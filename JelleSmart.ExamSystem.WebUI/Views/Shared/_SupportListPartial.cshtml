@@ -1,0 +1,863 @@
+﻿@using Koala.Portal.Core.Models
+@using Koala.Portal.Core.ViewModels.CrmViewModels
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Authorization
+@model (List<CrmSupportListViewModel> supportList, List<CrmUserFullNameInfoViewModel> crmUsers, List<CrmUserDepartmentsViewModel> userDepartments)
+@inject UserManager<AppUser> UserManager
+@inject IAuthorizationService AuthorizationService;
+@{
+    var currentUser = User;
+    var user = await UserManager.GetUserAsync(currentUser);
+    var isFirm = false;
+    var isProject = false;
+    var firmOid = "";
+    if (TempData["IsFirm"] != null)
+    {
+        isFirm = (bool)(TempData["IsFirm"] ?? false);
+    }
+    if (TempData["IsProject"] != null)
+    {
+        isProject = (bool)(TempData["Project"] ?? false);
+    }
+    
+    var openTicketTypes = new List<string>
+    {
+        "5D982B4A-4D94-43F2-960F-834743CBE1B0",
+        "56C7DB4D-EFB7-4103-952D-84A719C94020",
+        "B61F4BCF-B108-4676-8EDE-91AC3538E916",
+        "B35C770E-7D9E-4523-B3F6-C61BA273B61C",
+        "C6DAF753-63BF-4825-9476-D38872472727",
+        "2E1076A9-7B80-418A-A8BD-D72074D577B6",
+        "F3D3AD27-FFBF-48C2-B2A6-5761BC6E45E0"
+    };
+    var isTransferUser = AuthorizationService.AuthorizeAsync(User, "Support.TransferToUser").Result.Succeeded;
+    var isProjectUser = AuthorizationService.AuthorizeAsync(User, "Support.ProjectSupport").Result.Succeeded;
+}
+
+
+<div class="col-xxl-8 order-2 order-xxl-1">
+    <div class="card card-custom card-stretch gutter-b">
+        <div class="card-header border-0 pt-5">
+            <h3 class="card-title align-items-start flex-column">
+                <span class="card-label font-weight-bolder text-dark">Destek Kayıtları</span>
+                <span class="text-muted mt-3 font-weight-bold font-size-sm">Toplam 123 Kayıt</span>
+            </h3>
+            <div class="card-toolbar">
+                <ul class="nav nav-pills nav-pills-sm nav-dark-75">
+                    @if (isFirm)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link py-2 px-4 active" data-toggle="tab" href="#kt_tab_pane_12_1">Açık Kayıtlar</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link py-2 px-4" data-toggle="tab" href="#kt_tab_pane_12_2">Tamamlanan</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link py-2 px-4" data-toggle="tab" href="#kt_tab_pane_12_3">logoda Bekliyor</a>
+                        </li>
+                        <li>
+                            <a href="javascript:;" class="btn btn-info font-weight-bolder font-size-sm mr-3 py-2 px-4 add-support">Yeni Kayıt Ekle</a>
+                        </li>
+                    }
+                    else if (isProject)
+                    {
+                        
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link py-2 px-4 active" data-toggle="tab" href="#kt_tab_pane_11_1">Benim Kayıtlarım</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link py-2 px-4" data-toggle="tab" href="#kt_tab_pane_11_2">Departman Kayıtları</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link py-2 px-4" data-toggle="tab" href="#kt_tab_pane_11_3">Cevap Bekleyen</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link py-2 px-4 " data-toggle="tab" href="#kt_tab_pane_11_4">Web User</a>
+                        </li>
+                        <li>
+                            <a href="javascript:;" class="btn btn-info font-weight-bolder font-size-sm mr-3 py-2 px-4 add-support">Yeni Kayıt Ekle</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+
+        <div class="card-body pt-2 pb-0 mt-n3">
+            <div class="tab-content mt-5" id="myTabTables11">
+                @if (isFirm)
+                {
+                    <!--Açık Kayıtlar::Tap pane-->
+                    <div class="tab-pane fade show active" id="kt_tab_pane_12_1" role="tabpanel" aria-labelledby="kt_tab_pane_12_1">
+                        <div class="table-responsive">
+                            <table class="table table-vertical-center  border-bottom" id="support_firm_open_support_table">
+                                <thead>
+                                    <tr>
+                                        <th class="p-0"></th>
+                                        <th class="p-0 w-200px"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.supportList)
+                                    {
+                                        if ((item.TicketStateOid != "bd6344e9-e338-47a3-b6c0-38d9385b80b4" &&
+                                        item.TicketStateOid != "07d17e00-b999-4a39-8c01-4e0ceb1925fd" &&
+                                        item.TicketStateOid != "a048ac84-9dde-4a2c-86aa-d3ef76506103" &&
+                                        item.TicketStateOid != "e4bea484-e65c-4161-9b7e-95631a36928b") &&
+                                        item.TicketStateOid != "439e8fb4-b576-4650-83de-656ee3cfd3e7")
+                                        {
+                                            var notes = item.Notes?.Length > 90 ? item.Notes?.Substring(0, 90) : item.Notes;
+                                            var isProjectFirm = (!string.IsNullOrEmpty(item.FirmSpecCode5) && item.FirmSpecCode5.Equals("PORTAL", StringComparison.OrdinalIgnoreCase));
+
+                                            <tr>
+                                                <td class="pl-0">
+                                                    <a data-id="@item.Oid" data-module="FirmOpenSupports" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" href="javascript:;" class="font-weight-bolder text-hover-primary  text-primary mb-1 font-size-sm detail">@item.TicketFirmNavigation?.Title</a>
+                                                    <div>
+                                                        <span data-id="@item.Oid" data-module="FirmOpenSupports" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bolder text-hover-primary text-primary font-size-sm detail">Yetkili : @item.TicketContactNavigation?.Name @item.TicketContactNavigation?.LastName - </span>
+                                                        <a data-id="@item.Oid" data-module="FirmOpenSupports" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="text-muted text-hover-primary font-size-sm detail" href="javascript:;">@notes</a>
+                                                    </div>
+                                                    <br />
+                                                    <div>
+                                                        <span data-id="@item.Oid" data-module="FirmOpenSupports" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Arama Zamanı : </span>
+                                                        <a data-id="@item.Oid" data-module="FirmOpenSupports" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="text-muted font-weight-bold text-hover-primary font-size-xs detail" href="javascript:;">@item._CreatedDateTime?.ToString("dd-MM-yyyy HH:mm")</a> -
+                                                        <span data-id="@item.Oid" data-module="FirmOpenSupports" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Başlama Zamananı : </span>
+                                                        <a data-id="@item.Oid" data-module="FirmOpenSupports" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="text-muted font-weight-bold text-hover-primary font-size-xs detail" href="javascript:;">@item.TicketStartDate?.ToString("dd-MM-yyyy HH:mm")</a>
+                                                    </div>
+                                                    <div>
+
+                                                        <span data-id="@item.Oid" data-module="FirmOpenSupports" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Departman : </span>
+                                                        <a data-id="@item.Oid" data-module="FirmOpenSupports" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="text-muted font-weight-bold text-hover-primary   font-size-xs detail" href="javascript:;">@item.AssignedDepartmentNavigation?.DepartmentName</a> -
+                                                        <span data-id="@item.Oid" data-module="FirmOpenSupports" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Atanan Kullanıcı : </span>
+                                                        @if (item.AssignedToOid != null)
+                                                        {
+                                                            var userfN = Model.crmUsers.FirstOrDefault(x => x.Oid.ToUpper() == item.AssignedToOid.ToUpper()).FullName;
+                                                            <a data-id="@item.Oid" data-module="FirmOpenSupports" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-size-xs text-muted text-hover-primary detail" href="javascript:;">@userfN</a>
+                                                        }
+                                                        -
+                                                        <span data-id="@item.Oid" data-module="FirmOpenSupports" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Çalışan Kullanıcı : </span>
+                                                        @if (item.ActiveWorkingUserOid != null)
+                                                        {
+                                                            var userfN = Model.crmUsers.FirstOrDefault(x => x.Oid.ToUpper() == item.ActiveWorkingUserOid.ToUpper()).FullName;
+                                                            <a data-id="@item.Oid" data-module="FirmOpenSupports" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-size-xs text-muted text-hover-primary detail" href="javascript:;">@userfN</a>
+                                                        }
+                                                    </div>
+                                                </td>
+                                                <td class="pl-0 pull-right">
+                                                    <span data-id="@item.Oid" data-module="FirmOpenSupports" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bolder text-hover-primary text-warning font-size-sm detail">Destek Numarası : </span>
+                                                    <a data-id="@item.Oid" data-module="FirmOpenSupports" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" href="javascript:;" class="text-muted font-weight-bolder text-hover-primary  text-primary mb-1 font-size-xs detail">@item.TicketId</a>
+                                                    <br /><br />
+                                                    <div>
+                                                        <span data-id="@item.Oid" data-module="FirmOpenSupports" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bold text-hover-primary  text-success font-size-sm detail">Ticket Durum : </span>
+                                                        <a data-id="@item.Oid" data-module="FirmOpenSupports" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="text-muted font-weight-bold text-hover-primary font-size-xs detail" href="javascript:;">@item.TicketStateNavigation?.TicketStateDescription</a>
+                                                    </div>
+                                                    @if (!string.IsNullOrEmpty(item.ActiveWorkingUserOid) && item.ActiveWorkingUserOid.Equals(user.Oid, StringComparison.OrdinalIgnoreCase)
+                                                   && openTicketTypes.Any(x => x.Equals(item.TicketStateOid, StringComparison.OrdinalIgnoreCase)))
+                                                    {
+                                                        <div class="spinner spinner-danger spinner-right">
+                                                        </div>
+                                                    }
+                                                    @switch (@item.Priority)
+                                                    {
+                                                        case 1:
+                                                        case 2:
+                                                            <span data-id="@item.Oid" data-module="FirmOpenSupports" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bold  text-success font-size-sm detail">
+                                                                Öncelik : Düşük
+                                                            </span>
+                                                            break;
+                                                        case 3:
+                                                        case 4:
+                                                            <span data-id="@item.Oid" data-module="FirmOpenSupports" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bold text-warning font-size-sm detail">
+                                                                Öncelik : Normal
+                                                            </span>
+                                                            break;
+                                                        case 5:
+                                                        case 6:
+                                                            <span data-id="@item.Oid" data-module="FirmOpenSupports" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bold text-danger font-size-sm detail">
+                                                                Öncelik : Yüksek
+                                                            </span>
+                                                            break;
+                                                        default:
+                                                            <span data-id="@item.Oid" data-module="FirmOpenSupports" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bold text-default font-size-sm detail">
+                                                                Öncelik : Belirtilmemiş
+                                                            </span>
+                                                            break;
+                                                    }
+                                                    <div>
+                                                        <a class="text-muted font-weight-bold text-hover-primary font-size-xs" href="http://crm.sistem-bilgi.com:8090/LOGOCRM/#ViewID=MT_Ticket_DetailView&ObjectKey=@item.Oid" target="_blank">Logo CRM'de Görüntüle</a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <!--end::Table-->
+                    </div>
+                    <!--Tamamlanan Kayıtlar::Tap pane-->
+                    <div class="tab-pane fade" id="kt_tab_pane_12_2" role="tabpanel" aria-labelledby="kt_tab_pane_12_2">
+                        <!--begin::Table-->
+                        <div class="table-responsive">
+                            <table class="table  border-bottom table-vertical-center" id="support_answer_waiting_table">
+                                <thead>
+                                    <tr>
+                                        <th class="p-0"></th>
+                                        <th class="p-0 w-200px"></th>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.supportList)
+                                    {
+                                        if (item.TicketStateOid == "bd6344e9-e338-47a3-b6c0-38d9385b80b4" ||
+                                        item.TicketStateOid == "07d17e00-b999-4a39-8c01-4e0ceb1925fd" ||
+                                        item.TicketStateOid == "a048ac84-9dde-4a2c-86aa-d3ef76506103" ||
+                                        item.TicketStateOid == "e4bea484-e65c-4161-9b7e-95631a36928b")
+                                        {
+                                            var notes = item.Notes?.Length > 90 ? item.Notes?.Substring(0, 90) : item.Notes;
+                                            var isProjectFirm = (!string.IsNullOrEmpty(item.FirmSpecCode5) && item.FirmSpecCode5.Equals("PORTAL", StringComparison.OrdinalIgnoreCase));
+
+                                            <tr>
+                                                <td class="pl-0">
+                                                    <a data-id="@item.Oid" data-module="FirmComplatedSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" href="javascript:;" class="font-weight-bolder text-hover-primary  text-primary mb-1 font-size-sm detail">@item.TicketFirmNavigation?.Title</a>
+                                                    <div>
+                                                        <span data-id="@item.Oid" data-module="FirmComplatedSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bolder text-hover-primary text-primary font-size-sm detail">Yetkili : @item.TicketContactNavigation?.Name @item.TicketContactNavigation?.LastName - </span>
+                                                        <a data-id="@item.Oid" data-module="FirmComplatedSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="text-muted text-hover-primary font-size-sm detail" href="javascript:;">@notes</a>
+                                                    </div>
+                                                    <br />
+                                                    <div>
+                                                        <span data-id="@item.Oid" data-module="FirmComplatedSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Arama Zamanı : </span>
+                                                        <a data-id="@item.Oid" data-module="FirmComplatedSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="text-muted font-weight-bold text-hover-primary font-size-xs detail" href="javascript:;">@item._CreatedDateTime?.ToString("dd-MM-yyyy HH:mm")</a> -
+                                                        <span data-id="@item.Oid" data-module="FirmComplatedSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Başlama Zamananı : </span>
+                                                        <a data-id="@item.Oid" data-module="FirmComplatedSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="text-muted font-weight-bold text-hover-primary font-size-xs detail" href="javascript:;">@item.TicketStartDate?.ToString("dd-MM-yyyy HH:mm")</a>
+                                                    </div>
+                                                    <div>
+
+                                                        <span data-id="@item.Oid" data-module="FirmComplatedSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Departman : </span>
+                                                        <a data-id="@item.Oid" data-module="FirmComplatedSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="text-muted font-weight-bold text-hover-primary   font-size-xs detail" href="javascript:;">@item.AssignedDepartmentNavigation?.DepartmentName</a> -
+                                                        <span data-id="@item.Oid" data-module="FirmComplatedSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Atanan Kullanıcı : </span>
+                                                        @if (item.AssignedToOid != null)
+                                                        {
+                                                            var userfN = Model.crmUsers.FirstOrDefault(x => x.Oid.ToUpper() == item.AssignedToOid.ToUpper()).FullName;
+                                                            <a data-id="@item.Oid" data-module="FirmComplatedSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-size-xs text-muted text-hover-primary detail" href="javascript:;">@userfN</a>
+                                                        }
+                                                        -
+                                                        <span data-id="@item.Oid" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Çalışan Kullanıcı : </span>
+                                                        @if (item.ActiveWorkingUserOid != null)
+                                                        {
+                                                            var userfN = Model.crmUsers.FirstOrDefault(x => x.Oid.ToUpper() == item.ActiveWorkingUserOid.ToUpper()).FullName;
+                                                            <a data-id="@item.Oid" data-module="FirmComplatedSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-size-xs text-muted text-hover-primary detail" href="javascript:;">@userfN</a>
+                                                        }
+                                                    </div>
+                                                </td>
+                                                <td class="pl-0 pull-right">
+                                                    <spa data-id="@item.Oid" data-module="FirmComplatedSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bolder text-hover-primary text-warning font-size-sm detail">Destek Numarası : </spa>
+                                                    <a data-id="@item.Oid" data-module="FirmComplatedSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" href="javascript:;" class="text-muted font-weight-bolder text-hover-primary  text-primary mb-1 font-size-xs detail">@item.TicketId</a>
+                                                    <br /><br />
+                                                    <div>
+                                                        <span data-id="@item.Oid" data-module="FirmComplatedSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bold text-hover-primary  text-success font-size-sm detail">Ticket Durum : </span>
+                                                        <a data-id="@item.Oid" data-module="FirmComplatedSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="text-muted font-weight-bold text-hover-primary font-size-xs detail" href="javascript:;">@item.TicketStateNavigation?.TicketStateDescription</a>
+                                                    </div>
+                                                    @if (!string.IsNullOrEmpty(item.ActiveWorkingUserOid) && item.ActiveWorkingUserOid.Equals(user.Oid, StringComparison.OrdinalIgnoreCase)
+                                                   && openTicketTypes.Any(x => x.Equals(item.TicketStateOid, StringComparison.OrdinalIgnoreCase)))
+                                                    {
+                                                        <div class="spinner spinner-danger spinner-right">
+                                                        </div>
+                                                    }
+                                                    @switch (@item.Priority)
+                                                    {
+                                                        case 1:
+                                                        case 2:
+                                                            <span data-id="@item.Oid" data-module="FirmComplatedSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bold  text-success font-size-sm detail">
+                                                                Öncelik : Düşük
+                                                            </span>
+                                                            break;
+                                                        case 3:
+                                                        case 4:
+                                                            <span data-id="@item.Oid" data-module="FirmComplatedSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bold text-warning font-size-sm detail">
+                                                                Öncelik : Normal
+                                                            </span>
+                                                            break;
+                                                        case 5:
+                                                        case 6:
+                                                            <span data-id="@item.Oid" data-module="FirmComplatedSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bold text-danger font-size-sm detail">
+                                                                Öncelik : Yüksek
+                                                            </span>
+                                                            break;
+                                                        default:
+                                                            <span data-id="@item.Oid" data-module="FirmComplatedSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bold text-default font-size-sm detail">
+                                                                Öncelik : Belirtilmemiş
+                                                            </span>
+                                                            break;
+                                                    }
+                                                    <div>
+                                                        <a class="text-muted font-weight-bold text-hover-primary font-size-xs" href="http://crm.sistem-bilgi.com:8090/LOGOCRM/#ViewID=MT_Ticket_DetailView&ObjectKey=@item.Oid" target="_blank">Logo CRM'de Görüntüle</a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <!--end::Table-->
+                    </div>
+                    <!--logoda Bekleyen Kayıtlar::Tap pane-->
+                    <div class="tab-pane fade" id="kt_tab_pane_12_3" role="tabpanel" aria-labelledby="kt_tab_pane_12_3">
+                        <!--begin::Table-->
+
+                        <div class="table-responsive">
+                            <table class="table border-bottom table-vertical-center" id="support_WebUser_table">
+                                <thead>
+                                    <tr>
+                                        <th class="p-0"></th>
+                                        <th class="p-0 w-200px"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.supportList)
+                                    {
+                                        if (item.TicketStateOid == "439e8fb4-b576-4650-83de-656ee3cfd3e7")
+                                        {
+                                            var notes = item.Notes?.Length > 90 ? item.Notes?.Substring(0, 90) : item.Notes;
+                                            var isProjectFirm = (!string.IsNullOrEmpty(item.FirmSpecCode5) && item.FirmSpecCode5.Equals("PORTAL", StringComparison.OrdinalIgnoreCase));
+                                            <tr>
+                                                <td class="pl-0">
+                                                    <a data-id="@item.Oid" data-module="FirmWaitOnLogoSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" href="javascript:;" class="font-weight-bolder text-hover-primary  text-primary mb-1 font-size-sm detail">@item.TicketFirmNavigation?.Title</a>
+                                                    <div>
+                                                        <span data-id="@item.Oid" data-module="FirmWaitOnLogoSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bolder text-hover-primary text-primary font-size-sm detail">Yetkili : @item.TicketContactNavigation?.Name @item.TicketContactNavigation?.LastName - </span>
+                                                        <a data-id="@item.Oid" data-module="FirmWaitOnLogoSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="text-muted text-hover-primary font-size-sm detail" href="javascript:;">@notes</a>
+                                                    </div>
+                                                    <br />
+                                                    <div>
+                                                        <span data-id="@item.Oid" data-module="FirmWaitOnLogoSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Arama Zamanı : </span>
+                                                        <a data-id="@item.Oid" data-module="FirmWaitOnLogoSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="text-muted font-weight-bold text-hover-primary font-size-xs detail" href="javascript:;">@item._CreatedDateTime?.ToString("dd-MM-yyyy HH:mm")</a> -
+                                                        <span data-id="@item.Oid" data-module="FirmWaitOnLogoSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Başlama Zamananı : </span>
+                                                        <a data-id="@item.Oid" data-module="FirmWaitOnLogoSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="text-muted font-weight-bold text-hover-primary font-size-xs detail" href="javascript:;">@item.TicketStartDate?.ToString("dd-MM-yyyy HH:mm")</a>
+                                                    </div>
+                                                    <div>
+
+                                                        <span data-id="@item.Oid" data-module="FirmWaitOnLogoSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Departman : </span>
+                                                        <a data-id="@item.Oid" data-module="FirmWaitOnLogoSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="text-muted font-weight-bold text-hover-primary   font-size-xs detail" href="javascript:;">@item.AssignedDepartmentNavigation?.DepartmentName</a> -
+                                                        <span data-id="@item.Oid" data-module="FirmWaitOnLogoSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Atanan Kullanıcı : </span>
+                                                        @if (item.AssignedToOid != null)
+                                                        {
+                                                            var userfN = Model.crmUsers.FirstOrDefault(x => x.Oid.ToUpper() == item.AssignedToOid.ToUpper()).FullName;
+                                                            <a data-id="@item.Oid" data-module="FirmWaitOnLogoSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-size-xs text-muted text-hover-primary detail" href="javascript:;">@userfN</a>
+                                                        }
+                                                        -
+                                                        <span data-id="@item.Oid" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Çalışan Kullanıcı : </span>
+                                                        @if (item.ActiveWorkingUserOid != null)
+                                                        {
+                                                            var userfN = Model.crmUsers.FirstOrDefault(x => x.Oid.ToUpper() == item.ActiveWorkingUserOid.ToUpper()).FullName;
+                                                            <a data-id="@item.Oid" data-module="FirmWaitOnLogoSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-size-xs text-muted text-hover-primary detail" href="javascript:;">@userfN</a>
+                                                        }
+                                                    </div>
+                                                </td>
+                                                <td class="pl-0 pull-right">
+                                                    <span data-id="@item.Oid" class="font-weight-bolder text-hover-primary text-warning font-size-sm detail">Destek Numarası : </span>
+                                                    <a data-id="@item.Oid" data-module="FirmWaitOnLogoSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" href="javascript:;" class="text-muted font-weight-bolder text-hover-primary  text-primary mb-1 font-size-xs detail">@item.TicketId</a>
+                                                    <br /><br />
+                                                    <div>
+                                                        <span data-id="@item.Oid" data-module="FirmWaitOnLogoSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bold text-hover-primary  text-success font-size-sm detail">Ticket Durum : </span>
+                                                        <a data-id="@item.Oid" data-module="FirmWaitOnLogoSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="text-muted font-weight-bold text-hover-primary font-size-xs detail" href="javascript:;">@item.TicketStateNavigation?.TicketStateDescription</a>
+                                                    </div>
+                                                    @if (!string.IsNullOrEmpty(item.ActiveWorkingUserOid) && item.ActiveWorkingUserOid.Equals(user.Oid, StringComparison.OrdinalIgnoreCase)
+                                                   && openTicketTypes.Any(x => x.Equals(item.TicketStateOid, StringComparison.OrdinalIgnoreCase)))
+                                                    {
+                                                        <div class="spinner spinner-danger spinner-right">
+                                                        </div>
+                                                    }
+                                                    @switch (@item.Priority)
+                                                    {
+                                                        case 1:
+                                                        case 2:
+                                                            <span data-id="@item.Oid" data-module="FirmWaitOnLogoSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bold  text-success font-size-sm detail">
+                                                                Öncelik : Düşük
+                                                            </span>
+                                                            break;
+                                                        case 3:
+                                                        case 4:
+                                                            <span data-id="@item.Oid" data-module="FirmWaitOnLogoSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bold text-warning font-size-sm detail">
+                                                                Öncelik : Normal
+                                                            </span>
+                                                            break;
+                                                        case 5:
+                                                        case 6:
+                                                            <span data-id="@item.Oid" data-module="FirmWaitOnLogoSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bold text-danger font-size-sm detail">
+                                                                Öncelik : Yüksek
+                                                            </span>
+                                                            break;
+                                                        default:
+                                                            <span data-id="@item.Oid" data-module="FirmWaitOnLogoSupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@true" class="font-weight-bold text-default font-size-sm detail">
+                                                                Öncelik : Belirtilmemiş
+                                                            </span>
+                                                            break;
+                                                    }
+                                                    <div>
+                                                        <a class="text-muted font-weight-bold text-hover-primary font-size-xs" href="http://crm.sistem-bilgi.com:8090/LOGOCRM/#ViewID=MT_Ticket_DetailView&ObjectKey=@item.Oid" target="_blank">Logo CRM'de Görüntüle</a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <!--end::Table-->
+                    </div>
+
+                   
+
+                }
+                else if (isProject)
+                {
+                    
+                }
+                else
+                {
+                    <!--Benim Kayıtlarım::Tap pane-->
+                    <div class="tab-pane fade show active" id="kt_tab_pane_11_1" role="tabpanel" aria-labelledby="kt_tab_pane_11_1">
+                        <div class="table-responsive">
+                            <table class="table table-vertical-center border-bottom" id="support_open_support_table">
+                                <thead>
+                                    <tr>
+                                        <th class="p-0"></th>
+                                        <th class="p-0 w-200px"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.supportList)
+                                    {
+
+                                        if (!string.IsNullOrEmpty(item.ActiveWorkingUserOid) && (item.ActiveWorkingUserOid.Equals(user.Oid, StringComparison.OrdinalIgnoreCase)) ||
+                                        (string.IsNullOrEmpty(item.ActiveWorkingUserOid) && item.AssignedToOid.Equals(user.Oid, StringComparison.OrdinalIgnoreCase)))
+                                        {
+                                            var notes = item.Notes?.Length > 90 ? item.Notes?.Substring(0, 90) : item.Notes;
+
+                                            var isProjectFirm = (!string.IsNullOrEmpty(item.FirmSpecCode5) && item.FirmSpecCode5.Equals("PORTAL", StringComparison.OrdinalIgnoreCase));
+                                            var tittleText = isProjectFirm ? $"<span class=\"text-danger\">(Proje Firması) - </span>{item.TicketFirmNavigation?.Title}" : item.TicketFirmNavigation?.Title;
+
+
+                                            <tr>
+                                                <td class="pl-0">
+
+                                                    <a data-id="@item.Oid" data-module="MySupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" href="javascript:;" class="font-weight-bolder text-hover-primary  text-primary mb-1 font-size-sm detail">@Html.Raw(tittleText)</a>
+                                                    <div>
+                                                        <span data-id="@item.Oid" data-module="MySupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-primary font-size-sm detail">Yetkili : @item.TicketContactNavigation?.Name @item.TicketContactNavigation?.LastName - </span>
+                                                        <a data-id="@item.Oid" data-module="MySupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="text-muted text-hover-primary font-size-sm detail" href="javascript:;">@notes</a>
+                                                    </div>
+                                                    <br />
+                                                    <div>
+                                                        <span data-id="@item.Oid" data-module="MySupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Arama Zamanı : </span>
+                                                        <a data-id="@item.Oid" data-module="MySupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="text-muted font-weight-bold text-hover-primary font-size-xs detail" href="javascript:;">@item._CreatedDateTime?.ToString("dd-MM-yyyy HH:mm")</a> -
+                                                        <span data-id="@item.Oid" data-module="MySupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Başlama Zamananı : </span>
+                                                        <a data-id="@item.Oid" data-module="MySupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="text-muted font-weight-bold text-hover-primary font-size-xs detail" href="javascript:;">@item.TicketStartDate?.ToString("dd-MM-yyyy HH:mm")</a>
+                                                    </div>
+                                                    <div>
+
+
+                                                        <span data-id="@item.Oid" data-module="MySupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Departman : </span>
+                                                        <a data-id="@item.Oid" data-module="MySupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="text-muted font-weight-bold text-hover-primary   font-size-xs detail" href="javascript:;">@item.AssignedDepartmentNavigation?.DepartmentName</a> -
+                                                        <span data-id="@item.Oid" data-module="MySupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Atanan Kullanıcı : </span>
+                                                        @if (item.AssignedToOid != null)
+                                                        {
+                                                            var userfN = Model.crmUsers.FirstOrDefault(x => x.Oid.ToUpper() == item.AssignedToOid.ToUpper()).FullName;
+                                                            <a data-id="@item.Oid" data-module="MySupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-size-xs text-muted text-hover-primary detail" href="javascript:;">@userfN</a>
+                                                        }
+                                                        -
+                                                        <span data-id="@item.Oid" data-module="MySupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Çalışan Kullanıcı : </span>
+                                                        @if (item.ActiveWorkingUserOid != null)
+                                                        {
+                                                            var userfN = Model.crmUsers.FirstOrDefault(x => x.Oid.ToUpper() == item.ActiveWorkingUserOid.ToUpper()).FullName;
+                                                            <a data-id="@item.Oid" data-module="MySupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-size-xs text-muted text-hover-primary detail" href="javascript:;">@userfN</a>
+                                                        }
+
+                                                    </div>
+                                                </td>
+                                                <td class="pl-0 pull-right">
+                                                    <span data-id="@item.Oid" data-module="MySupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-warning font-size-sm detail">Destek Numarası : </span>
+                                                    <a data-id="@item.Oid" data-module="MySupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" href="javascript:;" class="text-muted font-weight-bolder text-hover-primary  text-primary mb-1 font-size-xs detail">@item.TicketId</a>
+                                                    <br /><br />
+                                                    <div>
+                                                        <span data-id="@item.Oid" data-module="MySupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" data-isFirm="@false" class="font-weight-bold text-hover-primary  text-success font-size-sm detail">Ticket Durum : </span>
+                                                        <a data-id="@item.Oid" data-module="MySupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="text-muted font-weight-bold text-hover-primary font-size-xs detail" href="javascript:;">@item.TicketStateNavigation?.TicketStateDescription</a>
+                                                    </div>
+                                                    @if (!string.IsNullOrEmpty(item.ActiveWorkingUserOid) && item.ActiveWorkingUserOid.Equals(user.Oid, StringComparison.OrdinalIgnoreCase)
+                                                   && openTicketTypes.Any(x => x.Equals(item.TicketStateOid, StringComparison.OrdinalIgnoreCase)))
+                                                    {
+                                                        <div class="spinner spinner-danger spinner-right">
+                                                        </div>
+                                                    }
+
+                                                    @switch (@item.Priority)
+                                                    {
+                                                        case 1:
+                                                        case 2:
+                                                            <span data-id="@item.Oid" data-module="MySupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bold  text-success font-size-sm detail">
+                                                                Öncelik : Düşük
+                                                            </span>
+                                                            break;
+                                                        case 3:
+                                                        case 4:
+                                                            <span data-id="@item.Oid" data-module="MySupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bold text-warning font-size-sm detail">
+                                                                Öncelik : Normal
+                                                            </span>
+                                                            break;
+                                                        case 5:
+                                                        case 6:
+                                                            <span data-id="@item.Oid" data-module="MySupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bold text-danger font-size-sm detail">
+                                                                Öncelik : Yüksek
+                                                            </span>
+                                                            break;
+                                                        default:
+                                                            <span data-id="@item.Oid" data-module="MySupport" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bold text-default font-size-sm detail">
+                                                                Öncelik : Belirtilmemiş
+                                                            </span>
+                                                            break;
+                                                    }
+                                                    <div>
+                                                        <a class="text-muted font-weight-bold text-hover-primary font-size-xs" href="http://crm.sistem-bilgi.com:8090/LOGOCRM/#ViewID=MT_Ticket_DetailView&ObjectKey=@item.Oid" target="_blank">Logo CRM'de Görüntüle</a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <!--end::Table-->
+                    </div>
+                    <!--Departman Kayıtlarım::Tap pane-->
+                    <div class="tab-pane fade" id="kt_tab_pane_11_2" role="tabpanel" aria-labelledby="kt_tab_pane_11_2">
+                        <!--begin::Table-->
+                        <div class="table-responsive">
+                            <table class="table border-bottom table-vertical-center" id="support_department_table">
+                                <thead>
+                                    <tr>
+                                        <th class="p-0"></th>
+                                        <th class="p-0 w-200px"></th>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.supportList)
+                                    {
+                                        //Cevap Bekleyen : F2028B99-C49E-4F4B-B1E7-69FF7ACF869A
+                                        //Web User       : A0EFF398-D31A-4767-A1DE-445312C9E086
+                                        if (Model.userDepartments.Any(x => x.Oid.Equals(item.AssignedDepartmentOid, StringComparison.OrdinalIgnoreCase) &&
+                                        ((!string.IsNullOrEmpty(item.ActiveWorkingUserOid) && !item.ActiveWorkingUserOid.Equals(user.Oid, StringComparison.OrdinalIgnoreCase)) &&
+                                        (!item.AssignedToOid.Equals("F2028B99-C49E-4F4B-B1E7-69FF7ACF869A", StringComparison.OrdinalIgnoreCase) ||
+                                        !item.AssignedToOid.Equals("A0EFF398-D31A-4767-A1DE-445312C9E086", StringComparison.OrdinalIgnoreCase) ||
+                                        !item.AssignedToOid.Equals(user.Oid, StringComparison.OrdinalIgnoreCase)))))
+                                        {
+
+                                            var notes = item.Notes?.Length > 90 ? item.Notes?.Substring(0, 90) : item.Notes;
+                                            var isProjectFirm = (!string.IsNullOrEmpty(item.FirmSpecCode5) && item.FirmSpecCode5.Equals("PORTAL", StringComparison.OrdinalIgnoreCase));
+                                            var tittleText = isProjectFirm ? $"<span class=\"text-danger\">(Proje Firması) - </span>{item.TicketFirmNavigation?.Title}" : item.TicketFirmNavigation?.Title;
+
+                                            <tr>
+                                                <td class="pl-0">
+                                                    <a data-id="@item.Oid" data-module="Department" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary  text-primary mb-1 font-size-sm detail">@Html.Raw(tittleText)</a>
+                                                    <div>
+                                                        <span data-id="@item.Oid" data-module="Department" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-primary font-size-sm detail">Yetkili : @item.TicketContactNavigation?.Name @item.TicketContactNavigation?.LastName - </span>
+                                                        <a data-id="@item.Oid" data-module="Department" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="text-muted text-hover-primary font-size-sm detail" href="javascript:;">@notes</a>
+                                                    </div>
+
+                                                    <br />
+                                                    <div>
+                                                        <span data-id="@item.Oid" data-module="Department" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Arama Zamanı : </span>
+                                                        <a data-id="@item.Oid" data-module="Department" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="text-muted font-weight-bold text-hover-primary font-size-xs detail" href="javascript:;">@item._CreatedDateTime?.ToString("dd-MM-yyyy HH:mm")</a> -
+                                                        <span data-id="@item.Oid" data-module="Department" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Başlama Zamananı : </span>
+                                                        <a data-id="@item.Oid" data-module="Department" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="text-muted font-weight-bold text-hover-primary font-size-xs detail" href="javascript:;">@item.TicketStartDate?.ToString("dd-MM-yyyy HH:mm")</a>
+                                                    </div>
+                                                    <div>
+
+                                                        <span data-id="@item.Oid" data-module="Department" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Departman : </span>
+                                                        <a data-id="@item.Oid" data-module="Department" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="text-muted font-weight-bold text-hover-primary   font-size-xs detail" href="javascript:;">@item.AssignedDepartmentNavigation?.DepartmentName</a> -
+                                                        <span data-id="@item.Oid" data-module="Department" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Atanan Kullanıcı : </span>
+                                                        @if (item.AssignedToOid != null)
+                                                        {
+                                                            var userfN = Model.crmUsers.FirstOrDefault(x => x.Oid.ToUpper() == item.AssignedToOid.ToUpper()).FullName;
+                                                            <a data-id="@item.Oid" data-module="Department" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-size-xs text-muted text-hover-primary detail" href="javascript:;">@userfN</a>
+                                                        }
+                                                        -
+                                                        <span data-id="@item.Oid" data-module="Department" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Çalışan Kullanıcı : </span>
+                                                        @if (item.ActiveWorkingUserOid != null)
+                                                        {
+                                                            var userfN = Model.crmUsers.FirstOrDefault(x => x.Oid.ToUpper() == item.ActiveWorkingUserOid.ToUpper()).FullName;
+                                                            <a data-id="@item.Oid" data-module="Department" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-size-xs text-muted text-hover-primary detail" href="javascript:;">@userfN</a>
+                                                        }
+                                                    </div>
+                                                </td>
+                                                <td class="pl-0 pull-right">
+                                                    <span data-id="@item.Oid" data-module="Department" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-warning font-size-sm detail">Destek Numarası : </span>
+                                                    <a data-id="@item.Oid" data-module="Department" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" href="javascript:;" class="text-muted font-weight-bolder text-hover-primary  text-primary mb-1 font-size-xs detail">@item.TicketId</a>
+                                                    <br /><br />
+                                                    <div>
+                                                        <span data-id="@item.Oid" data-module="Department" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bold text-hover-primary  text-success font-size-sm detail">Ticket Durum : </span>
+                                                        <a data-id="@item.Oid" data-module="Department" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="text-muted font-weight-bold text-hover-primary font-size-xs detail" href="javascript:;">@item.TicketStateNavigation?.TicketStateDescription</a>
+                                                    </div>
+                                                    @if (!string.IsNullOrEmpty(item.ActiveWorkingUserOid) && item.ActiveWorkingUserOid.Equals(user.Oid, StringComparison.OrdinalIgnoreCase)
+                                                   && openTicketTypes.Any(x => x.Equals(item.TicketStateOid, StringComparison.OrdinalIgnoreCase)))
+                                                    {
+                                                        <div class="spinner spinner-danger spinner-right">
+                                                        </div>
+                                                    }
+                                                    @switch (@item.Priority)
+                                                    {
+                                                        case 1:
+                                                        case 2:
+                                                            <span data-id="@item.Oid" data-module="Department" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bold  text-success font-size-sm detail">
+                                                                Öncelik : Düşük
+                                                            </span>
+                                                            break;
+                                                        case 3:
+                                                        case 4:
+                                                            <span data-id="@item.Oid" data-module="Department" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bold text-warning font-size-sm detail">
+                                                                Öncelik : Normal
+                                                            </span>
+                                                            break;
+                                                        case 5:
+                                                        case 6:
+                                                            <span data-id="@item.Oid" data-module="Department" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bold text-danger font-size-sm detail">
+                                                                Öncelik : Yüksek
+                                                            </span>
+                                                            break;
+                                                        default:
+                                                            <span data-id="@item.Oid" data-module="Department" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bold text-default font-size-sm detail">
+                                                                Öncelik : Belirtilmemiş
+                                                            </span>
+                                                            break;
+                                                    }
+                                                    <div>
+                                                        <a class="text-muted font-weight-bold text-hover-primary font-size-xs" href="http://crm.sistem-bilgi.com:8090/LOGOCRM/#ViewID=MT_Ticket_DetailView&ObjectKey=@item.Oid" target="_blank">Logo CRM'de Görüntüle</a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <!--end::Table-->
+                    </div>
+                    <!--Cevap Bekleyen::Tap pane-->
+                    <div class="tab-pane fade" id="kt_tab_pane_11_3" role="tabpanel" aria-labelledby="kt_tab_pane_11_3">
+                        <!--begin::Table-->
+                        <div class="table-responsive">
+                            <table class="table border-bottom table-vertical-center" id="support_answer_waiting_table">
+                                <thead>
+                                    <tr>
+                                        <th class="p-0"></th>
+                                        <th class="p-0 w-200px"></th>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.supportList)
+                                    {
+                                        if (item.AssignedToOid.Equals("F2028B99-C49E-4F4B-B1E7-69FF7ACF869A", StringComparison.OrdinalIgnoreCase) && string.IsNullOrEmpty(item.ActiveWorkingUserOid) && Model.userDepartments.Any(x => x.Oid.Equals(item.AssignedDepartmentOid, StringComparison.OrdinalIgnoreCase)))
+                                        {
+                                            var notes = item.Notes?.Length > 90 ? item.Notes?.Substring(0, 90) : item.Notes;
+                                            var isProjectFirm = (!string.IsNullOrEmpty(item.FirmSpecCode5) && item.FirmSpecCode5.Equals("PORTAL", StringComparison.OrdinalIgnoreCase));
+                                            var tittleText = isProjectFirm ? $"<span class=\"text-danger\">(Proje Firması) - </span>{item.TicketFirmNavigation?.Title}" : item.TicketFirmNavigation?.Title;
+                                            <tr>
+                                                <td class="pl-0">
+                                                    <a data-id="@item.Oid" data-module="CevapBekleyen" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" href="javascript:;" class="font-weight-bolder text-hover-primary  text-primary mb-1 font-size-sm detail">@Html.Raw(tittleText)</a>
+                                                    <div>
+                                                        <span data-id="@item.Oid" data-module="CevapBekleyen" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-primary font-size-sm detail">Yetkili : @item.TicketContactNavigation?.Name @item.TicketContactNavigation?.LastName - </span>
+                                                        <a data-id="@item.Oid" data-module="CevapBekleyen" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="text-muted text-hover-primary font-size-sm detail" href="javascript:;">@notes</a>
+                                                    </div>
+                                                    <br />
+                                                    <div>
+                                                        <span data-id="@item.Oid" data-module="CevapBekleyen" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Arama Zamanı : </span>
+                                                        <a data-id="@item.Oid" data-module="CevapBekleyen" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="text-muted font-weight-bold text-hover-primary font-size-xs detail" href="javascript:;">@item._CreatedDateTime?.ToString("dd-MM-yyyy HH:mm")</a> -
+                                                        <span data-id="@item.Oid" data-module="CevapBekleyen" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Başlama Zamananı : </span>
+                                                        <a data-id="@item.Oid" data-module="CevapBekleyen" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="text-muted font-weight-bold text-hover-primary font-size-xs detail" href="javascript:;">@item.TicketStartDate?.ToString("dd-MM-yyyy HH:mm")</a>
+                                                    </div>
+                                                    <div>
+
+                                                        <span data-id="@item.Oid" data-module="CevapBekleyen" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Departman : </span>
+                                                        <a data-id="@item.Oid" data-module="CevapBekleyen" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="text-muted font-weight-bold text-hover-primary   font-size-xs detail" href="javascript:;">@item.AssignedDepartmentNavigation?.DepartmentName</a> -
+                                                        <span data-id="@item.Oid" data-module="CevapBekleyen" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Atanan Kullanıcı : </span>
+                                                        @if (item.AssignedToOid != null)
+                                                        {
+                                                            var userfN = Model.crmUsers.FirstOrDefault(x => x.Oid.ToUpper() == item.AssignedToOid.ToUpper()).FullName;
+                                                            <a data-id="@item.Oid" data-module="CevapBekleyen" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-size-xs text-muted text-hover-primary detail" href="javascript:;">@userfN</a>
+                                                        }
+                                                        -
+                                                        <span data-id="@item.Oid" data-module="CevapBekleyen" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Çalışan Kullanıcı : </span>
+                                                        @if (item.ActiveWorkingUserOid != null)
+                                                        {
+                                                            var userfN = Model.crmUsers.FirstOrDefault(x => x.Oid.ToUpper() == item.ActiveWorkingUserOid.ToUpper()).FullName;
+                                                            <a data-id="@item.Oid" data-module="CevapBekleyen" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-size-xs text-muted text-hover-primary detail" href="javascript:;">@userfN</a>
+                                                        }
+                                                    </div>
+                                                </td>
+                                                <td class="pl-0 pull-right">
+                                                    <span data-id="@item.Oid" data-module="CevapBekleyen" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-warning font-size-sm detail">Destek Numarası : </span>
+                                                    <a data-id="@item.Oid" data-module="CevapBekleyen" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" href="javascript:;" class="text-muted font-weight-bolder text-hover-primary  text-primary mb-1 font-size-xs detail">@item.TicketId</a>
+                                                    <br /><br />
+                                                    <div>
+                                                        <span data-id="@item.Oid" data-module="CevapBekleyen" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bold text-hover-primary  text-success font-size-sm detail">Ticket Durum : </span>
+                                                        <a data-id="@item.Oid" data-module="CevapBekleyen" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="text-muted font-weight-bold text-hover-primary font-size-xs detail" href="javascript:;">@item.TicketStateNavigation?.TicketStateDescription</a>
+                                                    </div>
+                                                    @if (!string.IsNullOrEmpty(item.ActiveWorkingUserOid) && item.ActiveWorkingUserOid.Equals(user.Oid, StringComparison.OrdinalIgnoreCase)
+                                                   && openTicketTypes.Any(x => x.Equals(item.TicketStateOid, StringComparison.OrdinalIgnoreCase)))
+                                                    {
+                                                        <div class="spinner spinner-danger spinner-right">
+                                                        </div>
+                                                    }
+                                                    @switch (@item.Priority)
+                                                    {
+                                                        case 1:
+                                                        case 2:
+                                                            <span data-id="@item.Oid" data-module="CevapBekleyen" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bold  text-success font-size-sm detail">
+                                                                Öncelik : Düşük
+                                                            </span>
+                                                            break;
+                                                        case 3:
+                                                        case 4:
+                                                            <span data-id="@item.Oid" data-module="CevapBekleyen" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bold text-warning font-size-sm detail">
+                                                                Öncelik : Normal
+                                                            </span>
+                                                            break;
+                                                        case 5:
+                                                        case 6:
+                                                            <span data-id="@item.Oid" data-module="CevapBekleyen" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bold text-danger font-size-sm detail">
+                                                                Öncelik : Yüksek
+                                                            </span>
+                                                            break;
+                                                        default:
+                                                            <span data-id="@item.Oid" data-module="CevapBekleyen" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bold text-default font-size-sm detail">
+                                                                Öncelik : Belirtilmemiş
+                                                            </span>
+                                                            break;
+                                                    }
+                                                    <div>
+                                                        <a class="text-muted font-weight-bold text-hover-primary font-size-xs" href="http://crm.sistem-bilgi.com:8090/LOGOCRM/#ViewID=MT_Ticket_DetailView&ObjectKey=@item.Oid" target="_blank">Logo CRM'de Görüntüle</a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <!--end::Table-->
+                    </div>
+                    <!--Web User::Tap pane-->
+                    <div class="tab-pane fade" id="kt_tab_pane_11_4" role="tabpanel" aria-labelledby="kt_tab_pane_11_4">
+                        <!--begin::Table-->
+
+                        <div class="table-responsive">
+                            <table class="table border-bottom table-vertical-center" id="support_WebUser_table">
+                                <thead>
+                                    <tr>
+                                        <th class="p-0"></th>
+                                        <th class="p-0 w-200px"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.supportList)
+                                    {
+                                        if (item.AssignedToOid.Equals("A0EFF398-D31A-4767-A1DE-445312C9E086", StringComparison.OrdinalIgnoreCase) && string.IsNullOrEmpty(item.ActiveWorkingUserOid) && Model.userDepartments.Any(x => x.Oid.Equals(item.AssignedDepartmentOid, StringComparison.OrdinalIgnoreCase)))
+                                        {
+                                            var notes = item.Notes?.Length > 90 ? item.Notes?.Substring(0, 90) : item.Notes;
+                                            var isProjectFirm = (!string.IsNullOrEmpty(item.FirmSpecCode5) && item.FirmSpecCode5.Equals("PORTAL", StringComparison.OrdinalIgnoreCase));
+                                            var tittleText = isProjectFirm ? $"<span class=\"text-danger\">(Proje Firması) - </span>{item.TicketFirmNavigation?.Title}" : item.TicketFirmNavigation?.Title;
+                                            <tr class="">
+                                                <td class="pl-0">
+
+                                                    <a data-id="@item.Oid" data-module="WebUser" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" href="javascript:;" class="font-weight-bolder text-hover-primary  text-primary mb-1 font-size-sm detail">@Html.Raw(tittleText)</a>
+                                                    <div>
+                                                        <span data-id="@item.Oid" data-module="WebUser" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-primary font-size-sm detail">Yetkili : @item.TicketContactNavigation?.Name @item.TicketContactNavigation?.LastName - </span>
+                                                        <a data-id="@item.Oid" data-module="WebUser" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="text-muted text-hover-primary font-size-sm detail" href="javascript:;">@notes</a>
+                                                    </div>
+                                                    <br />
+                                                    <div>
+                                                        <span data-id="@item.Oid" data-module="WebUser" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Arama Zamanı : </span>
+                                                        <a data-id="@item.Oid" data-module="WebUser" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="text-muted font-weight-bold text-hover-primary font-size-xs detail" href="javascript:;">@item._CreatedDateTime?.ToString("dd-MM-yyyy HH:mm")</a> -
+                                                        <span data-id="@item.Oid" data-module="WebUser" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Başlama Zamananı : </span>
+                                                        <a data-id="@item.Oid" data-module="WebUser" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="text-muted font-weight-bold text-hover-primary font-size-xs detail" href="javascript:;">@item.TicketStartDate?.ToString("dd-MM-yyyy HH:mm")</a>
+                                                    </div>
+                                                    <div>
+
+                                                        <span data-id="@item.Oid" data-module="WebUser" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Departman : </span>
+                                                        <a data-id="@item.Oid" data-module="WebUser" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="text-muted font-weight-bold text-hover-primary   font-size-xs detail" href="javascript:;">@item.AssignedDepartmentNavigation?.DepartmentName</a> -
+                                                        <span data-id="@item.Oid" data-module="WebUser" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Atanan Kullanıcı : </span>
+                                                        @if (item.AssignedToOid != null)
+                                                        {
+                                                            var userfN = Model.crmUsers.FirstOrDefault(x => x.Oid.ToUpper() == item.AssignedToOid.ToUpper()).FullName;
+                                                            <a data-id="@item.Oid" data-module="WebUser" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-size-xs text-muted text-hover-primary detail" href="javascript:;">@userfN</a>
+                                                        }
+                                                        -
+                                                        <span data-id="@item.Oid" data-module="WebUser" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-danger font-size-sm detail">Çalışan Kullanıcı : </span>
+                                                        @if (item.ActiveWorkingUserOid != null)
+                                                        {
+                                                            var userfN = Model.crmUsers.FirstOrDefault(x => x.Oid.ToUpper() == item.ActiveWorkingUserOid.ToUpper()).FullName;
+                                                            <a data-id="@item.Oid" data-module="WebUser" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-size-xs text-muted text-hover-primary detail" href="javascript:;">@userfN</a>
+                                                        }
+                                                    </div>
+                                                </td>
+                                                <td class="pl-0 pull-right">
+                                                    <span data-id="@item.Oid" data-module="WebUser" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bolder text-hover-primary text-warning font-size-sm detail">Destek Numarası : </span>
+                                                    <a data-id="@item.Oid" data-module="WebUser" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" href="javascript:;" class="text-muted font-weight-bolder text-hover-primary  text-primary mb-1 font-size-xs detail">@item.TicketId</a>
+                                                    <br /><br />
+                                                    <div>
+                                                        <span data-id="@item.Oid" data-module="WebUser" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bold text-hover-primary  text-success font-size-sm detail">Ticket Durum : </span>
+                                                        <a data-id="@item.Oid" data-module="WebUser" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="text-muted font-weight-bold text-hover-primary font-size-xs detail" href="javascript:;">@item.TicketStateNavigation?.TicketStateDescription</a>
+                                                    </div>
+                                                    @if (!string.IsNullOrEmpty(item.ActiveWorkingUserOid) && item.ActiveWorkingUserOid.Equals(user.Oid, StringComparison.OrdinalIgnoreCase)
+                                                   && openTicketTypes.Any(x => x.Equals(item.TicketStateOid, StringComparison.OrdinalIgnoreCase)))
+                                                    {
+                                                        <div class="spinner spinner-danger spinner-right">
+                                                        </div>
+                                                    }
+                                                    @switch (@item.Priority)
+                                                    {
+                                                        case 1:
+                                                        case 2:
+                                                            <span data-id="@item.Oid" data-module="WebUser" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bold  text-success font-size-sm detail">
+                                                                Öncelik : Düşük
+                                                            </span>
+                                                            break;
+                                                        case 3:
+                                                        case 4:
+                                                            <span data-id="@item.Oid" data-module="WebUser" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bold text-warning font-size-sm detail">
+                                                                Öncelik : Normal
+                                                            </span>
+                                                            break;
+                                                        case 5:
+                                                        case 6:
+                                                            <span data-id="@item.Oid" data-module="WebUser" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bold text-danger font-size-sm detail">
+                                                                Öncelik : Yüksek
+                                                            </span>
+                                                            break;
+                                                        default:
+                                                            <span data-id="@item.Oid" data-module="WebUser" data-isProjectUser="@isProjectUser" data-isTransferUser="@isTransferUser" data-isProjectFirm="@isProjectFirm" data-isFirm="@false" class="font-weight-bold text-default font-size-sm detail">
+                                                                Öncelik : Belirtilmemiş
+                                                            </span>
+                                                            break;
+                                                    }
+                                                    <div>
+                                                        <a class="text-muted font-weight-bold text-hover-primary font-size-xs" href="http://crm.sistem-bilgi.com:8090/LOGOCRM/#ViewID=MT_Ticket_DetailView&ObjectKey=@item.Oid" target="_blank">Logo CRM'de Görüntüle</a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <!--end::Table-->
+                    </div>
+
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

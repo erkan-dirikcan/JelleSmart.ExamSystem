@@ -1,0 +1,74 @@
+@model JelleSmart.ExamSystem.Core.Entities.Exam
+
+@{
+    ViewData["Title"] = "Sınav Detay";
+    var studentExam = ViewBag.StudentExam as JelleSmart.ExamSystem.Core.Entities.StudentExam;
+}
+
+<h2>@Model.Name</h2>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Sınav Bilgileri</h5>
+
+                <dl class="row">
+                    <dt class="col-sm-4">Ders</dt>
+                    <dd class="col-sm-8">@Model.Subject?.Name</dd>
+
+                    <dt class="col-sm-4">Süre</dt>
+                    <dd class="col-sm-8">@Model.Duration dakika</dd>
+
+                    <dt class="col-sm-4">Soru Sayısı</dt>
+                    <dd class="col-sm-8">@Model.QuestionCount</dd>
+
+                    <dt class="col-sm-4">Toplam Puan</dt>
+                    <dd class="col-sm-8">@Model.TotalPoints</dd>
+
+                    <dt class="col-sm-4">Başlangıç</dt>
+                    <dd class="col-sm-8">@Model.StartTime.ToString("dd.MM.yyyy HH:mm")</dd>
+
+                    <dt class="col-sm-4">Bitiş</dt>
+                    <dd class="col-sm-8">@Model.EndTime.ToString("dd.MM.yyyy HH:mm")</dd>
+
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <dt class="col-sm-4">Açıklama</dt>
+                        <dd class="col-sm-8">@Model.Description</dd>
+                    }
+                </dl>
+
+                @if (studentExam != null)
+                {
+                    <div class="alert alert-info">
+                        @if (studentExam.Status == JelleSmart.ExamSystem.Core.Enums.ExamStatus.Completed)
+                        {
+                            <span>Bu sınavı tamamladınız. <a asp-action="Result" asp-route-id="@studentExam.Id" class="btn btn-sm btn-success">Sonucu Gör</a></span>
+                        }
+                        else if (studentExam.Status == JelleSmart.ExamSystem.Core.Enums.ExamStatus.InProgress)
+                        {
+                            <span>Bu sınava devam ediyorsunuz. <a asp-action="Take" asp-route-id="@studentExam.Id" class="btn btn-sm btn-primary">Sınava Devam Et</a></span>
+                        }
+                    </div>
+                }
+                else if (DateTime.Now >= Model.StartTime && DateTime.Now <= Model.EndTime)
+                {
+                    <a asp-action="Start" asp-route-id="@Model.Id" class="btn btn-primary btn-lg">Sınava Başla</a>
+                }
+                else if (DateTime.Now < Model.StartTime)
+                {
+                    <div class="alert alert-warning">Sınav henüz başlamadı.</div>
+                }
+                else
+                {
+                    <div class="alert alert-danger">Sınav süresi doldu.</div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" class="btn btn-secondary">Listeye Dön</a>
+</div>

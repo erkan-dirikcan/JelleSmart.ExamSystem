@@ -1,0 +1,145 @@
+@model IEnumerable<JelleSmart.ExamSystem.Core.DTOs.ExamResultDto>
+
+@{
+    ViewData["Title"] = "Sınav Sonuçlarım";
+}
+
+<h2>Sınav Sonuçlarım</h2>
+
+<div class="mb-3">
+    <a asp-action="Index" class="btn btn-secondary">Geri Dön</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Sınav Adı</th>
+                <th>Ders</th>
+                <th>Puan</th>
+                <th>Toplam Puan</th>
+                <th>Başarı Oranı</th>
+                <th>Doğru</th>
+                <th>Yanlış</th>
+                <th>Boş</th>
+                <th>Tarih</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                @foreach (var result in Model.OrderByDescending(r => r.CompletedAt))
+                {
+                    <tr>
+                        <td>@result.ExamName</td>
+                        <td>@result.SubjectName</td>
+                        <td>@result.Score.ToString("F2")</td>
+                        <td>@result.TotalPoints</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="progress" style="width: 100px; height: 20px;">
+                                    <div class="progress-bar @(result.Percentage >= 70 ? "bg-success" : result.Percentage >= 50 ? "bg-warning" : "bg-danger")"
+                                         role="progressbar" style="width: @result.Percentage%">
+                                    </div>
+                                </div>
+                                <span>@result.Percentage.ToString("F1")%</span>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-success">@result.CorrectCount</span></td>
+                        <td><span class="badge bg-danger">@result.WrongCount</span></td>
+                        <td><span class="badge bg-secondary">@result.EmptyCount</span></td>
+                        <td>@result.CompletedAt?.ToString("dd.MM.yyyy HH:mm")</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="9" class="text-center">Henüz tamamlanmış sınavınız yok.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (Model.Any())
+{
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Sınav Başarı Grafiği</h5>
+                    <canvas id="examChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Doğru/Yanlış/Boş Dağılımı</h5>
+                    <canvas id="answerDistChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const examNames = @Json.Serialize(Model.Select(r => r.ExamName));
+        const percentages = @Json.Serialize(Model.Select(r => r.Percentage));
+
+        new Chart(document.getElementById('examChart'), {
+            type: 'line',
+            data: {
+                labels: examNames,
+                datasets: [{
+                    label: 'Başarı Oranı (%)',
+                    data: percentages,
+                    borderColor: 'rgb(13, 110, 253)',
+                    backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                    tension: 0.1,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+
+        const totalCorrect = @Model.Sum(r => r.CorrectCount);
+        const totalWrong = @Model.Sum(r => r.WrongCount);
+        const totalEmpty = @Model.Sum(r => r.EmptyCount);
+
+        new Chart(document.getElementById('answerDistChart'), {
+            type: 'pie',
+            data: {
+                labels: ['Doğru', 'Yanlış', 'Boş'],
+                datasets: [{
+                    data: [totalCorrect, totalWrong, totalEmpty],
+                    backgroundColor: [
+                        'rgba(25, 135, 84, 0.7)',
+                        'rgba(220, 53, 69, 0.7)',
+                        'rgba(108, 117, 125, 0.7)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    </script>
+}

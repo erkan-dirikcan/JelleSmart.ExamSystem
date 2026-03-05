@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="JelleSmart.ExamSystem.Core/JelleSmart.ExamSystem.Core.csproj" />
+  <Project Path="JelleSmart.ExamSystem.Repository/JelleSmart.ExamSystem.Repository.csproj" />
+  <Project Path="JelleSmart.ExamSystem.Service/JelleSmart.ExamSystem.Service.csproj" />
+  <Project Path="JelleSmart.ExamSystem.WebUI/JelleSmart.ExamSystem.WebUI.csproj" />
+</Solution>

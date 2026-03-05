@@ -1,0 +1,163 @@
+@model JelleSmart.ExamSystem.WebUI.Models.QuestionViewModel
+
+@{
+    ViewData["Title"] = "Soru Düzenle";
+}
+
+<h2>Soru Düzenle</h2>
+
+<form method="post" enctype="multipart/form-data" id="questionForm">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Soru Bilgileri</h5>
+
+                    <div class="mb-3">
+                        <label asp-for="Text" class="form-label">Soru Metni</label>
+                        <textarea asp-for="Text" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Text" class="text-danger"></span>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <div class="mb-3">
+                            <label class="form-label">Mevcut Görsel</label>
+                            <div>
+                                <img src="~/@Model.ImageUrl" alt="Soru görseli" style="max-width: 300px;" class="img-thumbnail" />
+                            </div>
+                        </div>
+                    }
+
+                    <div class="mb-3">
+                        <label asp-for="ImageFile" class="form-label">Görseli Değiştir (Opsiyonel)</label>
+                        <input asp-for="ImageFile" class="form-control" type="file" accept="image/*" id="imageInput" />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="SubjectId" class="form-label">Ders</label>
+                            <select asp-for="SubjectId" class="form-select" id="subjectSelect">
+                                <option value="">Seçiniz...</option>
+                                @foreach (var subject in ViewBag.Subjects)
+                                {
+                                    <option value="@subject.Id">@subject.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="SubjectId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="GradeId" class="form-label">Sınıf</label>
+                            <select asp-for="GradeId" class="form-select">
+                                <option value="">Seçiniz...</option>
+                                @foreach (var grade in ViewBag.Grades)
+                                {
+                                    <option value="@grade.Id">@grade.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="GradeId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="UnitId" class="form-label">Ünite (Opsiyonel)</label>
+                            <select asp-for="UnitId" class="form-select" id="unitSelect">
+                                <option value="">Seçiniz...</option>
+                                @if (ViewBag.Units != null)
+                                {
+                                    @foreach (var unit in ViewBag.Units)
+                                    {
+                                        <option value="@unit.Id">@unit.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="TopicId" class="form-label">Kazanım (Opsiyonel)</label>
+                            <select asp-for="TopicId" class="form-select" id="topicSelect">
+                                <option value="">Seçiniz...</option>
+                                @if (ViewBag.Topics != null)
+                                {
+                                    @foreach (var topic in ViewBag.Topics)
+                                    {
+                                        <option value="@topic.Id">@topic.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Difficulty" class="form-label">Zorluk Seviyesi</label>
+                        <select asp-for="Difficulty" class="form-select">
+                            <option value="1">Kolay</option>
+                            <option value="2">Orta</option>
+                            <option value="3">Zor</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Şıklar</h5>
+
+                    <div id="choicesContainer">
+                        @for (int i = 0; i < Model.Choices.Count; i++)
+                        {
+                            <div class="row mb-2 choice-row" data-index="@i">
+                                <input type="hidden" asp-for="Choices[i].Label" />
+                                <input type="hidden" asp-for="Choices[i].Id" />
+                                <div class="col-auto">
+                                    <span class="input-group-text">@Model.Choices[i].Label</span>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="Choices[i].Text" class="form-control" placeholder="Şık metni" />
+                                </div>
+                                <div class="col-auto">
+                                    <div class="form-check">
+                                        <input class="form-check-input" asp-for="Choices[i].IsCorrect" type="radio" name="CorrectChoice" value="@i" required />
+                                        <label class="form-check-label">Doğru</label>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary">Güncelle</button>
+        <a asp-action="Index" class="btn btn-secondary">İptal</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Radio button handling for choices
+        document.querySelectorAll('input[name="CorrectChoice"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.querySelectorAll('input[type="hidden"][name$=".IsCorrect"]').forEach(hidden => {
+                    hidden.value = "false";
+                });
+                const index = this.value;
+                document.querySelector(`input[name="Choices[${index}].IsCorrect"][type="hidden"]`).value = "true";
+            });
+        });
+
+        // Initialize with current correct choice
+        const currentCorrect = @Model.Choices.FindIndex(c => c.IsCorrect);
+        if (currentCorrect >= 0) {
+            const correctRadio = document.querySelector(`input[name="CorrectChoice"][value="${currentCorrect}"]`);
+            if (correctRadio) correctRadio.checked = true;
+        }
+    </script>
+}

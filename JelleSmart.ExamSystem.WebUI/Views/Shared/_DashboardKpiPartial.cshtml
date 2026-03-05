@@ -1,0 +1,311 @@
+﻿@using Koala.Portal.Core.ViewModels.CrmViewModels
+@model CrmDashboardKpiDbViewModel
+<div class="card card-custom gutter-b">
+    @* <div class="card-header border-0 bg-danger py-5">
+        <h3 class="card-title font-weight-bolder text-white">Gelen Destek Kayıtları</h3>
+        <div class="card-toolbar">
+        </div>
+    </div> *@
+    <!--begin::Container-->
+    <div class="card-body">
+        <div class="d-flex align-items-center flex-wrap">
+            <!--begin: Item-->
+            <div class="d-flex align-items-center flex-lg-fill mr-5 my-1">
+                <span class="mr-4">
+                    <i class="flaticon-support icon-2x text-muted font-weight-bold"></i>
+                </span>
+                <div class="d-flex flex-column text-dark-75">
+                    <span class="font-weight-bolder font-size-sm">Açık Kayıtlarım</span>
+                    <span class="font-weight-bolder font-size-h1">
+                        <span class="font-weight-bold text-danger">@Model.WaitingMySupportCount</span>
+                    </span>
+                </div>
+            </div>
+            <!--end: Item-->
+            <!--begin: Item-->
+            <div class="d-flex align-items-center flex-lg-fill mr-5 my-1">
+                <span class="mr-4">
+                    <i class="flaticon-support icon-2x text-muted font-weight-bold"></i>
+                </span>
+                <div class="d-flex flex-column">
+                    <span class="font-weight-bolder font-size-sm">Cevap Bekleyen</span>
+                    <span class="font-weight-bolder font-size-h1">
+                        <span class="font-weight-bold text-primary">@Model.WaitAnswerSupportCount</span>
+                    </span>
+                </div>
+            </div>
+            <!--end: Item-->
+            <!--begin: Item-->
+            <div class="d-flex align-items-center flex-lg-fill mr-5 my-1">
+                <span class="mr-4">
+                    <i class="flaticon-support icon-2x text-muted font-weight-bold"></i>
+                </span>
+                <div class="d-flex flex-column text-dark-75">
+                    <span class="font-weight-bolder font-size-sm">Açık Departman Kayıtları</span>
+                    <span class="font-weight-bolder font-size-h1">
+                        <span class="font-weight-bold text-warning">@Model.WaitingdDepartmentSupportCount</span>
+                    </span>
+                </div>
+            </div>
+            <!--end: Item-->
+            <!--begin: Item-->
+            <div class="d-flex align-items-center flex-lg-fill mr-5 my-1">
+                <span class="mr-4">
+                    <i class="flaticon-support  icon-2x text-muted font-weight-bold"></i>
+                </span>
+                <div class="d-flex flex-column text-dark-75">
+                    <span class="font-weight-bolder font-size-sm">Web User</span>
+                    <span class="font-weight-bolder font-size-h1">
+                        <span class="font-weight-bold text-info">@Model.WaitWebUserSupportCount</span>
+                    </span>
+                </div>
+            </div>
+            <!--end: Item-->
+            <!--begin: Item-->
+            <div class="d-flex align-items-center flex-lg-fill mr-5 my-1">
+                <span class="mr-4">
+                    <i class="flaticon-support  icon-2x text-muted font-weight-bold"></i>
+                </span>
+                <div class="d-flex flex-column text-dark-75">
+                    <span class="font-weight-bolder font-size-sm">Logoda Bekliyor</span>
+                    <span class="font-weight-bolder font-size-h1">
+                        <span class="font-weight-bold text-success">@Model.WaitOnLogoSupportCount</span>
+                    </span>
+                </div>
+            </div>
+            <!--end: Item-->
+           
+        </div>
+    </div>
+</div>
+
+
+<!--end: Item-->
+<!--begin::Row-->
+@* <div class="row">
+    <div class="col-md-6 col-xxl-4">
+        <!--begin::Mixed Widget 1-->
+        <div class="card card-custom bg-gray-100 card-stretch gutter-b">
+            <!--begin::Header-->
+            <div class="card-header border-0 bg-danger py-5">
+                <h3 class="card-title font-weight-bolder text-white">Gelen Destek Kayıtları</h3>
+                <div class="card-toolbar">
+                </div>
+            </div>
+            <!--end::Header-->
+            <!--begin::Body-->
+            <div class="card-body p-0 position-relative overflow-hidden">
+                <!--begin::Chart-->
+                <div id="st_weekly_total" class="card-rounded-bottom bg-danger" style="height: 200px"></div>
+                <!--end::Chart-->
+                <!--begin::Stats-->
+                <div class="card-spacer mt-n25">
+                    <!--begin::Row-->
+                    <div class="row m-0">
+                        <div class="col bg-light-warning px-6 py-8 rounded-xl mr-7 mb-7">
+                            <span class="svg-icon svg-icon-3x svg-icon-warning d-block my-2">
+                                <!--begin::Svg Icon | path:assets/media/svg/icons/Media/Equalizer.svg-->
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                        <rect x="0" y="0" width="24" height="24" />
+                                        <rect fill="#000000" opacity="0.3" x="13" y="4" width="3" height="16" rx="1.5" />
+                                        <rect fill="#000000" x="8" y="9" width="3" height="11" rx="1.5" />
+                                        <rect fill="#000000" x="18" y="11" width="3" height="9" rx="1.5" />
+                                        <rect fill="#000000" x="3" y="13" width="3" height="7" rx="1.5" />
+                                    </g>
+                                </svg>
+                                <span class=" font-weight-bolder font-size-h3 text-warning" id="st_open_sp"></span>
+                                <!--end::Svg Icon-->
+                            </span>
+                            <a href="#" class="text-warning font-weight-bold font-size-h6">Açık Destek Kaydı</a>
+                        </div>
+                        <div class="col bg-light-primary px-6 py-8 rounded-xl mb-7">
+                            <span class="svg-icon svg-icon-3x svg-icon-primary d-block my-2">
+                                <!--begin::Svg Icon | path:assets/media/svg/icons/Media/Equalizer.svg-->
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                        <rect x="0" y="0" width="24" height="24" />
+                                        <rect fill="#000000" opacity="0.3" x="13" y="4" width="3" height="16" rx="1.5" />
+                                        <rect fill="#000000" x="8" y="9" width="3" height="11" rx="1.5" />
+                                        <rect fill="#000000" x="18" y="11" width="3" height="9" rx="1.5" />
+                                        <rect fill="#000000" x="3" y="13" width="3" height="7" rx="1.5" />
+                                    </g>
+                                </svg>
+                                <span class=" font-weight-bolder font-size-h3 text-primary" id="st_wait_on_logo">55</span>
+                                <!--end::Svg Icon-->
+                            </span>
+                            <a href="#" class="text-primary font-weight-bold font-size-h6 mt-2">Logoda Bekliyor</a>
+                        </div>
+                    </div>
+                    <!--end::Row-->
+                    <!--begin::Row-->
+                    <div class="row m-0">
+                        <div class="col bg-light-danger px-6 py-8 rounded-xl mr-7">
+                            <span class="svg-icon svg-icon-3x svg-icon-danger d-block my-2">
+                                <!--begin::Svg Icon | path:assets/media/svg/icons/Design/Layers.svg-->
+                                <span class="svg-icon svg-icon-primary svg-icon-2x">
+                                    <!--begin::Svg Icon | path:C:\wamp64\www\keenthemes\legacy\metronic\theme\html\demo1\dist/../src/media/svg/icons\General\User.svg-->
+                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                            <polygon points="0 0 24 0 24 24 0 24" />
+                                            <path d="M12,11 C9.790861,11 8,9.209139 8,7 C8,4.790861 9.790861,3 12,3 C14.209139,3 16,4.790861 16,7 C16,9.209139 14.209139,11 12,11 Z" fill="#000000" fill-rule="nonzero" opacity="0.3" />
+                                            <path d="M3.00065168,20.1992055 C3.38825852,15.4265159 7.26191235,13 11.9833413,13 C16.7712164,13 20.7048837,15.2931929 20.9979143,20.2 C21.0095879,20.3954741 20.9979143,21 20.2466999,21 C16.541124,21 11.0347247,21 3.72750223,21 C3.47671215,21 2.97953825,20.45918 3.00065168,20.1992055 Z" fill="#000000" fill-rule="nonzero" />
+                                        </g>
+                                    </svg><!--end::Svg Icon-->
+                                </span> <span class=" font-weight-bolder font-size-h3 text-danger" id="st_web_user">55</span>
+                                <!--end::Svg Icon-->
+                            </span>
+                            <a href="#" class="text-danger font-weight-bold font-size-h6 mt-2">Web User</a>
+                        </div>
+                        <div class="col bg-light-success px-6 py-8 rounded-xl">
+                            <span class="svg-icon svg-icon-3x svg-icon-success d-block my-2">
+                                <!--begin::Svg Icon | path:assets/media/svg/icons/Communication/Urgent-mail.svg-->
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                        <rect x="0" y="0" width="24" height="24" />
+                                        <path d="M12.7037037,14 L15.6666667,10 L13.4444444,10 L13.4444444,6 L9,12 L11.2222222,12 L11.2222222,14 L6,14 C5.44771525,14 5,13.5522847 5,13 L5,3 C5,2.44771525 5.44771525,2 6,2 L18,2 C18.5522847,2 19,2.44771525 19,3 L19,13 C19,13.5522847 18.5522847,14 18,14 L12.7037037,14 Z" fill="#000000" opacity="0.3" />
+                                        <path d="M9.80428954,10.9142091 L9,12 L11.2222222,12 L11.2222222,16 L15.6666667,10 L15.4615385,10 L20.2072547,6.57253826 C20.4311176,6.4108595 20.7436609,6.46126971 20.9053396,6.68513259 C20.9668779,6.77033951 21,6.87277228 21,6.97787787 L21,17 C21,18.1045695 20.1045695,19 19,19 L5,19 C3.8954305,19 3,18.1045695 3,17 L3,6.97787787 C3,6.70173549 3.22385763,6.47787787 3.5,6.47787787 C3.60510559,6.47787787 3.70753836,6.51099993 3.79274528,6.57253826 L9.80428954,10.9142091 Z" fill="#000000" />
+                                    </g>
+                                </svg>
+                                <span class=" font-weight-bolder font-size-h3 text-success" id="st_wait_answer">55</span>
+                            </span>
+                            <!--end::Svg Icon-->
+                            <a href="#" class="text-success font-weight-bold font-size-h6 mt-2">Cevap Bekliyor</a>
+                        </div>
+                    </div>
+                    <!--end::Row-->
+                </div>
+                <!--end::Stats-->
+            </div>
+            <!--end::Body-->
+        </div>
+        <!--end::Mixed Widget 1-->
+    </div>
+
+    <div class="col-md-6 col-xxl-4">
+        <!--begin::Stats Widget 11-->
+        <div class="card card-custom card-stretch card-stretch-half gutter-b">
+            <!--begin::Body-->
+            <div class="card-body p-0">
+                <div class="d-flex align-items-center justify-content-between card-spacer flex-grow-1">
+                    <span class="symbol symbol-50 symbol-light-success mr-2">
+                        <span class="symbol-label">
+                            <span class="svg-icon svg-icon-xl svg-icon-success">
+                                <!--begin::Svg Icon | path:assets/media/svg/icons/Layout/Layout-4-blocks.svg-->
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                        <polygon points="0 0 24 0 24 24 0 24" />
+                                        <path d="M18,14 C16.3431458,14 15,12.6568542 15,11 C15,9.34314575 16.3431458,8 18,8 C19.6568542,8 21,9.34314575 21,11 C21,12.6568542 19.6568542,14 18,14 Z M9,11 C6.790861,11 5,9.209139 5,7 C5,4.790861 6.790861,3 9,3 C11.209139,3 13,4.790861 13,7 C13,9.209139 11.209139,11 9,11 Z" fill="#000000" fill-rule="nonzero" opacity="0.3" />
+                                        <path d="M17.6011961,15.0006174 C21.0077043,15.0378534 23.7891749,16.7601418 23.9984937,20.4 C24.0069246,20.5466056 23.9984937,21 23.4559499,21 L19.6,21 C19.6,18.7490654 18.8562935,16.6718327 17.6011961,15.0006174 Z M0.00065168429,20.1992055 C0.388258525,15.4265159 4.26191235,13 8.98334134,13 C13.7712164,13 17.7048837,15.2931929 17.9979143,20.2 C18.0095879,20.3954741 17.9979143,21 17.2466999,21 C13.541124,21 8.03472472,21 0.727502227,21 C0.476712155,21 -0.0204617505,20.45918 0.00065168429,20.1992055 Z" fill="#000000" fill-rule="nonzero" />
+                                    </g>
+                                </svg>
+                                <!--end::Svg Icon-->
+                            </span>
+                        </span>
+                    </span>
+                    <div class="d-flex flex-column text-right">
+                        <span class="text-dark-75 font-weight-bolder font-size-h3" id="st_complated_from_me">15</span>
+                        <span class="text-muted font-weight-bold mt-2">Tamamladığım Destek Kaydı</span>
+                    </div>
+                </div>
+                <div id="st_complated_from_me_chart" class="card-rounded-bottom" data-color="success" style="height: 150px"></div>
+            </div>
+            <!--end::Body-->
+        </div>
+        <!--end::Stats Widget 11-->
+        <!--begin::Stats Widget 13-->
+        <div class="card card-custom card-stretch card-stretch-half gutter-b">
+            <!--begin::Body-->
+            <div class="card-body p-0">
+                <div class="d-flex align-items-center justify-content-between card-spacer flex-grow-1">
+                    <span class="symbol symbol-50 symbol-light-success mr-2">
+                        <span class="symbol-label">
+                            <span class="svg-icon svg-icon-xl svg-icon-success">
+                                <!--begin::Svg Icon | path:assets/media/svg/icons/Layout/Layout-4-blocks.svg-->
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                        <rect x="0" y="0" width="24" height="24" />
+                                        <rect fill="#000000" x="4" y="4" width="7" height="7" rx="1.5" />
+                                        <path d="M5.5,13 L9.5,13 C10.3284271,13 11,13.6715729 11,14.5 L11,18.5 C11,19.3284271 10.3284271,20 9.5,20 L5.5,20 C4.67157288,20 4,19.3284271 4,18.5 L4,14.5 C4,13.6715729 4.67157288,13 5.5,13 Z M14.5,4 L18.5,4 C19.3284271,4 20,4.67157288 20,5.5 L20,9.5 C20,10.3284271 19.3284271,11 18.5,11 L14.5,11 C13.6715729,11 13,10.3284271 13,9.5 L13,5.5 C13,4.67157288 13.6715729,4 14.5,4 Z M14.5,13 L18.5,13 C19.3284271,13 20,13.6715729 20,14.5 L20,18.5 C20,19.3284271 19.3284271,20 18.5,20 L14.5,20 C13.6715729,20 13,19.3284271 13,18.5 L13,14.5 C13,13.6715729 13.6715729,13 14.5,13 Z" fill="#000000" opacity="0.3" />
+                                    </g>
+                                </svg>
+                                <!--end::Svg Icon-->
+                            </span>
+                        </span>
+                    </span>
+                    <div class="d-flex flex-column text-right">
+                        <span class="text-dark-75 font-weight-bolder font-size-h3" id="st_total_closed">150</span>
+                        <span class="text-muted font-weight-bold mt-2">Toplam Tamamlanan</span>
+                    </div>
+                </div>
+                <div id="st_total_closed_chart" class="card-rounded-bottom" data-color="success" style="height: 150px"></div>
+            </div>
+            <!--end::Body-->
+        </div>
+        <!--end::Stats Widget 13-->
+    </div>
+    <div class="col-md-6 col-xxl-4">
+        <!--begin::Stats Widget 14-->
+        <div class="card card-custom card-stretch card-stretch-half gutter-b">
+            <!--begin::Body-->
+            <div class="card-body p-0">
+                <div class="d-flex align-items-center justify-content-between card-spacer flex-grow-1">
+                    <span class="symbol symbol-50 symbol-light-primary mr-2">
+                        <span class="symbol-label">
+                            <span class="svg-icon svg-icon-xl svg-icon-primary">
+                                <!--begin::Svg Icon | path:assets/media/svg/icons/Communication/Group.svg-->
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                        <polygon points="0 0 24 0 24 24 0 24" />
+                                        <path d="M18,14 C16.3431458,14 15,12.6568542 15,11 C15,9.34314575 16.3431458,8 18,8 C19.6568542,8 21,9.34314575 21,11 C21,12.6568542 19.6568542,14 18,14 Z M9,11 C6.790861,11 5,9.209139 5,7 C5,4.790861 6.790861,3 9,3 C11.209139,3 13,4.790861 13,7 C13,9.209139 11.209139,11 9,11 Z" fill="#000000" fill-rule="nonzero" opacity="0.3" />
+                                        <path d="M17.6011961,15.0006174 C21.0077043,15.0378534 23.7891749,16.7601418 23.9984937,20.4 C24.0069246,20.5466056 23.9984937,21 23.4559499,21 L19.6,21 C19.6,18.7490654 18.8562935,16.6718327 17.6011961,15.0006174 Z M0.00065168429,20.1992055 C0.388258525,15.4265159 4.26191235,13 8.98334134,13 C13.7712164,13 17.7048837,15.2931929 17.9979143,20.2 C18.0095879,20.3954741 17.9979143,21 17.2466999,21 C13.541124,21 8.03472472,21 0.727502227,21 C0.476712155,21 -0.0204617505,20.45918 0.00065168429,20.1992055 Z" fill="#000000" fill-rule="nonzero" />
+                                    </g>
+                                </svg>
+
+                                <!--end::Svg Icon-->
+                            </span>
+                        </span>
+                    </span>
+                    <div class="d-flex flex-column text-right">
+                        <span class="text-dark-75 font-weight-bolder font-size-h3" id="st_opened_for_me">12</span>
+                        <span class="text-muted font-weight-bold mt-2">Bana Açılan Kayıtlar</span>
+                    </div>
+                </div>
+                <div id="st_opened_for_me_chart" class="card-rounded-bottom" data-color="primary" style="height: 150px"></div>
+            </div>
+            <!--end::Body-->
+        </div>
+        <!--end::Stats Widget 14-->
+        <!--begin::Stats Widget 12-->
+        <div class="card card-custom card-stretch card-stretch-half gutter-b">
+            <!--begin::Body-->
+            <div class="card-body p-0">
+                <div class="d-flex align-items-center justify-content-between card-spacer flex-grow-1">
+                    <span class="symbol symbol-50 symbol-light-primary mr-2">
+                        <span class="symbol-label">
+                            <span class="svg-icon svg-icon-xl svg-icon-primary">
+                                <!--begin::Svg Icon | path:assets/media/svg/icons/Communication/Group.svg-->
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                        <rect x="0" y="0" width="24" height="24" />
+                                        <rect fill="#000000" x="4" y="4" width="7" height="7" rx="1.5" />
+                                        <path d="M5.5,13 L9.5,13 C10.3284271,13 11,13.6715729 11,14.5 L11,18.5 C11,19.3284271 10.3284271,20 9.5,20 L5.5,20 C4.67157288,20 4,19.3284271 4,18.5 L4,14.5 C4,13.6715729 4.67157288,13 5.5,13 Z M14.5,4 L18.5,4 C19.3284271,4 20,4.67157288 20,5.5 L20,9.5 C20,10.3284271 19.3284271,11 18.5,11 L14.5,11 C13.6715729,11 13,10.3284271 13,9.5 L13,5.5 C13,4.67157288 13.6715729,4 14.5,4 Z M14.5,13 L18.5,13 C19.3284271,13 20,13.6715729 20,14.5 L20,18.5 C20,19.3284271 19.3284271,20 18.5,20 L14.5,20 C13.6715729,20 13,19.3284271 13,18.5 L13,14.5 C13,13.6715729 13.6715729,13 14.5,13 Z" fill="#000000" opacity="0.3" />
+                                    </g>
+                                </svg>
+                                <!--end::Svg Icon-->
+                            </span>
+                        </span>
+                    </span>
+                    <div class="d-flex flex-column text-right">
+                        <span class="text-dark-75 font-weight-bolder font-size-h3" id="st_total_opened">25</span>
+                        <span class="text-muted font-weight-bold mt-2">Toplam Açılan</span>
+                    </div>
+                </div>
+                <div id="st_total_opened_chart" class="card-rounded-bottom" data-color="primary" style="height: 150px"></div>
+            </div>
+            <!--end::Body-->
+        </div>
+        <!--end::Stats Widget 12-->
+    </div>
+</div> *@
+<!--end::Row-->

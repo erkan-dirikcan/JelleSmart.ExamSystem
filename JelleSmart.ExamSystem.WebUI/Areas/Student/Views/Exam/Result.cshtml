@@ -1,0 +1,89 @@
+@model JelleSmart.ExamSystem.WebUI.Models.ExamResultViewModel
+
+@{
+    ViewData["Title"] = "Sınav Sonucu";
+}
+
+<h2>Sınav Sonucu</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">@Model.Result.ExamName</h5>
+                <h6 class="text-muted">@Model.Result.SubjectName</h6>
+
+                <div class="my-4">
+                    <h1 class="display-4 @(Model.Result.Percentage >= 70 ? "text-success" : Model.Result.Percentage >= 50 ? "text-warning" : "text-danger")">
+                        @Model.Result.Percentage.ToString("F1")%
+                    </h1>
+                    <p class="text-muted">Başarı Oranı</p>
+                </div>
+
+                <div class="row text-center">
+                    <div class="col-4">
+                        <div class="h3 text-success">@Model.Result.CorrectCount</div>
+                        <small class="text-muted">Doğru</small>
+                    </div>
+                    <div class="col-4">
+                        <div class="h3 text-danger">@Model.Result.WrongCount</div>
+                        <small class="text-muted">Yanlış</small>
+                    </div>
+                    <div class="col-4">
+                        <div class="h3 text-secondary">@Model.Result.EmptyCount</div>
+                        <small class="text-muted">Boş</small>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div>
+                    <span class="h4">@Model.Result.Score.ToString("F2")</span>
+                    <span class="text-muted">/ @Model.Result.TotalPoints puan</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Detaylı Cevaplar</h5>
+
+                <div class="list-group">
+                    @foreach (var (answer, index) in Model.Answers.Select((a, i) => (a, i)))
+                    {
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <strong>Soru @(index + 1):</strong> @answer.QuestionText
+                                </div>
+                                @if (answer.IsCorrect)
+                                {
+                                    <span class="badge bg-success">Doğru</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Yanlış</span>
+                                }
+                            </div>
+                            <div class="mt-2 ms-3">
+                                <span class="text-muted">Seçiminiz:</span> @answer.SelectedChoice
+                                @if (!answer.IsCorrect)
+                                {
+                                    <br />
+                                    <span class="text-success">Doğru Cevap:</span> @answer.CorrectChoice
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a asp-action="Index" class="btn btn-primary">Sınavlarıma Dön</a>
+    <a asp-controller="Report" asp-action="Index" class="btn btn-info">Raporlarım</a>
+</div>

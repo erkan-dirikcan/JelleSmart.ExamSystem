@@ -1,0 +1,38 @@
+@model JelleSmart.ExamSystem.Core.Entities.Exam
+
+@{
+    ViewData["Title"] = "Sınav Sil";
+}
+
+<h2>Sınav Sil</h2>
+
+<div class="alert alert-danger">
+    <p>Bu sınavı silmek istediğinizden emin misiniz?</p>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Sınav Adı</dt>
+            <dd class="col-sm-9">@Model.Name</dd>
+
+            <dt class="col-sm-3">Ders</dt>
+            <dd class="col-sm-9">@Model.Subject?.Name</dd>
+
+            <dt class="col-sm-3">Sınıf</dt>
+            <dd class="col-sm-9">@Model.Grade?.Name</dd>
+
+            <dt class="col-sm-3">Süre</dt>
+            <dd class="col-sm-9">@Model.Duration dakika</dd>
+
+            <dt class="col-sm-3">Soru Sayısı</dt>
+            <dd class="col-sm-9">@Model.QuestionCount</dd>
+        </dl>
+    </div>
+</div>
+
+<form method="post" class="mt-3">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Sil</button>
+    <a asp-action="Index" class="btn btn-secondary">İptal</a>
+</form>

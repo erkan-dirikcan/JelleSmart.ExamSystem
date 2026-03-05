@@ -1,0 +1,82 @@
+@model IEnumerable<JelleSmart.ExamSystem.Core.Entities.Exam>
+
+@{
+    ViewData["Title"] = "Sınavlarım";
+    var studentExams = ViewBag.StudentExams as List<JelleSmart.ExamSystem.Core.Entities.StudentExam> ?? new List<JelleSmart.ExamSystem.Core.Entities.StudentExam>();
+}
+
+<h2>Sınavlarım</h2>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Sınav Adı</th>
+                <th>Ders</th>
+                <th>Süre</th>
+                <th>Soru Sayısı</th>
+                <th>Başlangıç</th>
+                <th>Bitiş</th>
+                <th>Durum</th>
+                <th>İşlem</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                var studentExam = studentExams.FirstOrDefault(se => se.ExamId == item.Id);
+                var isCompleted = studentExam?.Status == JelleSmart.ExamSystem.Core.Enums.ExamStatus.Completed;
+                var isInProgress = studentExam?.Status == JelleSmart.ExamSystem.Core.Enums.ExamStatus.InProgress;
+
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Subject?.Name</td>
+                    <td>@item.Duration dk</td>
+                    <td>@item.QuestionCount</td>
+                    <td>@item.StartTime.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>@item.EndTime.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>
+                        @if (isCompleted)
+                        {
+                            <span class="badge bg-success">Tamamlandı</span>
+                        }
+                        else if (isInProgress)
+                        {
+                            <span class="badge bg-warning">Devam Ediyor</span>
+                        }
+                        else if (DateTime.Now < item.StartTime)
+                        {
+                            <span class="badge bg-info">Başlamadı</span>
+                        }
+                        else if (DateTime.Now > item.EndTime)
+                        {
+                            <span class="badge bg-danger">Süresi Doldu</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Başladı</span>
+                        }
+                    </td>
+                    <td>
+                        @if (isCompleted)
+                        {
+                            <a asp-action="Result" asp-route-id="@studentExam!.Id" class="btn btn-sm btn-success">Sonuç</a>
+                        }
+                        else if (isInProgress)
+                        {
+                            <a asp-action="Take" asp-route-id="@studentExam!.Id" class="btn btn-sm btn-primary">Devam Et</a>
+                        }
+                        else if (DateTime.Now >= item.StartTime && DateTime.Now <= item.EndTime)
+                        {
+                            <a asp-action="Start" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Başla</a>
+                        }
+                        else if (DateTime.Now < item.StartTime)
+                        {
+                            <button class="btn btn-sm btn-secondary" disabled>Başlamadı</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,182 @@
+﻿@using Koala.Portal.Core.ViewModels.CrmViewModels
+@using System.Text
+@using Newtonsoft.Json
+@model (List<CrmDailySupportChartViewModel> ClosedSupports,List<CrmDailySupportChartViewModel> OpenSupports)
+@{
+    var closedSupportCount = 0;
+    var openSupportCount = 0;
+    foreach (var item in Model.ClosedSupports)
+    {
+        closedSupportCount += item.UserSupportDeatils.Count;
+    }
+    foreach (var item in Model.OpenSupports)
+    {
+        openSupportCount += item.UserSupportDeatils.Count;
+    }
+}
+
+<div class="col-xxl-4 order-2 order-xxl-1">
+    <div class="card card-custom card-stretch gutter-b">
+        <div class="card-header border-0 pt-5">
+            <h3 class="card-title align-items-start flex-column">
+                <span class="card-label font-weight-bolder text-dark">Kapanan Bugünkü Destek Kayıtları</span>
+                <span class="text-muted mt-3 font-weight-bold font-size-sm" id="ClosedSupportChartSubHeader">Toplam @closedSupportCount Kayıt</span>
+            </h3>
+            @*  <div class="card-toolbar">
+
+            </div> *@
+        </div>
+        <div class="card-body pt-2 pb-0 mt-n3">
+            <div class="card-body p-0 position-relative overflow-hidden">
+                @if (Model.ClosedSupports.Count < 1)
+                {
+                    <div class="card card-custom bgi-no-repeat gutter-b card-stretch" style="background-color: #FFF4DE; background-position: 0 calc(100% + 0.5rem); background-size: 100% auto; background-image: url(/media/svg/patterns/taieri.svg)">
+                        <!--begin::Body-->
+                        <div class="card-body">
+                            <div class="p-4">
+                                <h3 class="font-weight-bolder my-7">Henüz Kapatılmış Kayıt Bulunmuyor</h3>
+                                <p class="font-size-lg mb-7">
+                                    Bugün için henüz kapatılmış
+                                    <br />bir kayıt bulunmuyor.
+                                    <br />Raporların görüntülenebilmesi
+                                    <br />için açık destek
+                                    <br />destek kayıtlarının
+                                    <br />kapatılması gerekiyor.
+                                </p>
+
+                            </div>
+                        </div>
+                        <!--end::Body-->
+                    </div>
+                }
+                else
+                {
+                    <div id="chart_12" class="d-flex justify-content-center"></div>
+                }
+            </div>
+            <div class="symbol-group symbol-hover mt-5">
+                @{
+                    var labels = new List<string>();
+                    var series = new List<int>();
+                }
+                @foreach (var item in Model.ClosedSupports)
+                {
+                    labels.Add(item.Label);
+                    series.Add(item.UserSupportDeatils.Count);
+
+                    <div class="symbol symbol-50 mr-3">
+                        @{
+
+                            var sb = new StringBuilder();
+                            foreach (var itemDetail in item.UserSupportDeatils.OrderBy(x => x.Time))
+                            {
+                                sb.Append($@"<div class='timeline-item align-items-start'>
+                    <div class='timeline-label font-weight-bolder text-dark-75 font-size-lg'>{itemDetail.Time}</div>
+                    <div class='timeline-badge'>
+                    <i class='fa fa-genderless text-warning icon-xl'></i>
+                    </div>
+                    <div class='font-weight-mormal font-size-lg timeline-content text-muted pl-3'>{itemDetail.Firm}</div>
+                    </div>");
+                            }
+                            var userChartInfo = $@"<div class='timeline timeline-6 mt-3'>
+                                {sb.ToString()}
+                    </div>";
+                        }
+                        <img src="/media/avatar/@item.Avatar"
+                        @* <img src="/media/avatar/e4e5f6c6-f260-11ee-a5b8-704d7b71982b.jpg" *@
+                             data-toggle="popover"
+                             title="@item.Label"
+                             data-html="true"
+                             data-content="@userChartInfo" />
+                    </div>
+                }
+                <input type="hidden" id="labels" value="@JsonConvert.SerializeObject(labels)" />
+                <input type="hidden" id="series" value="@JsonConvert.SerializeObject(series)" />
+            </div>
+            <div class="separator separator-dashed separator-border-2 separator-warning mt-5"></div>
+
+            <!--end::Body-->
+        </div>
+        <!--end::Mixed Widget 1-->
+
+        <div class="card-header border-0 pt-5">
+            <h3 class="card-title align-items-start flex-column">
+                <span class="card-label font-weight-bolder text-dark">Açık Destek Kayıtları</span>
+                <span class="text-muted mt-3 font-weight-bold font-size-sm" id="ClosedSupportChartSubHeader">Toplam @openSupportCount Kayıt</span>
+            </h3>
+            @*  <div class="card-toolbar">
+
+            </div> *@
+        </div>
+        <div class="card-body pt-2 pb-0 mt-n3">
+
+
+            <div class="card-body p-0 position-relative overflow-hidden">
+                @if (Model.OpenSupports.Count < 1)
+                {
+                    <div class="card card-custom bgi-no-repeat gutter-b card-stretch" style="background-color: #FFF4DE; background-position: 0 calc(100% + 0.5rem); background-size: 100% auto; background-image: url(/media/svg/patterns/taieri.svg)">
+                        <!--begin::Body-->
+                        <div class="card-body">
+                            <div class="p-4">
+                                <h3 class="font-weight-bolder my-7">Henüz Kapatılmış Kayıt Bulunmuyor</h3>
+                                <p class="font-size-lg mb-7">
+                                    Şu anda hiç açık destek
+                                    <br />kaydı bulunmuyor.
+                                    <br />üzerinize kayıt aldığınızda
+                                    <br />bu alanda
+                                    <br />gösterilecektir
+                                </p>
+
+                            </div>
+                        </div>
+                        <!--end::Body-->
+                    </div>
+                }
+                else
+                {
+                    <div id="chart_13" class="d-flex justify-content-center"></div>
+                }
+            </div>
+            <div class="symbol-group symbol-hover mt-5 mb-5">
+                @{
+                    var labelsOpen = new List<string>();
+                    var seriesOpen = new List<int>();
+                }
+                @foreach (var item in Model.OpenSupports)
+                {
+                    labelsOpen.Add(item.Label);
+                    seriesOpen.Add(item.UserSupportDeatils.Count);
+
+                    <div class="symbol symbol-50 mr-3">
+                        @{
+
+                            var sb = new StringBuilder();
+                            foreach (var itemDetail in item.UserSupportDeatils.OrderBy(x => x.Time))
+                            {
+                                sb.Append($@"<div class='timeline-item align-items-start'>
+                    <div class='timeline-label font-weight-bolder text-dark-75 font-size-lg'>{itemDetail.Time}</div>
+                    <div class='timeline-badge'>
+                    <i class='fa fa-genderless text-warning icon-xl'></i>
+                    </div>
+                    <div class='font-weight-mormal font-size-lg timeline-content text-muted pl-3'>{itemDetail.Firm}</div>
+                    </div>");
+                            }
+                            var userChartInfo = $@"<div class='timeline timeline-6 mt-3'>
+                                {sb.ToString()}
+                    </div>";
+                        }
+                        <img src="/media/avatar/@item.Avatar"
+                        @* <img src="/media/avatar/e4e5f6c6-f260-11ee-a5b8-704d7b71982b.jpg" *@
+                             data-toggle="popover"
+                             title="@item.Label"
+                             data-html="true"
+                             data-content="@userChartInfo" />
+                    </div>
+                }
+                <input type="hidden" id="labelsOpen" value="@JsonConvert.SerializeObject(labelsOpen)" />
+                <input type="hidden" id="seriesOpen" value="@JsonConvert.SerializeObject(seriesOpen)" />
+            </div>
+        </div>
+    </div>
+
+</div>

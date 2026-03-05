@@ -1,0 +1,48 @@
+{
+  "permissions": {
+    "allow": [
+	  "Edit",
+	  "MultiEdit",
+	  "Bash(*)",
+	  "Bash(npm *)",
+	  "Bash(git *)",
+	  "Read(**)",
+	  "WebFetch(*)",
+	  "Bash(rm *)",
+	  "Bash(dd *)",
+      "Bash(sqlcmd:*)",
+      "Bash(git -C:*)",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet ef migrations add:*)",
+      "Bash(dotnet ef migrations remove:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(powershell:*)",
+      "Bash(Select-String:*)",
+      "Bash(Select-Object:*)",
+      "Bash(dotnet clean:*)",
+      "Bash(dotnet run:*)",
+      "Bash(timeout:*)",
+      "Bash(dotnet ef database update:*)",
+      "mcp__web-reader__webReader",
+      "Bash(git push:*)",
+      "Bash(git rm:*)",
+      "Bash(dotnet ef:*)",
+      "Bash(dotnet list:*)",
+      "Bash(dotnet add package:*)",
+      "Bash(tree:*)",
+      "Bash(dotnet add:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(curl:*)",
+      "Bash(dotnet publish:*)",
+      "Bash(findstr:*)",
+      "Bash(powershell.exe:*)",
+      "Bash(dir:*)",
+      "Bash(git reset:*)"
+    ]
+  },
+  "enabledPlugins": {
+    "ralph-wiggum@claude-plugins-official": false
+  }
+}

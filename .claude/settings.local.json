@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet new:*)",
+      "Bash(dotnet sln:*)",
+      "Bash(dotnet sln Koala-Crm.sln add src/Koala.Core.Persistence/Koala.Core.Persistence.csproj)",
+      "Bash(dotnet sln Koala-Crm.sln add src/Koala.WebUI/Koala.WebUI.csproj)",
+      "Bash(dotnet sln Koala-Crm.sln add tests/Koala.Core.Domain.Tests/Koala.Core.Domain.Tests.csproj)",
+      "WebSearch",
+      "mcp__web-search-prime__webSearchPrime",
+      "Bash(python scripts/init_skill.py:*)",
+      "Bash(python scripts/package_skill.py:*)",
+      "Bash(python:*)",
+      "Bash(/tmp/create_rl_entities.sh:*)",
+      "Bash(bash /tmp/create_rl_entities.sh)",
+      "Bash(/tmp/create_rl_simple.sh:*)",
+      "Bash(bash /tmp/create_rl_simple.sh)",
+      "Bash(dotnet restore:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm install:*)",
+      "Bash(dotnet:*)"
+    ]
+  }
+}

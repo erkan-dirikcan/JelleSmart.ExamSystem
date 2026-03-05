@@ -1,0 +1,89 @@
+@model JelleSmart.ExamSystem.Core.Entities.Exam
+
+@{
+    ViewData["Title"] = "Sınav Detay";
+}
+
+<h2>Sınav Detay</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Sınav Bilgileri</h5>
+
+                <dl class="row">
+                    <dt class="col-sm-5">Sınav Adı</dt>
+                    <dd class="col-sm-7">@Model.Name</dd>
+
+                    <dt class="col-sm-5">Açıklama</dt>
+                    <dd class="col-sm-7">@Model.Description</dd>
+
+                    <dt class="col-sm-5">Ders</dt>
+                    <dd class="col-sm-7">@Model.Subject?.Name</dd>
+
+                    <dt class="col-sm-5">Sınıf</dt>
+                    <dd class="col-sm-7">@Model.Grade?.Name</dd>
+
+                    <dt class="col-sm-5">Süre</dt>
+                    <dd class="col-sm-7">@Model.Duration dakika</dd>
+
+                    <dt class="col-sm-5">Soru Sayısı</dt>
+                    <dd class="col-sm-7">@Model.QuestionCount</dd>
+
+                    <dt class="col-sm-5">Toplam Puan</dt>
+                    <dd class="col-sm-7">@Model.TotalPoints</dd>
+
+                    <dt class="col-sm-5">Durum</dt>
+                    <dd class="col-sm-7">
+                        @if (Model.IsActive)
+                        {
+                            <span class="badge bg-success">Aktif</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Pasif</span>
+                        }
+                    </dd>
+
+                    <dt class="col-sm-5">Başlangıç</dt>
+                    <dd class="col-sm-7">@Model.StartTime.ToString("dd.MM.yyyy HH:mm")</dd>
+
+                    <dt class="col-sm-5">Bitiş</dt>
+                    <dd class="col-sm-7">@Model.EndTime.ToString("dd.MM.yyyy HH:mm")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Sorular</h5>
+
+                <ol class="list-group list-group-numbered">
+                    @foreach (var eq in Model.ExamQuestions.OrderBy(eq => eq.Order))
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>@eq.Question?.Text</span>
+                            <span class="badge bg-primary rounded-pill">@eq.Points puan</span>
+                        </li>
+                    }
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a asp-action="Index" class="btn btn-secondary">Listeye Dön</a>
+    <a asp-action="Results" asp-route-id="@Model.Id" class="btn btn-success">Sonuçlar</a>
+    @if (Model.IsActive)
+    {
+        <a asp-action="Deactivate" asp-route-id="@Model.Id" class="btn btn-warning">Pasife Al</a>
+    }
+    else
+    {
+        <a asp-action="Activate" asp-route-id="@Model.Id" class="btn btn-primary">Aktifleştir</a>
+    }
+</div>

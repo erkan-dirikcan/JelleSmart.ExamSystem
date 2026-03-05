@@ -1,0 +1,61 @@
+@model IEnumerable<JelleSmart.ExamSystem.Core.DTOs.QuestionDto>
+
+@{
+    ViewData["Title"] = "Soru Bankası";
+}
+
+<h2>Soru Bankası</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Yeni Soru Ekle</a>
+</p>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Sıra</th>
+                <th>Soru</th>
+                <th>Ders</th>
+                <th>Ünite</th>
+                <th>Zorluk</th>
+                <th>Görsel</th>
+                <th>İşlemler</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Select((value, index) => new { value, index }))
+            {
+                <tr>
+                    <td>@(item.index + 1)</td>
+                    <td>@item.value.Text</td>
+                    <td>@item.value.SubjectName</td>
+                    <td>@item.value.UnitName</td>
+                    <td>
+                        @switch (item.value.Difficulty)
+                        {
+                            case 1: <span class="badge bg-success">Kolay</span> break;
+                            case 2: <span class="badge bg-warning">Orta</span> break;
+                            case 3: <span class="badge bg-danger">Zor</span> break;
+                        }
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.value.ImageUrl))
+                        {
+                            <span class="badge bg-info">Var</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Yok</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.value.Id" class="btn btn-sm btn-primary">Düzenle</a>
+                        <a asp-action="Delete" asp-route-id="@item.value.Id" class="btn btn-sm btn-danger"
+                           onclick="return confirm('Silmek istediğinizden emin misiniz?')">Sil</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,195 @@
+using JelleSmart.ExamSystem.Core.Entities;
+using JelleSmart.ExamSystem.Core.Entities.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+
+namespace JelleSmart.ExamSystem.Repository.Data
+{
+    public class AppDbContext : IdentityDbContext<AppUser, AppRole, string>
+    {
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
+        }
+
+        // DbSets
+        public DbSet<Subject> Subjects { get; set; }
+        public DbSet<Grade> Grades { get; set; }
+        public DbSet<Unit> Units { get; set; }
+        public DbSet<Topic> Topics { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<Choice> Choices { get; set; }
+        public DbSet<Exam> Exams { get; set; }
+        public DbSet<ExamQuestion> ExamQuestions { get; set; }
+        public DbSet<StudentSubject> StudentSubjects { get; set; }
+        public DbSet<StudentExam> StudentExams { get; set; }
+        public DbSet<StudentAnswer> StudentAnswers { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            // Subject - Grade ilişkisi yok (Subject tüm sınıflar için ortak)
+
+            // Subject - Unit (One to Many)
+            builder.Entity<Subject>()
+                .HasMany(s => s.Units)
+                .WithOne(u => u.Subject)
+                .HasForeignKey(u => u.SubjectId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Subject - Question (One to Many)
+            builder.Entity<Subject>()
+                .HasMany(s => s.Questions)
+                .WithOne(q => q.Subject)
+                .HasForeignKey(q => q.SubjectId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Grade - Unit (One to Many)
+            builder.Entity<Grade>()
+                .HasMany(g => g.Units)
+                .WithOne(u => u.Grade)
+                .HasForeignKey(u => u.GradeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Unit - Topic (One to Many)
+            builder.Entity<Unit>()
+                .HasMany(u => u.Topics)
+                .WithOne(t => t.Unit)
+                .HasForeignKey(t => t.UnitId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Unit - Question (One to Many)
+            builder.Entity<Unit>()
+                .HasMany(u => u.Questions)
+                .WithOne(q => q.Unit)
+                .HasForeignKey(q => q.UnitId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // Topic - Question (One to Many)
+            builder.Entity<Topic>()
+                .HasMany(t => t.Questions)
+                .WithOne(q => q.Topic)
+                .HasForeignKey(q => q.TopicId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // Question - Choice (One to Many)
+            builder.Entity<Question>()
+                .HasMany(q => q.Choices)
+                .WithOne(c => c.Question)
+                .HasForeignKey(c => c.QuestionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Exam - ExamQuestion (One to Many)
+            builder.Entity<Exam>()
+                .HasMany(e => e.ExamQuestions)
+                .WithOne(eq => eq.Exam)
+                .HasForeignKey(eq => eq.ExamId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // ExamQuestion - Question (Many to One)
+            builder.Entity<ExamQuestion>()
+                .HasOne(eq => eq.Question)
+                .WithMany()
+                .HasForeignKey(eq => eq.QuestionId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // Exam - StudentExam (One to Many)
+            builder.Entity<Exam>()
+                .HasMany(e => e.StudentExams)
+                .WithOne(se => se.Exam)
+                .HasForeignKey(se => se.ExamId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // StudentExam - StudentAnswer (One to Many)
+            builder.Entity<StudentExam>()
+                .HasMany(se => se.StudentAnswers)
+                .WithOne(sa => sa.StudentExam)
+                .HasForeignKey(sa => sa.StudentExamId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // Choice - StudentAnswer (One to Many)
+            builder.Entity<Choice>()
+                .HasMany(c => c.StudentAnswers)
+                .WithOne(sa => sa.Choice)
+                .HasForeignKey(sa => sa.ChoiceId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // StudentAnswer - Question (Many to One)
+            builder.Entity<StudentAnswer>()
+                .HasOne(sa => sa.Question)
+                .WithMany()
+                .HasForeignKey(sa => sa.QuestionId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // AppUser - Question (Teacher creates questions)
+            builder.Entity<AppUser>()
+                .HasMany(u => u.Questions)
+                .WithOne(q => q.CreatedByUser)
+                .HasForeignKey(q => q.CreatedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // AppUser - Exam (Teacher creates exams)
+            builder.Entity<AppUser>()
+                .HasMany(u => u.CreatedExams)
+                .WithOne(e => e.CreatedByUser)
+                .HasForeignKey(e => e.CreatedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // AppUser - StudentSubject (Many to Many - Student)
+            builder.Entity<StudentSubject>()
+                .HasOne(ss => ss.Student)
+                .WithMany(u => u.StudentSubjects)
+                .HasForeignKey(ss => ss.StudentUserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<StudentSubject>()
+                .HasOne(ss => ss.Subject)
+                .WithMany()
+                .HasForeignKey(ss => ss.SubjectId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // AppUser - StudentExam (Student takes exams)
+            builder.Entity<StudentExam>()
+                .HasOne(se => se.Student)
+                .WithMany(u => u.StudentExams)
+                .HasForeignKey(se => se.StudentUserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // AppUser - StudentAnswer (Student gives answers)
+            builder.Entity<StudentAnswer>()
+                .HasOne(sa => sa.Student)
+                .WithMany(u => u.StudentAnswers)
+                .HasForeignKey(sa => sa.StudentUserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // AppUser - Subject (Teacher's branch subject)
+            builder.Entity<AppUser>()
+                .HasOne(u => u.Subject)
+                .WithMany()
+                .HasForeignKey(u => u.SubjectId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // AppUser - Grade (Student's grade)
+            builder.Entity<AppUser>()
+                .HasOne(u => u.Grade)
+                .WithMany(g => g.Students)
+                .HasForeignKey(u => u.GradeId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // Index configurations
+            builder.Entity<Question>()
+                .HasIndex(q => new { q.SubjectId, q.UnitId, q.TopicId });
+
+            builder.Entity<Exam>()
+                .HasIndex(e => new { e.GradeId, e.SubjectId });
+
+            builder.Entity<StudentExam>()
+                .HasIndex(se => new { se.StudentUserId, se.ExamId })
+                .IsUnique();
+
+            builder.Entity<StudentAnswer>()
+                .HasIndex(sa => new { sa.StudentExamId, sa.QuestionId })
+                .IsUnique();
+        }
+    }
+}

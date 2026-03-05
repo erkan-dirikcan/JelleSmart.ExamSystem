@@ -1,0 +1,48 @@
+@model JelleSmart.ExamSystem.Core.Entities.Topic
+
+@{
+    ViewData["Title"] = "Kazanım Sil";
+}
+
+<div class="card card-xl-stretch mb-5 mb-xl-8">
+    <div class="card-body py-10">
+        <div class="text-center">
+            <div class="symbol symbol-75px symbol-circle mb-5">
+                <div class="symbol-label bg-light-danger">
+                    <i class="ki-outline ki-information-2 text-danger fs-5tx"></i>
+                </div>
+            </div>
+
+            <h2 class="fw-bold mb-3">Kazanım Silme Onayı</h2>
+            <p class="text-gray-600 fs-5 mb-8">
+                Bu kazanımı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+            </p>
+
+            <dl class="row text-start mb-8">
+                <dt class="col-sm-4 fw-bold text-gray-800">Kazanım Kodu</dt>
+                <dd class="col-sm-8 text-gray-600">@Model.Code</dd>
+
+                <dt class="col-sm-4 fw-bold text-gray-800">Kazanım Adı</dt>
+                <dd class="col-sm-8 text-gray-600">@Model.Name</dd>
+
+                <dt class="col-sm-4 fw-bold text-gray-800">Ünite</dt>
+                <dd class="col-sm-8 text-gray-600">@(Model.Unit?.Name ?? "-")</dd>
+
+                <dt class="col-sm-4 fw-bold text-gray-800">Açıklama</dt>
+                <dd class="col-sm-8 text-gray-600">@(Model.Description ?? "-")</dd>
+            </dl>
+
+            <form asp-action="Delete" method="post">
+                <input type="hidden" asp-for="Id" />
+                <a asp-action="Index" class="btn btn-light me-3">
+                    <i class="ki-outline ki-arrow-left fs-2"></i>
+                    İptal
+                </a>
+                <button type="submit" class="btn btn-danger">
+                    <i class="ki-outline ki-trash fs-2"></i>
+                    Sil
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,62 @@
+@model IEnumerable<JelleSmart.ExamSystem.Core.DTOs.ExamResultDto>
+
+@{
+    ViewData["Title"] = "Sınav Sonuçları";
+    var examName = ViewBag.ExamName ?? "";
+}
+
+<h2>@examName - Sınav Sonuçları</h2>
+
+<div class="mb-3">
+    <a asp-action="Index" class="btn btn-secondary">Listeye Dön</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Sıra</th>
+                <th>Öğrenci</th>
+                <th>Puan</th>
+                <th>Toplam Puan</th>
+                <th>Başarı Oranı</th>
+                <th>Doğru</th>
+                <th>Yanlış</th>
+                <th>Boş</th>
+                <th>Tamamlanma Tarihi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                @foreach (var (result, index) in Model.Select((r, i) => (r, i)))
+                {
+                    <tr>
+                        <td>@(index + 1)</td>
+                        <td>@result.ExamName</td>
+                        <td>@result.Score.ToString("F2")</td>
+                        <td>@result.TotalPoints</td>
+                        <td>
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar @(result.Percentage >= 70 ? "bg-success" : result.Percentage >= 50 ? "bg-warning" : "bg-danger")"
+                                     role="progressbar" style="width: @result.Percentage%">
+                                    @result.Percentage.ToString("F1")%
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-success">@result.CorrectCount</span></td>
+                        <td><span class="badge bg-danger">@result.WrongCount</span></td>
+                        <td><span class="badge bg-secondary">@result.EmptyCount</span></td>
+                        <td>@result.CompletedAt?.ToString("dd.MM.yyyy HH:mm")</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="9" class="text-center">Henüz bu sınavı tamamlayan öğrenci yok.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
