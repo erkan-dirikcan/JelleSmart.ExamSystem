@@ -1,0 +1,11 @@
+Hard project constraints:
+- Areas are forbidden.
+- Role-based Identity is mandatory.
+- Admin / Teacher / Student responsibilities must stay consistent.
+- Metronic 7 must be respected.
+- Do not rewrite page layouts freely.
+- Do not modify shared layout unless explicitly requested.
+- Page JavaScript must live in wwwroot/js/custom, not in cshtml.
+- Do not make unrelated refactors.
+- Do not leave partial implementations.
+- Do not claim completion if the flow is not end-to-end coherent.

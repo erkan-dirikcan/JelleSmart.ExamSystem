@@ -1,15 +1,15 @@
 {
   "permissions": {
     "allow": [
-	  "Edit",
-	  "MultiEdit",
-	  "Bash(*)",
-	  "Bash(npm *)",
-	  "Bash(git *)",
-	  "Read(**)",
-	  "WebFetch(*)",
-	  "Bash(rm *)",
-	  "Bash(dd *)",
+      "Edit",
+      "MultiEdit",
+      "Bash(*)",
+      "Bash(npm *)",
+      "Bash(git *)",
+      "Read(**)",
+      "WebFetch(*)",
+      "Bash(rm *)",
+      "Bash(dd *)",
       "Bash(sqlcmd:*)",
       "Bash(git -C:*)",
       "Bash(dotnet build:*)",
@@ -39,7 +39,8 @@
       "Bash(findstr:*)",
       "Bash(powershell.exe:*)",
       "Bash(dir:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Read(//c/Users/erkan.dirikcan/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.2/skills/requesting-code-review/**)"
     ]
   },
   "enabledPlugins": {

@@ -36,62 +36,62 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-striped" id="user-list-table">
+                            <table class="table table-bordered table-hover" id="user-list-table">
                                 <thead>
-                                    <tr>
-                                        <th>Ad Soyad</th>
-                                        <th>E-posta</th>
-                                        <th>Rol</th>
-                                        <th>Durum</th>
-                                        <th>İşlemler</th>
-                                    </tr>
+                                <tr>
+                                    <th>Ad Soyad</th>
+                                    <th>E-posta</th>
+                                    <th>Rol</th>
+                                    <th>Durum</th>
+                                    <th>İşlemler</th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var user in Model)
-                                    {
-                                        <tr>
-                                            <td>@user.FullName</td>
-                                            <td>@user.Email</td>
-                                            <td>
-                                                @switch (user.Role)
-                                                {
-                                                    case "Admin":
-                                                        <span class="badge bg-danger">Admin</span>
-                                                        break;
-                                                    case "Teacher":
+                                @foreach (var user in Model)
+                                {
+                                    <tr class="table-sm">
+                                        <td>@user.FullName</td>
+                                        <td>@user.Email</td>
+                                        <td>
+                                            @switch (user.Role)
+                                            {
+                                                case "Admin":
+                                                    <span class="badge bg-danger">Admin</span>
+                                                    break;
+                                                case "Teacher":
 
-                                                        <span class="badge bg-primary">Öğretmen</span>
-                                                        break;
-                                                    case "Student":
+                                                    <span class="badge bg-primary">Öğretmen</span>
+                                                    break;
+                                                case "Student":
 
-                                                        <span class="badge bg-success">Öğrenci</span>
-                                                        break;
-                                                    default:
+                                                    <span class="badge bg-success">Öğrenci</span>
+                                                    break;
+                                                default:
 
-                                                        <span class="badge bg-secondary">@user.Role</span>
-                                                        break;
-                                                }
-                                            </td>
-                                            <td>
-                                                @if (user.IsActive)
-                                                {
-                                                    <span class="badge bg-success">Aktif</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="badge bg-danger">Pasif</span>
-                                                }
-                                            </td>
-                                            <td>
-                                                <a asp-action="Details" asp-route-id="@user.Id" class="btn btn-sm btn-info">Detay</a>
-                                                <a asp-action="ToggleActive" asp-route-id="@user.Id" class="btn btn-sm btn-warning">
-                                                    @(user.IsActive ? "Pasife Al" : "Aktife Al")
-                                                </a>
-                                                <a asp-action="Delete" asp-route-id="@user.Id" class="btn btn-sm btn-danger"
-                                                   onclick="return confirm('Bu kullanıcıyı silmek istediğinizden emin misiniz?')">Sil</a>
-                                            </td>
-                                        </tr>
-                                    }
+                                                    <span class="badge bg-secondary">@user.Role</span>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (user.IsActive)
+                                            {
+                                                <span class="badge bg-success">Aktif</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">Pasif</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a asp-action="Details" asp-route-id="@user.Id" class="btn btn-sm btn-info btn-sm">Detay</a>
+                                                <a asp-action="ToggleActive" asp-route-id="@user.Id" class="btn btn-sm btn-warning btn-sm">
+                                                @(user.IsActive ? "Pasife Al" : "Aktife Al")
+                                            </a>
+                                                <a asp-action="Delete" asp-route-id="@user.Id" class="btn btn-sm btn-danger btn-sm"
+                                               onclick="return confirm('Bu kullanıcıyı silmek istediğinizden emin misiniz?')">Sil</a>
+                                        </td>
+                                    </tr>
+                                }
                                 </tbody>
                             </table>
                         </div>
@@ -105,3 +105,7 @@
         </div>
     </div>
 </div>
+@section Scripts
+{
+    <script src="~/assets/js/custom/user-list-page.js"></script>
+}

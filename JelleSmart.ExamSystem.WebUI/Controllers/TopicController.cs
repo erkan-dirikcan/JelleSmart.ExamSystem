@@ -22,8 +22,8 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
         public async Task<IActionResult> Index()
         {
             ViewData["ActivePage"] = ManageNavPages.Topics;
-            ViewData["Title"] = "Kazanımlar";
-            ViewData["PageDescription"] = "Sistem kazanımlarını yönetin";
+            ViewData["Title"] = "Konular";
+            ViewData["PageDescription"] = "Ünite konularını yönetin";
             var topics = await _topicService.GetAllAsync();
             return View(topics);
         }
@@ -31,8 +31,8 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
         public async Task<IActionResult> Create()
         {
             ViewData["ActivePage"] = ManageNavPages.Topics;
-            ViewData["Title"] = "Yeni Kazanım";
-            ViewData["PageDescription"] = "Yeni kazanım ekleyin";
+            ViewData["Title"] = "Yeni Konu";
+            ViewData["PageDescription"] = "Yeni konu ekleyin";
             ViewBag.Units = await _unitService.GetAllAsync();
             return View();
         }
@@ -48,15 +48,15 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             }
 
             await _topicService.CreateAsync(topic);
-            TempData["Success"] = "Kazanım başarıyla eklendi";
+            TempData["Success"] = "Konu başarıyla eklendi";
             return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Edit(int id)
         {
             ViewData["ActivePage"] = ManageNavPages.Topics;
-            ViewData["Title"] = "Kazanım Düzenle";
-            ViewData["PageDescription"] = "Kazanım bilgilerini düzenleyin";
+            ViewData["Title"] = "Konu Düzenle";
+            ViewData["PageDescription"] = "Konu bilgilerini düzenleyin";
 
             var topic = await _topicService.GetByIdAsync(id);
             if (topic == null)
@@ -77,15 +77,15 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             }
 
             await _topicService.UpdateAsync(topic);
-            TempData["Success"] = "Kazanım başarıyla güncellendi";
+            TempData["Success"] = "Konu başarıyla güncellendi";
             return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Delete(int id)
         {
             ViewData["ActivePage"] = ManageNavPages.Topics;
-            ViewData["Title"] = "Kazanım Sil";
-            ViewData["PageDescription"] = "Kazanım silme onayı";
+            ViewData["Title"] = "Konu Sil";
+            ViewData["PageDescription"] = "Konu silme onayı";
 
             var topic = await _topicService.GetByIdAsync(id);
             if (topic == null)
@@ -99,7 +99,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _topicService.DeleteAsync(id);
-            TempData["Success"] = "Kazanım başarıyla silindi";
+            TempData["Success"] = "Konu başarıyla silindi";
             return RedirectToAction("Index");
         }
     }
