@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Yeni Ünite";
+    var subjects = ViewBag.Subjects as IEnumerable<JelleSmart.ExamSystem.Core.Entities.Subject>;
+    var grades = ViewBag.Grades as IEnumerable<JelleSmart.ExamSystem.Core.Entities.Grade>;
 }
 
 <div class="card card-xl-stretch mb-5 mb-xl-8">
@@ -12,6 +14,28 @@
         </h3>
     </div>
     <div class="card-body py-3">
+        @if (subjects == null || !subjects.Any())
+        {
+            <div class="alert alert-warning d-flex align-items-center p-5 mb-5">
+                <i class="ki-outline ki-information-5 fs-1 me-4"></i>
+                <div class="d-flex flex-column">
+                    <h4 class="fw-bold mb-1">Ders Bulunamadı</h4>
+                    <span class="fs-6">Ünite ekleyebilmek için önce ders oluşturmanız gerekmektedir.</span>
+                </div>
+            </div>
+        }
+
+        @if (grades == null || !grades.Any())
+        {
+            <div class="alert alert-warning d-flex align-items-center p-5 mb-5">
+                <i class="ki-outline ki-information-5 fs-1 me-4"></i>
+                <div class="d-flex flex-column">
+                    <h4 class="fw-bold mb-1">Sınıf Bulunamadı</h4>
+                    <span class="fs-6">Ünite ekleyebilmek için önce sınıf oluşturmanız gerekmektedir.</span>
+                </div>
+            </div>
+        }
+
         <form asp-action="Create" method="post" id="unitForm">
             <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert"></div>
 
@@ -24,7 +48,7 @@
 
                 <div class="col-md-6 mb-5">
                     <label asp-for="SubjectId" class="form-label">Ders</label>
-                    <select asp-for="SubjectId" class="form-select form-select-solid" asp-items="@(new SelectList(ViewBag.Subjects, "Id", "Name"))">
+                    <select asp-for="SubjectId" class="form-select form-select-solid" asp-items="@(new SelectList(subjects ?? new List<JelleSmart.ExamSystem.Core.Entities.Subject>(), "Id", "Name"))">
                         <option value="">Seçiniz...</option>
                     </select>
                     <span asp-validation-for="SubjectId" class="text-danger fs-7"></span>
@@ -33,7 +57,7 @@
 
             <div class="mb-5">
                 <label asp-for="GradeId" class="form-label">Sınıf</label>
-                <select asp-for="GradeId" class="form-select form-select-solid" asp-items="@(new SelectList(ViewBag.Grades, "Id", "Name"))">
+                <select asp-for="GradeId" class="form-select form-select-solid" asp-items="@(new SelectList(grades ?? new List<JelleSmart.ExamSystem.Core.Entities.Grade>(), "Id", "Name"))">
                     <option value="">Seçiniz...</option>
                 </select>
                 <span asp-validation-for="GradeId" class="text-danger fs-7"></span>
@@ -61,5 +85,4 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script src="~/assets/js/custom/units-form.js"></script>
 }
