@@ -1,7 +1,7 @@
 @model JelleSmart.ExamSystem.Core.Entities.Topic
 
 @{
-    ViewData["Title"] = "Kazanım Sil";
+    ViewData["Title"] = "Konu Sil";
 }
 
 <div class="card card-xl-stretch mb-5 mb-xl-8">
@@ -13,16 +13,16 @@
                 </div>
             </div>
 
-            <h2 class="fw-bold mb-3">Kazanım Silme Onayı</h2>
+            <h2 class="fw-bold mb-3">Konu Silme Onayı</h2>
             <p class="text-gray-600 fs-5 mb-8">
-                Bu kazanımı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+                Bu konuyu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
             </p>
 
             <dl class="row text-start mb-8">
-                <dt class="col-sm-4 fw-bold text-gray-800">Kazanım Kodu</dt>
+                <dt class="col-sm-4 fw-bold text-gray-800">Konu Kodu</dt>
                 <dd class="col-sm-8 text-gray-600">@Model.Code</dd>
 
-                <dt class="col-sm-4 fw-bold text-gray-800">Kazanım Adı</dt>
+                <dt class="col-sm-4 fw-bold text-gray-800">Konu Adı</dt>
                 <dd class="col-sm-8 text-gray-600">@Model.Name</dd>
 
                 <dt class="col-sm-4 fw-bold text-gray-800">Ünite</dt>

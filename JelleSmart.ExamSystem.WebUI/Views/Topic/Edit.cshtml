@@ -1,14 +1,14 @@
 @model JelleSmart.ExamSystem.Core.Entities.Topic
 
 @{
-    ViewData["Title"] = "Kazanım Düzenle";
+    ViewData["Title"] = "Konu Düzenle";
 }
 
 <div class="card card-xl-stretch mb-5 mb-xl-8">
     <div class="card-header border-0 pt-5">
         <h3 class="card-title align-items-start flex-column">
-            <span class="card-label fw-bold fs-3 mb-1">Kazanım Düzenle</span>
-            <span class="text-muted fw-semibold fs-7">Kazanım bilgilerini güncelleyin</span>
+            <span class="card-label fw-bold fs-3 mb-1">Konu Düzenle</span>
+            <span class="text-muted fw-semibold fs-7">Konu bilgilerini güncelleyin</span>
         </h3>
     </div>
     <div class="card-body py-3">
@@ -18,13 +18,13 @@
 
             <div class="row">
                 <div class="col-md-6 mb-5">
-                    <label asp-for="Name" class="form-label">Kazanım Adı</label>
-                    <input asp-for="Name" class="form-control form-control-solid" placeholder="Kazanım adını girin" />
+                    <label asp-for="Name" class="form-label">Konu Adı</label>
+                    <input asp-for="Name" class="form-control form-control-solid" placeholder="Konu adını girin" />
                     <span asp-validation-for="Name" class="text-danger fs-7"></span>
                 </div>
 
                 <div class="col-md-6 mb-5">
-                    <label asp-for="Code" class="form-label">Kazanım Kodu</label>
+                    <label asp-for="Code" class="form-label">Konu Kodu</label>
                     <input asp-for="Code" class="form-control form-control-solid" placeholder="Örn: M.1.1.1" />
                     <span asp-validation-for="Code" class="text-danger fs-7"></span>
                 </div>
@@ -32,7 +32,7 @@
 
             <div class="mb-5">
                 <label asp-for="UnitId" class="form-label">Ünite</label>
-                <select asp-for="UnitId" class="form-select form-select-solid" asp-items="@(new SelectList(ViewBag.Units, "Id", "Name"))">
+                <select asp-for="UnitId" class="form-select form-select-solid" asp-items="@(new SelectList(ViewBag.Units ?? new List<JelleSmart.ExamSystem.Core.Entities.Unit>(), "Id", "Name"))">
                     <option value="">Seçiniz...</option>
                 </select>
                 <span asp-validation-for="UnitId" class="text-danger fs-7"></span>
@@ -40,7 +40,7 @@
 
             <div class="mb-5">
                 <label asp-for="Description" class="form-label">Açıklama</label>
-                <textarea asp-for="Description" class="form-control form-control-solid" rows="3" placeholder="Kazanım açıklamasını girin"></textarea>
+                <textarea asp-for="Description" class="form-control form-control-solid" rows="3" placeholder="Konu açıklamasını girin"></textarea>
                 <span asp-validation-for="Description" class="text-danger fs-7"></span>
             </div>
 
@@ -60,5 +60,4 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script src="~/assets/js/custom/topics-form.js"></script>
 }
