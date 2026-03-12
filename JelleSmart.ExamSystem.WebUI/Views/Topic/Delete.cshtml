@@ -1,4 +1,4 @@
-@model JelleSmart.ExamSystem.Core.Entities.Topic
+@model JelleSmart.ExamSystem.WebUI.Models.TopicViewModel
 
 @{
     ViewData["Title"] = "Konu Sil";
@@ -26,7 +26,7 @@
                 <dd class="col-sm-8 text-gray-600">@Model.Name</dd>
 
                 <dt class="col-sm-4 fw-bold text-gray-800">Ünite</dt>
-                <dd class="col-sm-8 text-gray-600">@(Model.Unit?.Name ?? "-")</dd>
+                <dd class="col-sm-8 text-gray-600">@(Model.UnitName ?? "-")</dd>
 
                 <dt class="col-sm-4 fw-bold text-gray-800">Açıklama</dt>
                 <dd class="col-sm-8 text-gray-600">@(Model.Description ?? "-")</dd>

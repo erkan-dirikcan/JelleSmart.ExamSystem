@@ -1,9 +1,10 @@
 using JelleSmart.ExamSystem.Core.Entities;
 using JelleSmart.ExamSystem.Core.Interfaces.Services;
 using JelleSmart.ExamSystem.Core.Enums;
+using JelleSmart.ExamSystem.WebUI.Models;
+using JelleSmart.ExamSystem.WebUI.ViewComponents;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using JelleSmart.ExamSystem.WebUI.ViewComponents;
 
 namespace JelleSmart.ExamSystem.WebUI.Controllers
 {
@@ -23,7 +24,8 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             ViewData["Title"] = "Dersler";
             ViewData["PageDescription"] = "Sistem derslerini yönetin";
             var subjects = await _subjectService.GetAllAsync();
-            return View(subjects);
+            var viewModels = subjects.Select(s => s.ToViewModel()).ToList();
+            return View(viewModels);
         }
 
         public IActionResult Create()
@@ -36,12 +38,13 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Subject subject)
+        public async Task<IActionResult> Create(SubjectViewModel viewModel)
         {
             if (!ModelState.IsValid)
-                return View(subject);
+                return View(viewModel);
 
-            await _subjectService.CreateAsync(subject);
+            var entity = viewModel.ToEntity();
+            await _subjectService.CreateAsync(entity);
             TempData["Success"] = "Ders başarıyla eklendi";
             return RedirectToAction("Index");
         }
@@ -56,16 +59,21 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             if (subject == null)
                 return NotFound();
 
-            return View(subject);
+            return View(subject.ToViewModel());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Subject subject)
+        public async Task<IActionResult> Edit(SubjectViewModel viewModel)
         {
             if (!ModelState.IsValid)
-                return View(subject);
+                return View(viewModel);
 
+            var subject = await _subjectService.GetByIdAsync(viewModel.Id);
+            if (subject == null)
+                return NotFound();
+
+            viewModel.UpdateEntity(subject);
             await _subjectService.UpdateAsync(subject);
             TempData["Success"] = "Ders başarıyla güncellendi";
             return RedirectToAction("Index");
@@ -81,7 +89,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             if (subject == null)
                 return NotFound();
 
-            return View(subject);
+            return View(subject.ToViewModel());
         }
 
         [HttpPost, ActionName("Delete")]

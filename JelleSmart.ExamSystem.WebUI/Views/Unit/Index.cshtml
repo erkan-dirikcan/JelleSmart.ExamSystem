@@ -1,4 +1,4 @@
-@model IEnumerable<JelleSmart.ExamSystem.Core.Entities.Unit>
+@model IEnumerable<JelleSmart.ExamSystem.WebUI.Models.UnitViewModel>
 
 @{
     ViewData["Title"] = "Üniteler";
@@ -52,10 +52,10 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="badge badge-light-primary">@item.Subject?.Name</span>
+                                <span class="badge badge-light-primary">@item.SubjectName</span>
                             </td>
                             <td>
-                                <span class="badge badge-light-success">@item.Grade?.Name</span>
+                                <span class="badge badge-light-success">@item.GradeName</span>
                             </td>
                             <td>
                                 <span class="text-muted text-truncate d-block" style="max-width: 200px;">

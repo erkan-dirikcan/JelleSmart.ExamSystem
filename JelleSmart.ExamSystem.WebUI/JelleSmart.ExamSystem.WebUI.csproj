@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
-    <ProjectReference Include="..\JelleSmart.ExamSystem.Core\JelleSmart.ExamSystem.Core.csproj" />
     <ProjectReference Include="..\JelleSmart.ExamSystem.Service\JelleSmart.ExamSystem.Service.csproj" />
   </ItemGroup>
 

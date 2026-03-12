@@ -1,4 +1,4 @@
-@model JelleSmart.ExamSystem.Core.Entities.Unit
+@model JelleSmart.ExamSystem.WebUI.Models.UnitViewModel
 
 @{
     ViewData["Title"] = "Ünite Sil";
@@ -23,10 +23,10 @@
                 <dd class="col-sm-8 text-gray-600">@Model.Name</dd>
 
                 <dt class="col-sm-4 fw-bold text-gray-800">Ders</dt>
-                <dd class="col-sm-8 text-gray-600">@(Model.Subject?.Name ?? "-")</dd>
+                <dd class="col-sm-8 text-gray-600">@(Model.SubjectName ?? "-")</dd>
 
                 <dt class="col-sm-4 fw-bold text-gray-800">Sınıf</dt>
-                <dd class="col-sm-8 text-gray-600">@(Model.Grade?.Name ?? "-")</dd>
+                <dd class="col-sm-8 text-gray-600">@(Model.GradeName ?? "-")</dd>
 
                 <dt class="col-sm-4 fw-bold text-gray-800">Açıklama</dt>
                 <dd class="col-sm-8 text-gray-600">@(Model.Description ?? "-")</dd>

@@ -1,9 +1,10 @@
 using JelleSmart.ExamSystem.Core.Entities;
 using JelleSmart.ExamSystem.Core.Interfaces.Services;
 using JelleSmart.ExamSystem.Core.Enums;
+using JelleSmart.ExamSystem.WebUI.Models;
+using JelleSmart.ExamSystem.WebUI.ViewComponents;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using JelleSmart.ExamSystem.WebUI.ViewComponents;
 
 namespace JelleSmart.ExamSystem.WebUI.Controllers
 {
@@ -25,7 +26,8 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             ViewData["Title"] = "Konular";
             ViewData["PageDescription"] = "Ünite konularını yönetin";
             var topics = await _topicService.GetAllAsync();
-            return View(topics);
+            var viewModels = topics.Select(t => t.ToViewModel()).ToList();
+            return View(viewModels);
         }
 
         public async Task<IActionResult> Create()
@@ -39,15 +41,16 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Topic topic)
+        public async Task<IActionResult> Create(TopicViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
                 ViewBag.Units = await _unitService.GetAllAsync();
-                return View(topic);
+                return View(viewModel);
             }
 
-            await _topicService.CreateAsync(topic);
+            var entity = viewModel.ToEntity();
+            await _topicService.CreateAsync(entity);
             TempData["Success"] = "Konu başarıyla eklendi";
             return RedirectToAction("Index");
         }
@@ -63,19 +66,24 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
                 return NotFound();
 
             ViewBag.Units = await _unitService.GetAllAsync();
-            return View(topic);
+            return View(topic.ToViewModel());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Topic topic)
+        public async Task<IActionResult> Edit(TopicViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
                 ViewBag.Units = await _unitService.GetAllAsync();
-                return View(topic);
+                return View(viewModel);
             }
 
+            var topic = await _topicService.GetByIdAsync(viewModel.Id);
+            if (topic == null)
+                return NotFound();
+
+            viewModel.UpdateEntity(topic);
             await _topicService.UpdateAsync(topic);
             TempData["Success"] = "Konu başarıyla güncellendi";
             return RedirectToAction("Index");
@@ -91,7 +99,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             if (topic == null)
                 return NotFound();
 
-            return View(topic);
+            return View(topic.ToViewModel());
         }
 
         [HttpPost, ActionName("Delete")]

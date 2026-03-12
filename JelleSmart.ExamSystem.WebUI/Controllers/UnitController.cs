@@ -1,9 +1,10 @@
 using JelleSmart.ExamSystem.Core.Entities;
 using JelleSmart.ExamSystem.Core.Interfaces.Services;
 using JelleSmart.ExamSystem.Core.Enums;
+using JelleSmart.ExamSystem.WebUI.Models;
+using JelleSmart.ExamSystem.WebUI.ViewComponents;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using JelleSmart.ExamSystem.WebUI.ViewComponents;
 
 namespace JelleSmart.ExamSystem.WebUI.Controllers
 {
@@ -27,7 +28,8 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             ViewData["Title"] = "Üniteler";
             ViewData["PageDescription"] = "Sistem ünitelerini yönetin";
             var units = await _unitService.GetAllAsync();
-            return View(units);
+            var viewModels = units.Select(u => u.ToViewModel()).ToList();
+            return View(viewModels);
         }
 
         public async Task<IActionResult> Create()
@@ -42,16 +44,17 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Unit unit)
+        public async Task<IActionResult> Create(UnitViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
                 ViewBag.Subjects = await _subjectService.GetAllAsync();
                 ViewBag.Grades = await _gradeService.GetAllAsync();
-                return View(unit);
+                return View(viewModel);
             }
 
-            await _unitService.CreateAsync(unit);
+            var entity = viewModel.ToEntity();
+            await _unitService.CreateAsync(entity);
             TempData["Success"] = "Ünite başarıyla eklendi";
             return RedirectToAction("Index");
         }
@@ -68,20 +71,25 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
 
             ViewBag.Subjects = await _subjectService.GetAllAsync();
             ViewBag.Grades = await _gradeService.GetAllAsync();
-            return View(unit);
+            return View(unit.ToViewModel());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Unit unit)
+        public async Task<IActionResult> Edit(UnitViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
                 ViewBag.Subjects = await _subjectService.GetAllAsync();
                 ViewBag.Grades = await _gradeService.GetAllAsync();
-                return View(unit);
+                return View(viewModel);
             }
 
+            var unit = await _unitService.GetByIdAsync(viewModel.Id);
+            if (unit == null)
+                return NotFound();
+
+            viewModel.UpdateEntity(unit);
             await _unitService.UpdateAsync(unit);
             TempData["Success"] = "Ünite başarıyla güncellendi";
             return RedirectToAction("Index");
@@ -97,7 +105,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             if (unit == null)
                 return NotFound();
 
-            return View(unit);
+            return View(unit.ToViewModel());
         }
 
         [HttpPost, ActionName("Delete")]
