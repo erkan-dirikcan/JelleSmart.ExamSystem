@@ -1,0 +1,130 @@
+@model JelleSmart.ExamSystem.WebUI.Models.TakeExamViewModel
+
+@{
+    ViewData["Title"] = Model.ExamName;
+    Layout = "_Layout"; // Or appropriate layout
+}
+
+<!-- Fixed Bottom Left Widget for Progress and Timer -->
+<div class="position-fixed bottom-0 start-0 m-5 p-4 bg-white rounded shadow-sm border border-light" style="z-index: 1050; min-width: 250px; border-radius: 12px !important;">
+    <div class="d-flex flex-column gap-3">
+        <!-- Exam Info -->
+        <div>
+            <span class="text-muted font-weight-bold font-size-sm d-block mb-1">@Model.ExamName</span>
+            <div class="d-flex align-items-center justify-content-between">
+                <span class="font-weight-bolder text-dark font-size-h5" id="questionCounter">Soru 1 / @Model.Questions.Count</span>
+                <span class="badge badge-light-success font-weight-bold" id="scorePreview">-- Puan</span>
+            </div>
+        </div>
+
+        <!-- Timer -->
+        <div class="d-flex align-items-center bg-light rounded p-3">
+            <span class="svg-icon svg-icon-primary svg-icon-2x mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 7V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </span>
+            <div class="d-flex flex-column">
+                <span class="text-muted font-weight-bold font-size-sm">Kalan Süre</span>
+                <span id="examTimerDisplay" class="font-weight-bolder text-dark font-size-h4 mb-0">--:--:--</span>
+            </div>
+        </div>
+        
+        <!-- Action -->
+        <button id="finishExamBtn" class="btn btn-danger font-weight-bold w-100">Sınavı Bitir</button>
+    </div>
+</div>
+
+<!-- Main Question Area -->
+<div class="container mt-8" style="padding-bottom: 120px;">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card card-custom gutter-b shadow-sm border-0">
+                <div class="card-body p-0" id="examQuestionsWrapper" 
+                     data-exam-id="@Model.StudentExamId" 
+                     data-total-questions="@Model.Questions.Count"
+                     data-remaining-time="@Model.RemainingTime">
+                    
+                    @foreach (var question in Model.Questions.Select((q, i) => new { Question = q, Index = i }))
+                    {
+                        var isFirst = question.Index == 0;
+                        <div class="exam-question-card @(isFirst ? "" : "d-none") p-8" data-question-order="@question.Index">
+                            
+                            <!-- Question Header -->
+                            <div class="d-flex justify-content-between align-items-center mb-6 border-bottom pb-4">
+                                <h3 class="card-title font-weight-bolder text-dark mb-0">Soru @(question.Index + 1)</h3>
+                                <span class="label label-light-primary label-inline font-weight-bold">
+                                    @(Model.Questions.Sum(q => q.Choices.Count > 0 ? (double)Model.Questions.Sum(eq => 1) / Model.Questions.Count : 0) * Model.Questions.Count) Puan
+                                </span>
+                            </div>
+
+                            <!-- Question Text & Image -->
+                            <div class="mb-8">
+                                <p class="font-size-h5 text-dark-75 line-height-lg">@question.Question.Text</p>
+                                @if (!string.IsNullOrEmpty(question.Question.ImageUrl))
+                                {
+                                    <div class="text-center mt-6">
+                                        <img src="~/@question.Question.ImageUrl" alt="Soru görseli" class="img-fluid rounded shadow-sm" style="max-height: 350px;" />
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Choices -->
+                            <div class="radio-list">
+                                @foreach (var choice in question.Question.Choices)
+                                {
+                                    var isSelected = question.Question.SelectedChoiceId == choice.Id;
+                                    <label class="radio radio-outline radio-outline-2x radio-primary mb-5 d-flex align-items-start p-4 border rounded cursor-pointer bg-hover-light @(isSelected ? "border-primary bg-light-primary" : "border-light")">
+                                        <input type="radio" 
+                                               name="question_@question.Question.QuestionId" 
+                                               value="@choice.Id" 
+                                               class="exam-choice-input"
+                                               data-question-id="@question.Question.QuestionId"
+                                               @(isSelected ? "checked" : "") />
+                                        <span></span>
+                                        <div class="ml-3">
+                                            <span class="font-weight-bold text-dark font-size-lg d-block">
+                                                <span class="text-primary mr-2">@choice.Label)</span> @choice.Text
+                                            </span>
+                                            @if (!string.IsNullOrEmpty(choice.ImageUrl))
+                                            {
+                                                <div class="mt-3">
+                                                    <img src="~/@choice.ImageUrl" alt="Şık görseli" class="img-fluid rounded shadow-sm border border-light" style="max-height: 150px;" />
+                                                </div>
+                                            }
+                                        </div>
+                                    </label>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+                
+                <!-- Navigation Footer -->
+                <div class="card-footer d-flex justify-content-between align-items-center py-6 bg-light rounded-bottom">
+                    <button id="btnPrevQuestion" class="btn btn-secondary font-weight-bold px-8 d-none">
+                        <i class="ki ki-arrow-left icon-sm mr-2"></i> Önceki
+                    </button>
+                    
+                    <div class="text-muted font-size-sm font-weight-bold mx-auto" id="navIndicator">1 / @Model.Questions.Count</div>
+
+                    <button id="btnNextQuestion" class="btn btn-primary font-weight-bold px-8 @(Model.Questions.Count <= 1 ? "d-none" : "")">
+                        Sonraki <i class="ki ki-arrow-right icon-sm ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden Form for Auto/Manual Submit -->
+<form id="completeExamForm" asp-action="Complete" asp-controller="StudentExam" method="post" class="d-none">
+    <input type="hidden" name="id" value="@Model.StudentExamId" />
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+    <!-- The JavaScript logic is moved to an external file per architectural rules -->
+    <script src="~/js/custom/student-exam-take.js"></script>
+}

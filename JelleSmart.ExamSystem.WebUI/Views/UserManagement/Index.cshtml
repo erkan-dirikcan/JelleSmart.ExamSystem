@@ -3,59 +3,105 @@
 @{
     ViewData["Title"] = "Kullanıcı Yönetimi";
 }
+<div class="d-flex flex-column-fluid">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-custom">
+                    <div class="card-header flex-wrap border-0 pt-6 pb-0">
+                        <div class="card-title">
+                            <h3 class="card-label">
+                                Kullanıcılar
+                                <span class="d-block text-muted pt-2 font-size-sm">Jello Smart Kullanıcı Listesi</span>
+                            </h3>
+                        </div>
+                        <div class="card-toolbar">
+                            <!--begin::Button-->
+                            @*  <a asp-action="SencronFirm" asp-controller="Firm" class="btn btn-primary font-weight-bolder"> *@
+                            <a href="#" onclick="SenkronFirm()" class="btn btn-primary font-weight-bolder" id="senkron-firm-bt">
+                                <span class="svg-icon svg-icon-2x">
+                                    <!--begin::Svg Icon | path:C:\wamp64\www\keenthemes\legacy\metronic\theme\html\demo1\dist/../src/media/svg/icons\Media\Repeat-one.svg-->
+                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                            <rect x="0" y="0" width="24" height="24" />
+                                            <path d="M21.9969433,12.1933592 C21.8948657,15.4175796 19.2490111,18 16,18 L12.0583175,18 L12.0583175,18.9825492 C12.0583175,19.2586916 11.8344599,19.4825492 11.5583175,19.4825492 C11.4509855,19.4825492 11.3465023,19.4480108 11.2603165,19.3840407 L8.40328311,17.263451 C8.18154548,17.0988696 8.13521119,16.7856962 8.29979258,16.5639585 C8.32872576,16.5249774 8.36318164,16.4904176 8.40207551,16.4613672 L11.2591089,14.3274051 C11.48035,14.1621567 11.7936615,14.2075478 11.9589099,14.4287888 C12.0234473,14.5151942 12.0583175,14.6201505 12.0583175,14.7279974 L12.0583175,16 L16,16 C17.6264832,16 19.0262317,15.0292331 19.6514501,13.6354945 C20.5364094,13.3251939 21.3338787,12.8288439 21.9969433,12.1933592 Z" fill="#000000" opacity="0.3" />
+                                            <path d="M12.1000181,6 C12.5632884,3.71775968 14.5810421,2 17,2 C19.7614237,2 22,4.23857625 22,7 C22,9.76142375 19.7614237,12 17,12 C14.5810421,12 12.5632884,10.2822403 12.1000181,8 L8,8 C5.790861,8 4,9.790861 4,12 L4,13 C4,14.6568542 5.34314575,16 7,16 L7,18 C4.23857625,18 2,15.7614237 2,13 L2,12 C2,8.6862915 4.6862915,6 8,6 L12.1000181,6 Z M16.7300002,5.668 L16.7300002,9.5 L17.6900002,9.5 L17.6900002,4.5 L16.8180002,4.5 L15.0500002,5.924 L15.6100002,6.588 L16.7300002,5.668 Z" fill="#000000" fill-rule="nonzero" />
+                                        </g>
+                                    </svg><!--end::Svg Icon-->
+                                </span> CRM Firmalarını Aktar
+                            </a>
+                            <div class="spinner spinner-track spinner-primary mr-15" id="senkron-firm-spiner" hidden="hidden"></div>
+                            <!--end::Button-->
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="user-list-table">
+                                <thead>
+                                    <tr>
+                                        <th>Ad Soyad</th>
+                                        <th>E-posta</th>
+                                        <th>Rol</th>
+                                        <th>Durum</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var user in Model)
+                                    {
+                                        <tr>
+                                            <td>@user.FullName</td>
+                                            <td>@user.Email</td>
+                                            <td>
+                                                @switch (user.Role)
+                                                {
+                                                    case "Admin":
+                                                        <span class="badge bg-danger">Admin</span>
+                                                        break;
+                                                    case "Teacher":
 
-<h2>Kullanıcı Yönetimi</h2>
+                                                        <span class="badge bg-primary">Öğretmen</span>
+                                                        break;
+                                                    case "Student":
 
-<div class="table-responsive">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Ad Soyad</th>
-                <th>E-posta</th>
-                <th>Rol</th>
-                <th>Durum</th>
-                <th>İşlemler</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var user in Model)
-            {
-                <tr>
-                    <td>@user.FullName</td>
-                    <td>@user.Email</td>
-                    <td>
-                        @switch (user.Role)
-                        {
-                            case "Admin": <span class="badge bg-danger">Admin</span> break;
-                            case "Teacher": <span class="badge bg-primary">Öğretmen</span> break;
-                            case "Student": <span class="badge bg-success">Öğrenci</span> break;
-                            default: <span class="badge bg-secondary">@user.Role</span> break;
-                        }
-                    </td>
-                    <td>
-                        @if (user.IsActive)
-                        {
-                            <span class="badge bg-success">Aktif</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-danger">Pasif</span>
-                        }
-                    </td>
-                    <td>
-                        <a asp-action="Details" asp-route-id="@user.Id" class="btn btn-sm btn-info">Detay</a>
-                        <a asp-action="ToggleActive" asp-route-id="@user.Id" class="btn btn-sm btn-warning">
-                            @(user.IsActive ? "Pasife Al" : "Aktife Al")
-                        </a>
-                        <a asp-action="Delete" asp-route-id="@user.Id" class="btn btn-sm btn-danger"
-                           onclick="return confirm('Bu kullanıcıyı silmek istediğinizden emin misiniz?')">Sil</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
+                                                        <span class="badge bg-success">Öğrenci</span>
+                                                        break;
+                                                    default:
 
-<div class="mt-3">
-    <a asp-action="Register" asp-controller="Account" class="btn btn-primary">Yeni Kullanıcı Ekle</a>
+                                                        <span class="badge bg-secondary">@user.Role</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (user.IsActive)
+                                                {
+                                                    <span class="badge bg-success">Aktif</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-danger">Pasif</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <a asp-action="Details" asp-route-id="@user.Id" class="btn btn-sm btn-info">Detay</a>
+                                                <a asp-action="ToggleActive" asp-route-id="@user.Id" class="btn btn-sm btn-warning">
+                                                    @(user.IsActive ? "Pasife Al" : "Aktife Al")
+                                                </a>
+                                                <a asp-action="Delete" asp-route-id="@user.Id" class="btn btn-sm btn-danger"
+                                                   onclick="return confirm('Bu kullanıcıyı silmek istediğinizden emin misiniz?')">Sil</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="mt-3">
+                            <a asp-action="Register" asp-controller="Account" class="btn btn-primary">Yeni Kullanıcı Ekle</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

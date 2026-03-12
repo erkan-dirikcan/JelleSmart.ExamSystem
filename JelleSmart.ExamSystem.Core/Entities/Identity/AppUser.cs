@@ -19,6 +19,8 @@ namespace JelleSmart.ExamSystem.Core.Entities.Identity
         public Grade? Grade { get; set; }
 
         // Navigation properties
+        public TeacherProfile? TeacherProfile { get; set; }
+        public StudentProfile? StudentProfile { get; set; }
         public ICollection<StudentSubject> StudentSubjects { get; set; } = new List<StudentSubject>();
         public ICollection<StudentExam> StudentExams { get; set; } = new List<StudentExam>();
         public ICollection<Question> Questions { get; set; } = new List<Question>();

@@ -65,7 +65,7 @@
                 <div class="card card-xl-stretch mb-5 mb-xl-8">
                     <div class="card-body p-0 d-flex align-items-center justify-content-between px-6 py-8">
                         <div class="d-flex flex-column">
-                            <a asp-controller="Question" asp-action="Index" asp-area="Teacher" class="text-dark text-hover-primary fw-bold fs-3">Soru Bankası</a>
+                            <a asp-controller="TeacherQuestion" asp-action="Index" class="text-dark text-hover-primary fw-bold fs-3">Soru Bankası</a>
                             <span class="text-gray-400 fw-semibold mt-1">Soru ekleyin ve yönetin</span>
                         </div>
                         <div class="symbol symbol-50px">
@@ -80,7 +80,7 @@
                 <div class="card card-xl-stretch mb-5 mb-xl-8">
                     <div class="card-body p-0 d-flex align-items-center justify-content-between px-6 py-8">
                         <div class="d-flex flex-column">
-                            <a asp-controller="Exam" asp-action="Index" asp-area="Teacher" class="text-dark text-hover-primary fw-bold fs-3">Sınavlar</a>
+                            <a asp-controller="TeacherExam" asp-action="Index" class="text-dark text-hover-primary fw-bold fs-3">Sınavlar</a>
                             <span class="text-gray-400 fw-semibold mt-1">Sınav oluşturun ve yönetin</span>
                         </div>
                         <div class="symbol symbol-50px">
@@ -98,7 +98,7 @@
                 <div class="card card-xl-stretch mb-5 mb-xl-8">
                     <div class="card-body p-0 d-flex align-items-center justify-content-between px-6 py-8">
                         <div class="d-flex flex-column">
-                            <a asp-controller="Exam" asp-action="Index" asp-area="Student" class="text-dark text-hover-primary fw-bold fs-3">Sınavlarım</a>
+                            <a asp-controller="StudentExam" asp-action="Index" class="text-dark text-hover-primary fw-bold fs-3">Sınavlarım</a>
                             <span class="text-gray-400 fw-semibold mt-1">Sınavlara katılın</span>
                         </div>
                         <div class="symbol symbol-50px">
@@ -113,7 +113,7 @@
                 <div class="card card-xl-stretch mb-5 mb-xl-8">
                     <div class="card-body p-0 d-flex align-items-center justify-content-between px-6 py-8">
                         <div class="d-flex flex-column">
-                            <a asp-controller="Report" asp-action="Index" asp-area="Student" class="text-dark text-hover-primary fw-bold fs-3">Raporlarım</a>
+                            <a asp-controller="StudentReport" asp-action="Index" class="text-dark text-hover-primary fw-bold fs-3">Raporlarım</a>
                             <span class="text-gray-400 fw-semibold mt-1">Sonuçlarınızı görün</span>
                         </div>
                         <div class="symbol symbol-50px">
@@ -171,7 +171,7 @@
 
                         case "Teacher":
                             <div class="col-sm-6 col-xl-3">
-                                <a asp-controller="Question" asp-action="Create" asp-area="Teacher" class="card border border-dashed border-gray-300 bg-hover-light-warning hoverable h-100">
+                                <a asp-controller="TeacherQuestion" asp-action="Create" class="card border border-dashed border-gray-300 bg-hover-light-warning hoverable h-100">
                                     <div class="card-body d-flex flex-column align-items-center justify-content-center py-8">
                                         <div class="symbol symbol-50px mb-3">
                                             <div class="symbol-label bg-light-warning">
@@ -183,7 +183,7 @@
                                 </a>
                             </div>
                             <div class="col-sm-6 col-xl-3">
-                                <a asp-controller="Exam" asp-action="Create" asp-area="Teacher" class="card border border-dashed border-gray-300 bg-hover-light-danger hoverable h-100">
+                                <a asp-controller="TeacherExam" asp-action="Create" class="card border border-dashed border-gray-300 bg-hover-light-danger hoverable h-100">
                                     <div class="card-body d-flex flex-column align-items-center justify-content-center py-8">
                                         <div class="symbol symbol-50px mb-3">
                                             <div class="symbol-label bg-light-danger">
@@ -198,7 +198,7 @@
 
                         case "Student":
                             <div class="col-sm-6 col-xl-3">
-                                <a asp-controller="Exam" asp-action="Index" asp-area="Student" class="card border border-dashed border-gray-300 bg-hover-light-primary hoverable h-100">
+                                <a asp-controller="StudentExam" asp-action="Index" class="card border border-dashed border-gray-300 bg-hover-light-primary hoverable h-100">
                                     <div class="card-body d-flex flex-column align-items-center justify-content-center py-8">
                                         <div class="symbol symbol-50px mb-3">
                                             <div class="symbol-label bg-light-primary">

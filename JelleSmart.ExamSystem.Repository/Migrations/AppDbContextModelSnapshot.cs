@@ -495,6 +495,89 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.ToTable("StudentExams");
                 });
 
+            modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.StudentParent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ParentType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StudentProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentProfileId", "ParentType")
+                        .IsUnique();
+
+                    b.ToTable("StudentParents");
+                });
+
+            modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.StudentProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateOnly?>("EnrollmentDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("GradeId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("StudentNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GradeId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("StudentProfiles");
+                });
+
             modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.StudentSubject", b =>
                 {
                     b.Property<int>("Id")
@@ -558,6 +641,59 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Subjects");
+                });
+
+            modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.TeacherProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Department")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly?>("HireDate")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("TeacherProfiles");
+                });
+
+            modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.TeacherSubject", b =>
+                {
+                    b.Property<int>("TeacherProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TeacherProfileId", "SubjectId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("TeacherSubjects");
                 });
 
             modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.Topic", b =>
@@ -914,6 +1050,36 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.StudentParent", b =>
+                {
+                    b.HasOne("JelleSmart.ExamSystem.Core.Entities.StudentProfile", "StudentProfile")
+                        .WithMany("Parents")
+                        .HasForeignKey("StudentProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("StudentProfile");
+                });
+
+            modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.StudentProfile", b =>
+                {
+                    b.HasOne("JelleSmart.ExamSystem.Core.Entities.Grade", "Grade")
+                        .WithMany()
+                        .HasForeignKey("GradeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("JelleSmart.ExamSystem.Core.Entities.Identity.AppUser", "User")
+                        .WithOne("StudentProfile")
+                        .HasForeignKey("JelleSmart.ExamSystem.Core.Entities.StudentProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Grade");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.StudentSubject", b =>
                 {
                     b.HasOne("JelleSmart.ExamSystem.Core.Entities.Identity.AppUser", "Student")
@@ -931,6 +1097,36 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.Navigation("Student");
 
                     b.Navigation("Subject");
+                });
+
+            modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.TeacherProfile", b =>
+                {
+                    b.HasOne("JelleSmart.ExamSystem.Core.Entities.Identity.AppUser", "User")
+                        .WithOne("TeacherProfile")
+                        .HasForeignKey("JelleSmart.ExamSystem.Core.Entities.TeacherProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.TeacherSubject", b =>
+                {
+                    b.HasOne("JelleSmart.ExamSystem.Core.Entities.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("JelleSmart.ExamSystem.Core.Entities.TeacherProfile", "TeacherProfile")
+                        .WithMany("Subjects")
+                        .HasForeignKey("TeacherProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subject");
+
+                    b.Navigation("TeacherProfile");
                 });
 
             modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.Topic", b =>
@@ -1043,7 +1239,11 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
 
                     b.Navigation("StudentExams");
 
+                    b.Navigation("StudentProfile");
+
                     b.Navigation("StudentSubjects");
+
+                    b.Navigation("TeacherProfile");
                 });
 
             modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.Question", b =>
@@ -1058,11 +1258,21 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.Navigation("StudentAnswers");
                 });
 
+            modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.StudentProfile", b =>
+                {
+                    b.Navigation("Parents");
+                });
+
             modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.Subject", b =>
                 {
                     b.Navigation("Questions");
 
                     b.Navigation("Units");
+                });
+
+            modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.TeacherProfile", b =>
+                {
+                    b.Navigation("Subjects");
                 });
 
             modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.Topic", b =>

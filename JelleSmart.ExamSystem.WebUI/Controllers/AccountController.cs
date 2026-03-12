@@ -1,14 +1,17 @@
+using JelleSmart.ExamSystem.Core.DTOs;
 using JelleSmart.ExamSystem.Core.Entities;
 using JelleSmart.ExamSystem.Core.Entities.Identity;
-using JelleSmart.ExamSystem.Core.Interfaces.Services;
 using JelleSmart.ExamSystem.Core.Enums;
+using JelleSmart.ExamSystem.Core.Interfaces.Services;
 using JelleSmart.ExamSystem.WebUI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace JelleSmart.ExamSystem.WebUI.Controllers
 {
+    [Authorize]
     public class AccountController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
@@ -16,82 +19,198 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
         private readonly RoleManager<AppRole> _roleManager;
         private readonly ISubjectService _subjectService;
         private readonly IGradeService _gradeService;
+        private readonly IEmailService _emailService;
 
         public AccountController(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
             RoleManager<AppRole> roleManager,
             ISubjectService subjectService,
-            IGradeService gradeService)
+            IGradeService gradeService,
+            IEmailService emailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _subjectService = subjectService;
             _gradeService = gradeService;
+            _emailService = emailService;
+        }
+
+        private async Task PopulateRegistrationDropdownsAsync(RegisterViewModel model)
+        {
+            model.AvailableSubjects = (await _subjectService.GetAllAsync())
+                .Select(s => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = s.Name
+                }).ToList();
+            model.AvailableGrades = (await _gradeService.GetAllAsync())
+                .Select(g => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+                {
+                    Value = g.Id.ToString(),
+                    Text = g.Name
+                }).ToList();
         }
 
         [HttpGet]
-        public IActionResult Login()
+        [AllowAnonymous]
+        public IActionResult Login(string returnUrl = "/")
+        {
+            var model = (new LoginViewModel(), new ForgotPasswordViewModel());
+            return View(model);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login([Bind(Prefix = "Item1")] LoginViewModel loginModel, [Bind(Prefix = "Item2")] ForgotPasswordViewModel forgetModel, string returnUrl = "/")
+        {
+            var model = (loginModel, forgetModel);
+            var user = await _userManager.FindByEmailAsync(loginModel.Email ?? "");
+            if (user == null)
+            {
+                ModelState.AddModelError(string.Empty, "Kullanıcı Bilgilerinizi kontrol ederek tekrar deneyiniz");
+                return View(model);
+            }
+
+            var res = await _signInManager.PasswordSignInAsync(user, loginModel.Password, loginModel.RememberMe, true);
+            if (res.IsLockedOut)
+            {
+                ModelState.AddModelError("", "Hesabınız Kilitli, 15 dakika boyunca giriş yapamazsınız. Lütfen daha sonra tekrar deneyiniz.");
+                return View(model);
+            }
+
+            if (res.IsNotAllowed)
+            {
+                ModelState.AddModelError("", "Erişim Yetkiniz bulunmamaktadır.");
+                return View(model);
+            }
+
+            if (res.RequiresTwoFactor)
+            {
+                return RedirectToAction("Login");
+            }
+
+            if (res.Succeeded)
+            {
+                return Redirect(returnUrl);
+            }
+
+            ModelState.AddModelError(string.Empty, "Kullanıcı Bilgilerinizi kontrol ederek tekrar deneyiniz");
+            return View(model);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> ForgetPassword([Bind(Prefix = "Item1")] LoginViewModel loginModel, [Bind(Prefix = "Item2")] ForgotPasswordViewModel forgetModel)
+        {
+            var url = Request.Host;
+            var model = (loginModel, forgetModel);
+
+            if (string.IsNullOrEmpty(forgetModel.Email))
+            {
+                ModelState.AddModelError(nameof(forgetModel.Email), "E-Posta Adresi Boş Bırakılamaz");
+                return View("Error");
+            }
+
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(forgetModel.Email);
+                if (user == null)
+                {
+                    TempData["Eposta"] = forgetModel.Email;
+                    return RedirectToAction("ForgotConfirm", "Account");
+                }
+
+                var passwordResetTokenstring = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var resetUrl = "https://" + url.Value + Url.Action("ResetPassword", "Account", new { userId = user.Id, token = passwordResetTokenstring });
+                TempData["Eposta"] = forgetModel.Email;
+
+                await _emailService.SendResetPasswordEmailAsync(new ResetPasswordEmailDto
+                {
+                    Email = user.Email,
+                    Name = user.FirstName ?? "",
+                    Lastname = user.LastName ?? "",
+                    ResetLink = resetUrl
+                });
+
+                return RedirectToAction("ForgotConfirm", "Account");
+            }
+            catch (System.Exception ex)
+            {
+                ModelState.AddModelError("", "E-posta gönderilirken bir hata oluştu: " + ex.Message);
+                return View("Error");
+            }
+        }
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ForgotConfirm()
         {
             return View();
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword(string userId, string token)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var model = new ResetPasswordDto 
+            { 
+                Token = token, 
+                Email = user.Email 
+            };
+            
+            return View(model);
+        }
+
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> ResetPassword(ResetPasswordDto model)
         {
             if (!ModelState.IsValid)
+            {
                 return View(model);
+            }
 
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
-                ModelState.AddModelError("", "Geçersiz e-posta veya şifre");
-                return View(model);
+                TempData["Success"] = "Şifreniz başarıyla sıfırlandı. Lütfen giriş yapınız.";
+                return RedirectToAction("Login", "Account");
             }
 
-            if (!user.IsActive)
-            {
-                ModelState.AddModelError("", "Hesabınız pasif durumda. Lütfen yönetici ile iletişime geçin.");
-                return View(model);
-            }
-
-            var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: true);
+            var result = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
             if (result.Succeeded)
             {
-                return RedirectToAction("Index", "Home");
+                TempData["Success"] = "Şifreniz başarıyla sıfırlandı. Yeni şifrenizle giriş yapabilirsiniz.";
+                return RedirectToAction("Login", "Account");
             }
 
-            if (result.IsLockedOut)
+            foreach (var error in result.Errors)
             {
-                ModelState.AddModelError("", "Hesabınız çok fazla başarısız girişten dolayı kilitlendi. Lütfen bekleyin.");
-                return View(model);
+                ModelState.AddModelError("", error.Description);
             }
 
-            ModelState.AddModelError("", "Geçersiz e-posta veya şifre");
             return View(model);
         }
 
         [HttpGet]
         public async Task<IActionResult> Register()
         {
-            var model = new RegisterViewModel
-            {
-                AvailableSubjects = (await _subjectService.GetAllAsync())
-                    .Select(s => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
-                    {
-                        Value = s.Id.ToString(),
-                        Text = s.Name
-                    }).ToList(),
-                AvailableGrades = (await _gradeService.GetAllAsync())
-                    .Select(g => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
-                    {
-                        Value = g.Id.ToString(),
-                        Text = g.Name
-                    }).ToList()
-            };
-
+            var model = new RegisterViewModel();
+            await PopulateRegistrationDropdownsAsync(model);
             return View(model);
         }
 
@@ -101,18 +220,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                model.AvailableSubjects = (await _subjectService.GetAllAsync())
-                    .Select(s => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
-                    {
-                        Value = s.Id.ToString(),
-                        Text = s.Name
-                    }).ToList();
-                model.AvailableGrades = (await _gradeService.GetAllAsync())
-                    .Select(g => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
-                    {
-                        Value = g.Id.ToString(),
-                        Text = g.Name
-                    }).ToList();
+                await PopulateRegistrationDropdownsAsync(model);
                 return View(model);
             }
 
@@ -134,33 +242,15 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
                 {
                     ModelState.AddModelError("", error.Description);
                 }
-                model.AvailableSubjects = (await _subjectService.GetAllAsync())
-                    .Select(s => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
-                    {
-                        Value = s.Id.ToString(),
-                        Text = s.Name
-                    }).ToList();
-                model.AvailableGrades = (await _gradeService.GetAllAsync())
-                    .Select(g => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
-                    {
-                        Value = g.Id.ToString(),
-                        Text = g.Name
-                    }).ToList();
+                await PopulateRegistrationDropdownsAsync(model);
                 return View(model);
             }
 
-            // Rol ata
             if (!await _roleManager.RoleExistsAsync(model.Role))
             {
                 await _roleManager.CreateAsync(new AppRole { Name = model.Role });
             }
             await _userManager.AddToRoleAsync(user, model.Role);
-
-            // Öğrenci için ders seçimi
-            if (model.Role == UserRoles.Student && model.SubjectId.HasValue)
-            {
-                // StudentSubject ilişkisi eklenebilir
-            }
 
             await _signInManager.SignInAsync(user, isPersistent: false);
             return RedirectToAction("Index", "Home");

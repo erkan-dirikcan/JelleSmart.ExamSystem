@@ -1,17 +1,20 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using JelleSmart.ExamSystem.Core.Entities.Identity;
 using JelleSmart.ExamSystem.WebUI.Models;
 using JelleSmart.ExamSystem.WebUI.ViewComponents;
+using Microsoft.AspNetCore.Authorization;
+
+
 
 namespace JelleSmart.ExamSystem.WebUI.Controllers;
 
+    [Authorize]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly UserManager<AppUser> _userManager;
-
     public HomeController(ILogger<HomeController> logger, UserManager<AppUser> userManager)
     {
         _logger = logger;
@@ -22,7 +25,7 @@ public class HomeController : Controller
     {
         if (User.Identity?.IsAuthenticated ?? false)
         {
-            ViewData["ActivePage"] = ManageNavPages.Dashboard;
+
 
             var user = await _userManager.GetUserAsync(User);
             if (user != null)

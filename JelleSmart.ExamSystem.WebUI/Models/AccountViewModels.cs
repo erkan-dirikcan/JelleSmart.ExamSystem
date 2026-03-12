@@ -15,6 +15,34 @@ namespace JelleSmart.ExamSystem.WebUI.Models
 
         [Display(Name = "Beni Hatırla")]
         public bool RememberMe { get; set; }
+
+        public ForgotPasswordViewModel ForgetModel { get; set; } = new();
+    }
+
+    public class ForgotPasswordViewModel
+    {
+        [Required(ErrorMessage = "E-posta adresi gereklidir")]
+        [EmailAddress(ErrorMessage = "Geçerli bir e-posta adresi giriniz")]
+        public string Email { get; set; } = string.Empty;
+    }
+
+    public class ResetPasswordViewModel
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        [Required]
+        public string Token { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Şifre gereklidir")]
+        [StringLength(100, ErrorMessage = "{0} en az {2} karakter uzunluğunda olmalıdır.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        public string Password { get; set; } = string.Empty;
+
+        [DataType(DataType.Password)]
+        [Compare("Password", ErrorMessage = "Şifreler eşleşmiyor.")]
+        public string ConfirmPassword { get; set; } = string.Empty;
     }
 
     public class RegisterViewModel

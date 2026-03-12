@@ -24,6 +24,12 @@ namespace JelleSmart.ExamSystem.Repository.Data
         public DbSet<StudentExam> StudentExams { get; set; }
         public DbSet<StudentAnswer> StudentAnswers { get; set; }
 
+        // Phase 1: Profile entities
+        public DbSet<TeacherProfile> TeacherProfiles { get; set; }
+        public DbSet<StudentProfile> StudentProfiles { get; set; }
+        public DbSet<StudentParent> StudentParents { get; set; }
+        public DbSet<TeacherSubject> TeacherSubjects { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -189,6 +195,68 @@ namespace JelleSmart.ExamSystem.Repository.Data
 
             builder.Entity<StudentAnswer>()
                 .HasIndex(sa => new { sa.StudentExamId, sa.QuestionId })
+                .IsUnique();
+
+            // ============================================
+            // Phase 1: Profile Entity Configurations
+            // ============================================
+
+            // AppUser - TeacherProfile (One-to-One)
+            builder.Entity<TeacherProfile>()
+                .HasOne(tp => tp.User)
+                .WithOne(u => u.TeacherProfile)
+                .HasForeignKey<TeacherProfile>(tp => tp.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // AppUser - StudentProfile (One-to-One)
+            builder.Entity<StudentProfile>()
+                .HasOne(sp => sp.User)
+                .WithOne(u => u.StudentProfile)
+                .HasForeignKey<StudentProfile>(sp => sp.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Unique indexes for UserId in profiles
+            builder.Entity<TeacherProfile>()
+                .HasIndex(tp => tp.UserId)
+                .IsUnique();
+
+            builder.Entity<StudentProfile>()
+                .HasIndex(sp => sp.UserId)
+                .IsUnique();
+
+            // StudentProfile - Grade (Many-to-One)
+            builder.Entity<StudentProfile>()
+                .HasOne(sp => sp.Grade)
+                .WithMany()
+                .HasForeignKey(sp => sp.GradeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // StudentProfile - StudentParent (One-to-Many)
+            builder.Entity<StudentParent>()
+                .HasOne(sp => sp.StudentProfile)
+                .WithMany(s => s.Parents)
+                .HasForeignKey(sp => sp.StudentProfileId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // TeacherProfile - TeacherSubject - Subject (Many-to-Many)
+            builder.Entity<TeacherSubject>()
+                .HasKey(ts => new { ts.TeacherProfileId, ts.SubjectId });
+
+            builder.Entity<TeacherSubject>()
+                .HasOne(ts => ts.TeacherProfile)
+                .WithMany(tp => tp.Subjects)
+                .HasForeignKey(ts => ts.TeacherProfileId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<TeacherSubject>()
+                .HasOne(ts => ts.Subject)
+                .WithMany()
+                .HasForeignKey(ts => ts.SubjectId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // StudentParent unique index (StudentProfile-ParentType combination must be unique)
+            builder.Entity<StudentParent>()
+                .HasIndex(sp => new { sp.StudentProfileId, sp.ParentType })
                 .IsUnique();
         }
     }

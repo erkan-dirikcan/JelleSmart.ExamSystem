@@ -50,20 +50,22 @@ namespace JelleSmart.ExamSystem.WebUI.ViewComponents
 
         public static string PageMainNavClass(ViewContext viewContext, string pageName)
         {
-            var activePage = viewContext.ViewData["ActivePage"] as string;
-            return activePage == pageName ? "menu-item active" : "menu-item";
+            var activePage = viewContext.ViewData["ActivePage"] as string 
+                             ?? viewContext.RouteData.Values["controller"]?.ToString();
+            return string.Equals(activePage, pageName, System.StringComparison.OrdinalIgnoreCase) ? "menu-item menu-item-active" : "menu-item";
         }
 
         public static string PageMainToggleNavClass(ViewContext viewContext, string menuName)
         {
             var activeMenu = viewContext.ViewData["MenuToggle"] as string;
-            return activeMenu == menuName ? "menu-item active" : "menu-item";
+            return string.Equals(activeMenu, menuName, System.StringComparison.OrdinalIgnoreCase) ? "menu-item menu-item-open menu-item-here" : "menu-item";
         }
 
         public static string PageAsideNavClass(ViewContext viewContext, string pageName)
         {
-            var activePage = viewContext.ViewData["ActivePage"] as string;
-            return activePage == pageName ? "menu-item active" : "menu-item";
+            var activePage = viewContext.ViewData["ActivePage"] as string 
+                             ?? viewContext.RouteData.Values["controller"]?.ToString();
+            return string.Equals(activePage, pageName, System.StringComparison.OrdinalIgnoreCase) ? "menu-item menu-item-active" : "menu-item";
         }
     }
 }

@@ -54,6 +54,11 @@ builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 builder.Services.AddScoped<IExamRepository, ExamRepository>();
 builder.Services.AddScoped<IStudentExamRepository, StudentExamRepository>();
 
+// Phase 1: Profile repositories
+builder.Services.AddScoped<IAppUserRepository, AppUserRepository>();
+builder.Services.AddScoped<ITeacherProfileRepository, TeacherProfileRepository>();
+builder.Services.AddScoped<IStudentProfileRepository, StudentProfileRepository>();
+
 // Service registration
 builder.Services.AddScoped<ISubjectService, SubjectService>();
 builder.Services.AddScoped<IGradeService, GradeService>();
@@ -65,10 +70,35 @@ builder.Services.AddScoped<IStudentExamService, StudentExamService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IFileService, FileService>();
 
+// Phase 1: Profile and identity services
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IAppUserService, AppUserService>();
+builder.Services.AddScoped<ITeacherProfileService, TeacherProfileService>();
+builder.Services.AddScoped<IStudentProfileService, StudentProfileService>();
+
 // Controllers & Views
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+// Phase 1: Seed data
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<AppDbContext>();
+        var userManager = services.GetRequiredService<UserManager<AppUser>>();
+        var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
+
+        await DbSeeder.SeedAsync(context, userManager, roleManager);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the database.");
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -88,9 +118,5 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
-app.MapControllerRoute(
-    name: "areas",
-    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

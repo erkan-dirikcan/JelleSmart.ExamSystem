@@ -1,0 +1,81 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "Şifre Sıfırlama İsteği";
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <base href="~/">
+    <meta charset="utf-8" />
+    <title>Sistem Bilgisayar | @ViewData["Title"]</title>
+    <meta name="description" content="Sistem bilgisayar şifre sıfırlama onay sayfası" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!--begin::Fonts-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
+    <!--end::Fonts-->
+    <!--begin::Page Custom Styles(used by this page)-->
+    <link href="~/assets/css/pages/login/login-1.css" rel="stylesheet" type="text/css" />
+    <!--end::Page Custom Styles-->
+    <!--begin::Global Theme Styles(used by all pages)-->
+    <link href="~/assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/plugins/custom/prismjs/prismjs.bundle.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
+    <!--end::Global Theme Styles-->
+    <link rel="shortcut icon" href="~/assets/media/logos/favicon.ico" />
+</head>
+<body id="kt_body" class="header-fixed header-mobile-fixed subheader-enabled subheader-fixed aside-enabled aside-fixed aside-minimize-hoverable page-loading">
+    <div class="d-flex flex-column flex-root">
+        <div class="login login-1 login-signin-on d-flex flex-column flex-lg-row flex-column-fluid bg-white" id="kt_login">
+            <div class="login-aside d-flex flex-column flex-row-auto" style="background-color: #F2C98A;">
+                <div class="d-flex flex-column-auto flex-column pt-lg-40 pt-15">
+                    <a href="#" class="text-center mb-10">
+                        <img src="~/media/logos/LogoLogin.png" class="max-h-150px" alt="Logo" />
+                    </a>
+                    <h3 class="font-weight-bolder text-center font-size-h4 font-size-h1-lg" style="color: #986923;">
+                        Sistem Bilgisayar Portal Koala ile
+                        <br />Eşsiz Kullanım Deneyimini Keşfet
+                    </h3>
+                </div>
+                <div class="aside-img d-flex flex-row-fluid bgi-no-repeat bgi-position-y-bottom bgi-position-x-center" style="background-image: url(/assets/media/svg/illustrations/login-visual-1.svg)"></div>
+            </div>
+            
+            <div class="login-content flex-row-fluid d-flex flex-column justify-content-center position-relative overflow-hidden p-7 mx-auto">
+                <div class="d-flex flex-column-fluid flex-center">
+                    <div class="login-form">
+                        <div class="pb-13 pt-lg-0 pt-5 text-center">
+                            <h3 class="font-weight-bolder text-dark font-size-h4 font-size-h1-lg">E-Posta Gönderildi</h3>
+                            
+                            <div class="mt-10">
+                                <span class="svg-icon svg-icon-primary svg-icon-5x">
+                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                            <rect x="0" y="0" width="24" height="24"/>
+                                            <path d="M5,6 L19,6 C20.1045695,6 21,6.8954305 21,8 L21,17 C21,18.1045695 20.1045695,19 19,19 L5,19 C3.8954305,19 3,18.1045695 3,17 L3,8 C3,6.8954305 3.8954305,6 5,6 Z M5.20710678,8 L12,14.7928932 L18.7928932,8 L5.20710678,8 Z" fill="#000000"/>
+                                        </g>
+                                    </svg>
+                                </span>
+                            </div>
+
+                            <p class="text-muted font-weight-bold font-size-h4 mt-8">
+                                Eğer sistemimizde kayıtlı bir hesabınız varsa,<br/> 
+                                <strong class="text-primary">@TempData["Eposta"]</strong> <br/>
+                                adresine şifre sıfırlama bağlantısı gönderilmiştir.
+                                <br /><br />
+                                Lütfen e-posta kutunuzu kontrol ediniz.
+                            </p>
+                            
+                            <div class="mt-10">
+                                <a asp-controller="Account" asp-action="Login" class="btn btn-primary font-weight-bolder font-size-h6 px-8 py-4 my-3 text-white">Giriş Sayfasına Dön</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/assets/plugins/global/plugins.bundle.js"></script>
+    <script src="~/assets/plugins/custom/prismjs/prismjs.bundle.js"></script>
+    <script src="~/assets/js/scripts.bundle.js"></script>
+</body>
+</html>
