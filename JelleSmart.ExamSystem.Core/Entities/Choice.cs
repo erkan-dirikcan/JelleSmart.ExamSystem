@@ -11,10 +11,10 @@ namespace JelleSmart.ExamSystem.Core.Entities
         public bool IsCorrect { get; set; } = false;
 
         // Foreign key
-        public int QuestionId { get; set; }
+        public string? QuestionId { get; set; }
 
         // Navigation properties
-        public Question Question { get; set; } = null!;
+        public Question? Question { get; set; }
         public ICollection<StudentAnswer> StudentAnswers { get; set; } = new List<StudentAnswer>();
     }
 }

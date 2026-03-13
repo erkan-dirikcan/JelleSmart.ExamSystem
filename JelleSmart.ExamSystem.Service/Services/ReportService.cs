@@ -42,7 +42,8 @@ namespace JelleSmart.ExamSystem.Service.Services
 
             // Ders bazlı performans
             var subjectGroups = completedExams
-                .GroupBy(se => se.Exam?.SubjectId ?? 0)
+                .Where(se => se.Exam?.SubjectId != null)
+                .GroupBy(se => se.Exam!.SubjectId!)
                 .Select(g => new SubjectPerformanceDto
                 {
                     SubjectId = g.Key,
@@ -96,7 +97,7 @@ namespace JelleSmart.ExamSystem.Service.Services
             }).ToList();
         }
 
-        public async Task<IEnumerable<ExamResultDto>> GetExamResultsByExamAsync(int examId)
+        public async Task<IEnumerable<ExamResultDto>> GetExamResultsByExamAsync(string examId)
         {
             var studentExams = await _studentExamRepository.GetByExamAsync(examId);
             var completedExams = studentExams.Where(se => se.Status == Core.Enums.ExamStatus.Completed).ToList();
@@ -116,7 +117,7 @@ namespace JelleSmart.ExamSystem.Service.Services
             }).ToList();
         }
 
-        public async Task<StudentPerformanceDto> GetStudentPerformanceAsync(string studentId, int subjectId)
+        public async Task<StudentPerformanceDto> GetStudentPerformanceAsync(string studentId, string? subjectId)
         {
             var studentExams = await _studentExamRepository.GetByStudentAsync(studentId);
             var subjectExams = studentExams

@@ -13,7 +13,7 @@ namespace JelleSmart.ExamSystem.Core.DTOs
 
     public class TopicPerformanceDto
     {
-        public int TopicId { get; set; }
+        public string? TopicId { get; set; }
         public string TopicName { get; set; } = string.Empty;
         public int QuestionCount { get; set; }
         public int CorrectCount { get; set; }

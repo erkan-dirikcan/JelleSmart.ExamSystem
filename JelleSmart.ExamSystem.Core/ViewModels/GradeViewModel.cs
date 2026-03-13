@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace JelleSmart.ExamSystem.WebUI.Models
+namespace JelleSmart.ExamSystem.Core.ViewModels
 {
     public class GradeViewModel
     {
-        public int Id { get; set; }
+        public string? Id { get; set; }
 
         [Required(ErrorMessage = "Sınıf adı gereklidir")]
         [StringLength(50, ErrorMessage = "Sınıf adı en fazla 50 karakter olabilir")]

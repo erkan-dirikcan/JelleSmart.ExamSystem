@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace JelleSmart.ExamSystem.WebUI.Models
+namespace JelleSmart.ExamSystem.Core.ViewModels
 {
     public class SubjectViewModel
     {
-        public int Id { get; set; }
+        public string? Id { get; set; }
 
         [Required(ErrorMessage = "Ders adı gereklidir")]
         [StringLength(100, ErrorMessage = "Ders adı en fazla 100 karakter olabilir")]

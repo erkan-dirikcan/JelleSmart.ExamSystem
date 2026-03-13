@@ -1,9 +1,9 @@
-@model JelleSmart.ExamSystem.WebUI.Models.UnitViewModel
+@model JelleSmart.ExamSystem.Core.ViewModels.UnitViewModel
 
 @{
     ViewData["Title"] = "Yeni Ünite";
-    var subjects = ViewBag.Subjects as IEnumerable<JelleSmart.ExamSystem.Core.Entities.Subject>;
-    var grades = ViewBag.Grades as IEnumerable<JelleSmart.ExamSystem.Core.Entities.Grade>;
+    var subjects = ViewBag.Subjects as IEnumerable<JelleSmart.ExamSystem.Core.ViewModels.SubjectViewModel>;
+    var grades = ViewBag.Grades as IEnumerable<JelleSmart.ExamSystem.Core.ViewModels.GradeViewModel>;
 }
 
 <div class="card card-xl-stretch mb-5 mb-xl-8">
@@ -48,7 +48,7 @@
 
                 <div class="col-md-6 mb-5">
                     <label asp-for="SubjectId" class="form-label">Ders</label>
-                    <select asp-for="SubjectId" class="form-select form-select-solid" asp-items="@(new SelectList(subjects ?? new List<JelleSmart.ExamSystem.Core.Entities.Subject>(), "Id", "Name"))">
+                    <select asp-for="SubjectId" class="form-select form-select-solid" asp-items="@(new SelectList(subjects ?? new List<JelleSmart.ExamSystem.Core.ViewModels.SubjectViewModel>(), "Id", "Name"))">
                         <option value="">Seçiniz...</option>
                     </select>
                     <span asp-validation-for="SubjectId" class="text-danger fs-7"></span>
@@ -57,7 +57,7 @@
 
             <div class="mb-5">
                 <label asp-for="GradeId" class="form-label">Sınıf</label>
-                <select asp-for="GradeId" class="form-select form-select-solid" asp-items="@(new SelectList(grades ?? new List<JelleSmart.ExamSystem.Core.Entities.Grade>(), "Id", "Name"))">
+                <select asp-for="GradeId" class="form-select form-select-solid" asp-items="@(new SelectList(grades ?? new List<JelleSmart.ExamSystem.Core.ViewModels.GradeViewModel>(), "Id", "Name"))">
                     <option value="">Seçiniz...</option>
                 </select>
                 <span asp-validation-for="GradeId" class="text-danger fs-7"></span>

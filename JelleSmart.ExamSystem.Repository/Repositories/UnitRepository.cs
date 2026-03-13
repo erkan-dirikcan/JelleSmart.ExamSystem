@@ -11,7 +11,7 @@ namespace JelleSmart.ExamSystem.Repository.Repositories
         {
         }
 
-        public async Task<Unit?> GetWithTopicsAsync(int id)
+        public async Task<Unit?> GetWithTopicsAsync(string id)
         {
             return await _dbSet
                 .Include(u => u.Topics.Where(t => !t.IsDeleted))
@@ -20,7 +20,7 @@ namespace JelleSmart.ExamSystem.Repository.Repositories
                 .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
         }
 
-        public async Task<IEnumerable<Unit>> GetBySubjectAsync(int subjectId)
+        public async Task<IEnumerable<Unit>> GetBySubjectAsync(string subjectId)
         {
             return await _dbSet
                 .Include(u => u.Grade)
@@ -28,11 +28,28 @@ namespace JelleSmart.ExamSystem.Repository.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Unit>> GetByGradeAsync(int gradeId)
+        public async Task<IEnumerable<Unit>> GetByGradeAsync(string gradeId)
         {
             return await _dbSet
                 .Include(u => u.Subject)
                 .Where(u => u.GradeId == gradeId && !u.IsDeleted)
+                .ToListAsync();
+        }
+
+        public async Task<Unit?> GetByIdWithIncludesAsync(string id)
+        {
+            return await _dbSet
+                .Include(u => u.Subject)
+                .Include(u => u.Grade)
+                .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
+        }
+
+        public async Task<IEnumerable<Unit>> GetAllWithIncludesAsync()
+        {
+            return await _dbSet
+                .Include(u => u.Subject)
+                .Include(u => u.Grade)
+                .Where(u => !u.IsDeleted)
                 .ToListAsync();
         }
     }

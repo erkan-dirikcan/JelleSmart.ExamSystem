@@ -9,8 +9,8 @@ namespace JelleSmart.ExamSystem.Core.Interfaces.Services
         Task<TeacherProfile?> GetWithSubjectsAsync(string userId);
         Task<bool> CreateTeacherProfileAsync(string userId, CreateTeacherProfileDto dto);
         Task<bool> UpdateTeacherProfileAsync(string userId, UpdateTeacherProfileDto dto);
-        Task<bool> AddSubjectAsync(string userId, int subjectId);
-        Task<bool> RemoveSubjectAsync(string userId, int subjectId);
-        Task<bool> HasSubjectAsync(string userId, int subjectId);
+        Task<bool> AddSubjectAsync(string userId, string subjectId);
+        Task<bool> RemoveSubjectAsync(string userId, string subjectId);
+        Task<bool> HasSubjectAsync(string userId, string subjectId);
     }
 }

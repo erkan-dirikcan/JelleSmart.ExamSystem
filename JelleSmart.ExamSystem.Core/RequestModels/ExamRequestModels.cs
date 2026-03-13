@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace JelleSmart.ExamSystem.WebUI.Models
+namespace JelleSmart.ExamSystem.Core.RequestModels
 {
-    public class CreateExamViewModel
+    public class CreateExamRequestModel
     {
         [Required(ErrorMessage = "Sınav adı gereklidir")]
         public string Name { get; set; } = string.Empty;
@@ -14,12 +14,12 @@ namespace JelleSmart.ExamSystem.WebUI.Models
         public int Duration { get; set; } = 30;
 
         [Required(ErrorMessage = "Sınıf seçimi gereklidir")]
-        public int GradeId { get; set; }
+        public string? GradeId { get; set; }
 
         [Required(ErrorMessage = "Ders seçimi gereklidir")]
-        public int SubjectId { get; set; }
+        public string? SubjectId { get; set; }
 
-        public List<int>? TopicIds { get; set; }
+        public List<string?>? TopicIds { get; set; }
 
         [Required(ErrorMessage = "Soru sayısı gereklidir")]
         [Range(1, 100, ErrorMessage = "Soru sayısı 1-100 arasında olmalıdır")]
@@ -30,9 +30,11 @@ namespace JelleSmart.ExamSystem.WebUI.Models
         public double TotalPoints { get; set; } = 100;
 
         [Required(ErrorMessage = "Başlangıç tarihi gereklidir")]
-        public DateTime StartDate { get; set; } = DateTime.Now;
+        public DateTime StartTime { get; set; } = DateTime.Now;
 
         [Required(ErrorMessage = "Bitiş tarihi gereklidir")]
-        public DateTime EndDate { get; set; } = DateTime.Now.AddDays(7);
+        public DateTime EndTime { get; set; } = DateTime.Now.AddDays(7);
+
+        public string CreatedByUserId { get; set; } = string.Empty;
     }
 }

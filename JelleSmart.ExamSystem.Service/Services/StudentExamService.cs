@@ -22,17 +22,17 @@ namespace JelleSmart.ExamSystem.Service.Services
             _questionRepository = questionRepository;
         }
 
-        public async Task<StudentExam?> GetByIdAsync(int id)
+        public async Task<StudentExam?> GetByIdAsync(string id)
         {
             return await _studentExamRepository.GetByIdAsync(id);
         }
 
-        public async Task<StudentExam?> GetWithAnswersAsync(int id)
+        public async Task<StudentExam?> GetWithAnswersAsync(string id)
         {
             return await _studentExamRepository.GetWithAnswersAsync(id);
         }
 
-        public async Task<StudentExam?> GetByStudentAndExamAsync(string studentId, int examId)
+        public async Task<StudentExam?> GetByStudentAndExamAsync(string studentId, string examId)
         {
             return await _studentExamRepository.GetByStudentAndExamAsync(studentId, examId);
         }
@@ -42,7 +42,7 @@ namespace JelleSmart.ExamSystem.Service.Services
             return await _studentExamRepository.GetByStudentAsync(studentId);
         }
 
-        public async Task<StudentExam> StartExamAsync(int examId, string studentId)
+        public async Task<StudentExam> StartExamAsync(string examId, string studentId)
         {
             // Sınavı getir
             var exam = await _examRepository.GetWithQuestionsAsync(examId);
@@ -102,7 +102,7 @@ namespace JelleSmart.ExamSystem.Service.Services
                 throw new InvalidOperationException("Sınav aktif değil");
 
             // Süre kontrolü
-            var exam = await _examRepository.GetByIdAsync(studentExam.ExamId);
+            var exam = await _examRepository.GetByIdAsync(studentExam.ExamId!);
             if (exam == null)
                 throw new ArgumentException("Sınav bulunamadı");
 
@@ -124,9 +124,9 @@ namespace JelleSmart.ExamSystem.Service.Services
                 // Mevcut cevabı güncelle
                 existingAnswer.ChoiceId = dto.ChoiceId;
 
-                if (dto.ChoiceId.HasValue)
+                if (!string.IsNullOrEmpty(dto.ChoiceId))
                 {
-                    var selectedChoice = question.Choices.FirstOrDefault(c => c.Id == dto.ChoiceId.Value);
+                    var selectedChoice = question.Choices.FirstOrDefault(c => c.Id == dto.ChoiceId);
                     existingAnswer.IsCorrect = selectedChoice?.IsCorrect ?? false;
                     existingAnswer.Points = existingAnswer.IsCorrect ? (exam.TotalPoints / exam.QuestionCount) : 0;
                 }
@@ -149,11 +149,16 @@ namespace JelleSmart.ExamSystem.Service.Services
                     StudentUserId = dto.StudentUserId
                 };
 
-                if (dto.ChoiceId.HasValue)
+                if (!string.IsNullOrEmpty(dto.ChoiceId))
                 {
-                    var selectedChoice = question.Choices.FirstOrDefault(c => c.Id == dto.ChoiceId.Value);
+                    var selectedChoice = question.Choices.FirstOrDefault(c => c.Id == dto.ChoiceId);
                     studentAnswer.IsCorrect = selectedChoice?.IsCorrect ?? false;
                     studentAnswer.Points = studentAnswer.IsCorrect ? (exam.TotalPoints / exam.QuestionCount) : 0;
+                }
+                else
+                {
+                    studentAnswer.IsCorrect = false;
+                    studentAnswer.Points = 0;
                 }
 
                 studentExam.StudentAnswers.Add(studentAnswer);
@@ -161,7 +166,7 @@ namespace JelleSmart.ExamSystem.Service.Services
             }
         }
 
-        public async Task<StudentExam> CompleteExamAsync(int studentExamId)
+        public async Task<StudentExam> CompleteExamAsync(string studentExamId)
         {
             var studentExam = await _studentExamRepository.GetWithAnswersAsync(studentExamId);
             if (studentExam == null)
@@ -170,7 +175,7 @@ namespace JelleSmart.ExamSystem.Service.Services
             if (studentExam.Status != ExamStatus.InProgress)
                 throw new InvalidOperationException("Sınav zaten tamamlandı");
 
-            var exam = await _examRepository.GetWithQuestionsAsync(studentExam.ExamId);
+            var exam = await _examRepository.GetWithQuestionsAsync(studentExam.ExamId!);
             if (exam == null)
                 throw new ArgumentException("Sınav bulunamadı");
 
@@ -179,7 +184,7 @@ namespace JelleSmart.ExamSystem.Service.Services
             studentExam.Status = ExamStatus.Completed;
 
             var correctCount = studentExam.StudentAnswers.Count(sa => sa.IsCorrect);
-            var wrongCount = studentExam.StudentAnswers.Count(sa => !sa.IsCorrect && sa.ChoiceId.HasValue);
+            var wrongCount = studentExam.StudentAnswers.Count(sa => !sa.IsCorrect && sa.ChoiceId != null);
             var answeredCount = studentExam.StudentAnswers.Count;
             var emptyCount = exam.QuestionCount - answeredCount;
 
@@ -193,13 +198,13 @@ namespace JelleSmart.ExamSystem.Service.Services
             return studentExam;
         }
 
-        public async Task<ExamResultDto> GetExamResultAsync(int studentExamId)
+        public async Task<ExamResultDto> GetExamResultAsync(string studentExamId)
         {
             var studentExam = await _studentExamRepository.GetWithAnswersAsync(studentExamId);
             if (studentExam == null)
                 throw new ArgumentException("Sınav bulunamadı");
 
-            var exam = await _examRepository.GetWithQuestionsAsync(studentExam.ExamId);
+            var exam = await _examRepository.GetWithQuestionsAsync(studentExam.ExamId!);
             if (exam == null)
                 throw new ArgumentException("Sınav bulunamadı");
 
@@ -207,7 +212,7 @@ namespace JelleSmart.ExamSystem.Service.Services
             {
                 ExamId = exam.Id,
                 ExamName = exam.Name,
-                SubjectName = exam.Subject.Name,
+                SubjectName = exam.Subject!.Name,
                 Score = studentExam.Score,
                 TotalPoints = exam.TotalPoints,
                 Percentage = exam.TotalPoints > 0 ? (studentExam.Score / exam.TotalPoints) * 100 : 0,

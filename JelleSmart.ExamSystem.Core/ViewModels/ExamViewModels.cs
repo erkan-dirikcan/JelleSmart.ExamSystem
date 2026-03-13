@@ -1,8 +1,22 @@
-namespace JelleSmart.ExamSystem.WebUI.Models
+namespace JelleSmart.ExamSystem.Core.ViewModels
 {
+    public class CreateExamViewModel
+    {
+        public string Name { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public int Duration { get; set; } = 30;
+        public string? GradeId { get; set; }
+        public string? SubjectId { get; set; }
+        public List<string?>? TopicIds { get; set; }
+        public int QuestionCount { get; set; } = 10;
+        public double TotalPoints { get; set; } = 100;
+        public DateTime StartDate { get; set; } = DateTime.Now;
+        public DateTime EndDate { get; set; } = DateTime.Now.AddDays(7);
+    }
+
     public class TakeExamViewModel
     {
-        public int StudentExamId { get; set; }
+        public string StudentExamId { get; set; } = null!;
         public string ExamName { get; set; } = string.Empty;
         public int Duration { get; set; }
         public DateTime StartTime { get; set; }
@@ -12,18 +26,18 @@ namespace JelleSmart.ExamSystem.WebUI.Models
 
     public class QuestionInExamViewModel
     {
-        public int ExamQuestionId { get; set; }
-        public int QuestionId { get; set; }
+        public string ExamQuestionId { get; set; } = null!;
+        public string QuestionId { get; set; } = null!;
         public int Order { get; set; }
         public string Text { get; set; } = string.Empty;
         public string? ImageUrl { get; set; }
         public List<ChoiceInExamViewModel> Choices { get; set; } = new();
-        public int? SelectedChoiceId { get; set; }
+        public string? SelectedChoiceId { get; set; }
     }
 
     public class ChoiceInExamViewModel
     {
-        public int Id { get; set; }
+        public string Id { get; set; } = null!;
         public string Label { get; set; } = string.Empty;
         public string Text { get; set; } = string.Empty;
         public string? ImageUrl { get; set; }
@@ -31,14 +45,14 @@ namespace JelleSmart.ExamSystem.WebUI.Models
 
     public class SubmitAnswerRequest
     {
-        public int StudentExamId { get; set; }
-        public int QuestionId { get; set; }
-        public int? ChoiceId { get; set; }
+        public string StudentExamId { get; set; } = null!;
+        public string QuestionId { get; set; } = null!;
+        public string? ChoiceId { get; set; }
     }
 
     public class ExamResultViewModel
     {
-        public Core.DTOs.ExamResultDto Result { get; set; } = null!;
+        public DTOs.ExamResultDto Result { get; set; } = null!;
         public List<AnswerDetailViewModel> Answers { get; set; } = new();
     }
 

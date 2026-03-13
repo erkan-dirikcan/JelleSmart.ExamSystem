@@ -2,7 +2,6 @@ using JelleSmart.ExamSystem.Core.Entities;
 using JelleSmart.ExamSystem.Core.DTOs;
 using JelleSmart.ExamSystem.Core.Interfaces.Repositories;
 using JelleSmart.ExamSystem.Core.Interfaces.Services;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace JelleSmart.ExamSystem.Service.Services
@@ -52,7 +51,7 @@ namespace JelleSmart.ExamSystem.Service.Services
                 foreach (var subjectId in dto.SubjectIds)
                 {
                     var subject = await _subjectRepository.GetByIdAsync(subjectId);
-                    if (subject != null && !await _teacherProfileRepository.HasSubjectAsync(profile.Id, subjectId))
+                    if (subject != null && !await _teacherProfileRepository.HasSubjectAsync(profile.Id!, subjectId))
                     {
                         var teacherSubject = new TeacherSubject
                         {
@@ -101,9 +100,9 @@ namespace JelleSmart.ExamSystem.Service.Services
                         var currentSubjectIds = currentProfile.Subjects.Select(ts => ts.SubjectId).ToList();
                         foreach (var currentSubjectId in currentSubjectIds)
                         {
-                            if (!dto.SubjectIds.Contains(currentSubjectId))
+                            if (!dto.SubjectIds.Contains(currentSubjectId!))
                             {
-                                await _teacherProfileRepository.RemoveSubjectAsync(profile.Id, currentSubjectId);
+                                await _teacherProfileRepository.RemoveSubjectAsync(profile.Id!, currentSubjectId!);
                             }
                         }
 
@@ -139,7 +138,7 @@ namespace JelleSmart.ExamSystem.Service.Services
             }
         }
 
-        public async Task<bool> AddSubjectAsync(string userId, int subjectId)
+        public async Task<bool> AddSubjectAsync(string userId, string subjectId)
         {
             try
             {
@@ -155,7 +154,7 @@ namespace JelleSmart.ExamSystem.Service.Services
                     return false;
                 }
 
-                if (await _teacherProfileRepository.HasSubjectAsync(profile.Id, subjectId))
+                if (await _teacherProfileRepository.HasSubjectAsync(profile.Id!, subjectId))
                     return true; // Already has the subject
 
                 var teacherSubject = new TeacherSubject
@@ -176,7 +175,7 @@ namespace JelleSmart.ExamSystem.Service.Services
             }
         }
 
-        public async Task<bool> RemoveSubjectAsync(string userId, int subjectId)
+        public async Task<bool> RemoveSubjectAsync(string userId, string subjectId)
         {
             try
             {
@@ -184,7 +183,7 @@ namespace JelleSmart.ExamSystem.Service.Services
                 if (profile == null)
                     return false;
 
-                await _teacherProfileRepository.RemoveSubjectAsync(profile.Id, subjectId);
+                await _teacherProfileRepository.RemoveSubjectAsync(profile.Id!, subjectId);
                 await _teacherProfileRepository.SaveChangesAsync();
 
                 return true;
@@ -196,13 +195,13 @@ namespace JelleSmart.ExamSystem.Service.Services
             }
         }
 
-        public async Task<bool> HasSubjectAsync(string userId, int subjectId)
+        public async Task<bool> HasSubjectAsync(string userId, string subjectId)
         {
             var profile = await _teacherProfileRepository.GetByUserIdAsync(userId);
             if (profile == null)
                 return false;
 
-            return await _teacherProfileRepository.HasSubjectAsync(profile.Id, subjectId);
+            return await _teacherProfileRepository.HasSubjectAsync(profile.Id!, subjectId);
         }
     }
 }

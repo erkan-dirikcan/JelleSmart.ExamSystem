@@ -3,6 +3,7 @@ using JelleSmart.ExamSystem.Core.Entities;
 using JelleSmart.ExamSystem.Core.Entities.Identity;
 using JelleSmart.ExamSystem.Core.Enums;
 using JelleSmart.ExamSystem.Core.Interfaces.Services;
+using JelleSmart.ExamSystem.Core.ViewModels;
 using JelleSmart.ExamSystem.WebUI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -37,18 +38,22 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             _emailService = emailService;
         }
 
-        private async Task PopulateRegistrationDropdownsAsync(RegisterViewModel model)
+        private async Task PopulateRegistrationDropdownsAsync(RegisterViewModelUI model)
         {
-            model.AvailableSubjects = (await _subjectService.GetAllAsync())
+            var subjectsTask = _subjectService.GetAllAsync();
+            var gradesTask = _gradeService.GetAllAsync();
+            await Task.WhenAll(subjectsTask, gradesTask);
+
+            model.AvailableSubjects = subjectsTask.Result
                 .Select(s => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
                 {
-                    Value = s.Id.ToString(),
+                    Value = s.Id,
                     Text = s.Name
                 }).ToList();
-            model.AvailableGrades = (await _gradeService.GetAllAsync())
+            model.AvailableGrades = gradesTask.Result
                 .Select(g => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
                 {
-                    Value = g.Id.ToString(),
+                    Value = g.Id,
                     Text = g.Name
                 }).ToList();
         }
@@ -209,14 +214,14 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> Register()
         {
-            var model = new RegisterViewModel();
+            var model = new RegisterViewModelUI();
             await PopulateRegistrationDropdownsAsync(model);
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterViewModelUI model)
         {
             if (!ModelState.IsValid)
             {

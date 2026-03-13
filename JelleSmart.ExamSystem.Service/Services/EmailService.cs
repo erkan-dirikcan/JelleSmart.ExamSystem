@@ -62,8 +62,8 @@ namespace JelleSmart.ExamSystem.Service.Services
                 
                 await smtp.ConnectAsync(server, port, SecureSocketOptions.SslOnConnect);
                 
-                string user = emailSettings["UserName"] ?? "matterapist@jellosmart.com";
-                string pass = emailSettings["Password"] ?? "As987987!";
+                string user = emailSettings["UserName"] ?? throw new InvalidOperationException("Email UserName configuration is missing");
+                string pass = emailSettings["Password"] ?? throw new InvalidOperationException("Email Password configuration is missing");
                 await smtp.AuthenticateAsync(user, pass);
                 
                 await smtp.SendAsync(email);

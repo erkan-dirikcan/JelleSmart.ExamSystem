@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JelleSmart.ExamSystem.Repository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260307111331_Phase1_ProfileEntities")]
-    partial class Phase1_ProfileEntities
+    [Migration("20260312135618_Phase1_SequentialGuidIds")]
+    partial class Phase1_SequentialGuidIds
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,11 +27,9 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
 
             modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.Choice", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -49,8 +47,8 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("QuestionId")
-                        .HasColumnType("int");
+                    b.Property<string>("QuestionId")
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<string>("Text")
                         .IsRequired()
@@ -68,11 +66,9 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
 
             modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.Exam", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -90,8 +86,8 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("GradeId")
-                        .HasColumnType("int");
+                    b.Property<string>("GradeId")
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -112,8 +108,8 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("SubjectId")
-                        .HasColumnType("int");
+                    b.Property<string>("SubjectId")
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<string>("TopicIds")
                         .HasColumnType("nvarchar(max)");
@@ -137,17 +133,15 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
 
             modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.ExamQuestion", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ExamId")
-                        .HasColumnType("int");
+                    b.Property<string>("ExamId")
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -158,11 +152,8 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.Property<double>("Points")
                         .HasColumnType("float");
 
-                    b.Property<int>("QuestionId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("QuestionId1")
-                        .HasColumnType("int");
+                    b.Property<string>("QuestionId")
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -173,18 +164,14 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.HasIndex("QuestionId1");
-
                     b.ToTable("ExamQuestions");
                 });
 
             modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.Grade", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -263,8 +250,8 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("GradeId")
-                        .HasColumnType("int");
+                    b.Property<string>("GradeId")
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -299,8 +286,8 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("SubjectId")
-                        .HasColumnType("int");
+                    b.Property<string>("SubjectId")
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -328,11 +315,9 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
 
             modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.Question", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -347,8 +332,8 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.Property<string>("Explanation")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("GradeId")
-                        .HasColumnType("int");
+                    b.Property<string>("GradeId")
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
@@ -359,18 +344,18 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("int");
 
-                    b.Property<int>("SubjectId")
-                        .HasColumnType("int");
+                    b.Property<string>("SubjectId")
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TopicId")
-                        .HasColumnType("int");
+                    b.Property<string>("TopicId")
+                        .HasColumnType("nvarchar(36)");
 
-                    b.Property<int?>("UnitId")
-                        .HasColumnType("int");
+                    b.Property<string>("UnitId")
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -392,14 +377,12 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
 
             modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.StudentAnswer", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("ChoiceId")
-                        .HasColumnType("int");
+                    b.Property<string>("ChoiceId")
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -413,11 +396,11 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.Property<double>("Points")
                         .HasColumnType("float");
 
-                    b.Property<int>("QuestionId")
-                        .HasColumnType("int");
+                    b.Property<string>("QuestionId")
+                        .HasColumnType("nvarchar(36)");
 
-                    b.Property<int>("StudentExamId")
-                        .HasColumnType("int");
+                    b.Property<string>("StudentExamId")
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<string>("StudentUserId")
                         .IsRequired()
@@ -435,18 +418,17 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.HasIndex("StudentUserId");
 
                     b.HasIndex("StudentExamId", "QuestionId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[StudentExamId] IS NOT NULL AND [QuestionId] IS NOT NULL");
 
                     b.ToTable("StudentAnswers");
                 });
 
             modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.StudentExam", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<DateTime?>("CompletedAt")
                         .HasColumnType("datetime2");
@@ -460,8 +442,8 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.Property<double>("EmptyCount")
                         .HasColumnType("float");
 
-                    b.Property<int>("ExamId")
-                        .HasColumnType("int");
+                    b.Property<string>("ExamId")
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -493,18 +475,17 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.HasIndex("ExamId");
 
                     b.HasIndex("StudentUserId", "ExamId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[ExamId] IS NOT NULL");
 
                     b.ToTable("StudentExams");
                 });
 
             modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.StudentParent", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -527,8 +508,8 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("StudentProfileId")
-                        .HasColumnType("int");
+                    b.Property<string>("StudentProfileId")
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -536,18 +517,17 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("StudentProfileId", "ParentType")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[StudentProfileId] IS NOT NULL");
 
                     b.ToTable("StudentParents");
                 });
 
             modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.StudentProfile", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -555,8 +535,8 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.Property<DateOnly?>("EnrollmentDate")
                         .HasColumnType("date");
 
-                    b.Property<int>("GradeId")
-                        .HasColumnType("int");
+                    b.Property<string>("GradeId")
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -583,11 +563,9 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
 
             modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.StudentSubject", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -599,8 +577,8 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("SubjectId")
-                        .HasColumnType("int");
+                    b.Property<string>("SubjectId")
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -616,11 +594,9 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
 
             modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.Subject", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -648,11 +624,9 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
 
             modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.TeacherProfile", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -686,11 +660,11 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
 
             modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.TeacherSubject", b =>
                 {
-                    b.Property<int>("TeacherProfileId")
-                        .HasColumnType("int");
+                    b.Property<string>("TeacherProfileId")
+                        .HasColumnType("nvarchar(36)");
 
-                    b.Property<int>("SubjectId")
-                        .HasColumnType("int");
+                    b.Property<string>("SubjectId")
+                        .HasColumnType("nvarchar(36)");
 
                     b.HasKey("TeacherProfileId", "SubjectId");
 
@@ -701,11 +675,9 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
 
             modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.Topic", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(max)");
@@ -723,8 +695,8 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UnitId")
-                        .HasColumnType("int");
+                    b.Property<string>("UnitId")
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -738,11 +710,9 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
 
             modelBuilder.Entity("JelleSmart.ExamSystem.Core.Entities.Unit", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -750,8 +720,8 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("GradeId")
-                        .HasColumnType("int");
+                    b.Property<string>("GradeId")
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -760,8 +730,8 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SubjectId")
-                        .HasColumnType("int");
+                    b.Property<string>("SubjectId")
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -886,8 +856,7 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.HasOne("JelleSmart.ExamSystem.Core.Entities.Question", "Question")
                         .WithMany("Choices")
                         .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Question");
                 });
@@ -902,15 +871,11 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
 
                     b.HasOne("JelleSmart.ExamSystem.Core.Entities.Grade", "Grade")
                         .WithMany()
-                        .HasForeignKey("GradeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GradeId");
 
                     b.HasOne("JelleSmart.ExamSystem.Core.Entities.Subject", "Subject")
                         .WithMany()
-                        .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SubjectId");
 
                     b.Navigation("CreatedByUser");
 
@@ -924,18 +889,12 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.HasOne("JelleSmart.ExamSystem.Core.Entities.Exam", "Exam")
                         .WithMany("ExamQuestions")
                         .HasForeignKey("ExamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("JelleSmart.ExamSystem.Core.Entities.Question", "Question")
-                        .WithMany()
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("JelleSmart.ExamSystem.Core.Entities.Question", null)
                         .WithMany("ExamQuestions")
-                        .HasForeignKey("QuestionId1");
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Exam");
 
@@ -969,15 +928,12 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
 
                     b.HasOne("JelleSmart.ExamSystem.Core.Entities.Grade", "Grade")
                         .WithMany()
-                        .HasForeignKey("GradeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GradeId");
 
                     b.HasOne("JelleSmart.ExamSystem.Core.Entities.Subject", "Subject")
                         .WithMany("Questions")
                         .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("JelleSmart.ExamSystem.Core.Entities.Topic", "Topic")
                         .WithMany("Questions")
@@ -1010,14 +966,12 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.HasOne("JelleSmart.ExamSystem.Core.Entities.Question", "Question")
                         .WithMany()
                         .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("JelleSmart.ExamSystem.Core.Entities.StudentExam", "StudentExam")
                         .WithMany("StudentAnswers")
                         .HasForeignKey("StudentExamId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("JelleSmart.ExamSystem.Core.Entities.Identity.AppUser", "Student")
                         .WithMany("StudentAnswers")
@@ -1039,8 +993,7 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.HasOne("JelleSmart.ExamSystem.Core.Entities.Exam", "Exam")
                         .WithMany("StudentExams")
                         .HasForeignKey("ExamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("JelleSmart.ExamSystem.Core.Entities.Identity.AppUser", "Student")
                         .WithMany("StudentExams")
@@ -1058,8 +1011,7 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.HasOne("JelleSmart.ExamSystem.Core.Entities.StudentProfile", "StudentProfile")
                         .WithMany("Parents")
                         .HasForeignKey("StudentProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("StudentProfile");
                 });
@@ -1069,8 +1021,7 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.HasOne("JelleSmart.ExamSystem.Core.Entities.Grade", "Grade")
                         .WithMany()
                         .HasForeignKey("GradeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("JelleSmart.ExamSystem.Core.Entities.Identity.AppUser", "User")
                         .WithOne("StudentProfile")
@@ -1094,8 +1045,7 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.HasOne("JelleSmart.ExamSystem.Core.Entities.Subject", "Subject")
                         .WithMany()
                         .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Student");
 
@@ -1137,8 +1087,7 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.HasOne("JelleSmart.ExamSystem.Core.Entities.Unit", "Unit")
                         .WithMany("Topics")
                         .HasForeignKey("UnitId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Unit");
                 });
@@ -1148,14 +1097,12 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     b.HasOne("JelleSmart.ExamSystem.Core.Entities.Grade", "Grade")
                         .WithMany("Units")
                         .HasForeignKey("GradeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("JelleSmart.ExamSystem.Core.Entities.Subject", "Subject")
                         .WithMany("Units")
                         .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Grade");
 

@@ -6,7 +6,7 @@ namespace JelleSmart.ExamSystem.Core.Interfaces.Services
     {
         Task<StudentReportDto> GetStudentReportAsync(string studentId);
         Task<IEnumerable<ExamResultDto>> GetStudentExamResultsAsync(string studentId);
-        Task<IEnumerable<ExamResultDto>> GetExamResultsByExamAsync(int examId);
-        Task<StudentPerformanceDto> GetStudentPerformanceAsync(string studentId, int subjectId);
+        Task<IEnumerable<ExamResultDto>> GetExamResultsByExamAsync(string examId);
+        Task<StudentPerformanceDto> GetStudentPerformanceAsync(string studentId, string? subjectId);
     }
 }

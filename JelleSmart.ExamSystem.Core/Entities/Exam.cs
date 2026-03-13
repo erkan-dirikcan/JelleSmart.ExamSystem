@@ -19,10 +19,10 @@ namespace JelleSmart.ExamSystem.Core.Entities
         public ExamStatus Status { get; set; } = ExamStatus.NotStarted;
 
         // Hangi sınıf için?
-        public int GradeId { get; set; }
+        public string? GradeId { get; set; }
 
         // Hangi ders için?
-        public int SubjectId { get; set; }
+        public string? SubjectId { get; set; }
 
         // Hangi kazanımlardan? (JSON olarak saklanabilir)
         public string? TopicIds { get; set; }
@@ -31,8 +31,8 @@ namespace JelleSmart.ExamSystem.Core.Entities
         public string CreatedByUserId { get; set; } = null!;
 
         // Navigation properties
-        public Grade Grade { get; set; } = null!;
-        public Subject Subject { get; set; } = null!;
+        public Grade? Grade { get; set; }
+        public Subject? Subject { get; set; }
         public AppUser CreatedByUser { get; set; } = null!;
         public ICollection<ExamQuestion> ExamQuestions { get; set; } = new List<ExamQuestion>();
         public ICollection<StudentExam> StudentExams { get; set; } = new List<StudentExam>();

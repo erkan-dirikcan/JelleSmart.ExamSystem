@@ -4,8 +4,8 @@ namespace JelleSmart.ExamSystem.Core.Entities
 {
     public class StudentParent : BaseEntity
     {
-        public int StudentProfileId { get; set; }
-        public StudentProfile StudentProfile { get; set; } = null!;
+        public string? StudentProfileId { get; set; }
+        public StudentProfile? StudentProfile { get; set; }
 
         public ParentType ParentType { get; set; }
         public string? FirstName { get; set; }

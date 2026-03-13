@@ -14,7 +14,7 @@ namespace JelleSmart.ExamSystem.Core.DTOs
 
     public class SubjectPerformanceDto
     {
-        public int SubjectId { get; set; }
+        public string? SubjectId { get; set; }
         public string SubjectName { get; set; } = string.Empty;
         public double AverageScore { get; set; }
         public int ExamCount { get; set; }

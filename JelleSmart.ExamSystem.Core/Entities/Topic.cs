@@ -12,10 +12,10 @@ namespace JelleSmart.ExamSystem.Core.Entities
         public string? Code { get; set; } // Konu kodu (Örn: M.1.1.1)
 
         // Foreign key
-        public int UnitId { get; set; }
+        public string? UnitId { get; set; }
 
         // Navigation properties
-        public Unit Unit { get; set; } = null!;
+        public Unit? Unit { get; set; }
         public ICollection<Question> Questions { get; set; } = new List<Question>();
     }
 }

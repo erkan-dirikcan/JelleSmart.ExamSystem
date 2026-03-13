@@ -9,12 +9,12 @@ namespace JelleSmart.ExamSystem.Core.Entities
         public string? Description { get; set; }
 
         // Foreign keys
-        public int SubjectId { get; set; }
-        public int GradeId { get; set; }
+        public string? SubjectId { get; set; }
+        public string? GradeId { get; set; }
 
         // Navigation properties
-        public Subject Subject { get; set; } = null!;
-        public Grade Grade { get; set; } = null!;
+        public Subject? Subject { get; set; }
+        public Grade? Grade { get; set; }
         public ICollection<Topic> Topics { get; set; } = new List<Topic>();
         public ICollection<Question> Questions { get; set; } = new List<Question>();
     }

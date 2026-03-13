@@ -30,7 +30,7 @@ namespace JelleSmart.ExamSystem.Repository.Repositories
                 .FirstOrDefaultAsync(tp => tp.UserId == userId);
         }
 
-        public async Task<bool> HasSubjectAsync(int teacherProfileId, int subjectId)
+        public async Task<bool> HasSubjectAsync(string teacherProfileId, string subjectId)
         {
             return await _context.TeacherSubjects
                 .AnyAsync(ts => ts.TeacherProfileId == teacherProfileId && ts.SubjectId == subjectId);
@@ -41,7 +41,7 @@ namespace JelleSmart.ExamSystem.Repository.Repositories
             await _context.TeacherSubjects.AddAsync(teacherSubject);
         }
 
-        public async Task RemoveSubjectAsync(int teacherProfileId, int subjectId)
+        public async Task RemoveSubjectAsync(string teacherProfileId, string subjectId)
         {
             var teacherSubject = await _context.TeacherSubjects
                 .FirstOrDefaultAsync(ts => ts.TeacherProfileId == teacherProfileId && ts.SubjectId == subjectId);

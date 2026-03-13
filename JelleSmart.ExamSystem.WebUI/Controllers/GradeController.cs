@@ -1,7 +1,6 @@
-using JelleSmart.ExamSystem.Core.Entities;
+using JelleSmart.ExamSystem.Core.ViewModels;
 using JelleSmart.ExamSystem.Core.Interfaces.Services;
 using JelleSmart.ExamSystem.Core.Enums;
-using JelleSmart.ExamSystem.WebUI.Models;
 using JelleSmart.ExamSystem.WebUI.ViewComponents;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,9 +22,8 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             ViewData["ActivePage"] = ManageNavPages.Grades;
             ViewData["Title"] = "Sınıflar";
             ViewData["PageDescription"] = "Sistem sınıflarını yönetin";
-            var grades = await _gradeService.GetAllAsync();
-            var viewModels = grades.OrderBy(g => g.Level).Select(g => g.ToViewModel()).ToList();
-            return View(viewModels);
+            var viewModels = await _gradeService.GetAllViewModelAsync();
+            return View(viewModels.OrderBy(v => v.Level));
         }
 
         public IActionResult Create()
@@ -43,23 +41,22 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             if (!ModelState.IsValid)
                 return View(viewModel);
 
-            var entity = viewModel.ToEntity();
-            await _gradeService.CreateAsync(entity);
+            await _gradeService.CreateViewModelAsync(viewModel);
             TempData["Success"] = "Sınıf başarıyla eklendi";
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(string id)
         {
             ViewData["ActivePage"] = ManageNavPages.Grades;
             ViewData["Title"] = "Sınıf Düzenle";
             ViewData["PageDescription"] = "Sınıf bilgilerini düzenleyin";
 
-            var grade = await _gradeService.GetByIdAsync(id);
-            if (grade == null)
+            var viewModel = await _gradeService.GetViewModelByIdAsync(id);
+            if (viewModel == null)
                 return NotFound();
 
-            return View(grade.ToViewModel());
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -69,32 +66,27 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             if (!ModelState.IsValid)
                 return View(viewModel);
 
-            var grade = await _gradeService.GetByIdAsync(viewModel.Id);
-            if (grade == null)
-                return NotFound();
-
-            viewModel.UpdateEntity(grade);
-            await _gradeService.UpdateAsync(grade);
+            await _gradeService.UpdateViewModelAsync(viewModel);
             TempData["Success"] = "Sınıf başarıyla güncellendi";
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             ViewData["ActivePage"] = ManageNavPages.Grades;
             ViewData["Title"] = "Sınıf Sil";
             ViewData["PageDescription"] = "Sınıf silme onayı";
 
-            var grade = await _gradeService.GetByIdAsync(id);
-            if (grade == null)
+            var viewModel = await _gradeService.GetViewModelByIdAsync(id);
+            if (viewModel == null)
                 return NotFound();
 
-            return View(grade.ToViewModel());
+            return View(viewModel);
         }
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
             await _gradeService.DeleteAsync(id);
             TempData["Success"] = "Sınıf başarıyla silindi";

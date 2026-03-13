@@ -1,4 +1,4 @@
-@model JelleSmart.ExamSystem.WebUI.Models.TopicViewModel
+@model JelleSmart.ExamSystem.Core.ViewModels.TopicViewModel
 
 @{
     ViewData["Title"] = "Konu Düzenle";
@@ -32,7 +32,7 @@
 
             <div class="mb-5">
                 <label asp-for="UnitId" class="form-label">Ünite</label>
-                <select asp-for="UnitId" class="form-select form-select-solid" asp-items="@(new SelectList(ViewBag.Units ?? new List<JelleSmart.ExamSystem.Core.Entities.Unit>(), "Id", "Name"))">
+                <select asp-for="UnitId" class="form-select form-select-solid" asp-items="@(new SelectList(ViewBag.Units ?? new List<JelleSmart.ExamSystem.Core.ViewModels.UnitViewModel>(), "Id", "Name"))">
                     <option value="">Seçiniz...</option>
                 </select>
                 <span asp-validation-for="UnitId" class="text-danger fs-7"></span>

@@ -9,10 +9,10 @@ namespace JelleSmart.ExamSystem.Core.Entities
     {
         // Foreign keys
         public string StudentUserId { get; set; } = null!;
-        public int SubjectId { get; set; }
+        public string? SubjectId { get; set; }
 
         // Navigation properties
         public AppUser Student { get; set; } = null!;
-        public Subject Subject { get; set; } = null!;
+        public Subject? Subject { get; set; }
     }
 }

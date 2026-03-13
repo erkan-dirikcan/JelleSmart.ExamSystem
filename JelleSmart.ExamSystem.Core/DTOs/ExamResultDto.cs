@@ -2,7 +2,7 @@ namespace JelleSmart.ExamSystem.Core.DTOs
 {
     public class ExamResultDto
     {
-        public int ExamId { get; set; }
+        public string? ExamId { get; set; }
         public string ExamName { get; set; } = string.Empty;
         public string SubjectName { get; set; } = string.Empty;
         public double Score { get; set; }

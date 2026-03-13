@@ -32,7 +32,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             return View(results);
         }
 
-        public async Task<IActionResult> SubjectPerformance(int subjectId)
+        public async Task<IActionResult> SubjectPerformance(string subjectId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var performance = await _reportService.GetStudentPerformanceAsync(userId!, subjectId);

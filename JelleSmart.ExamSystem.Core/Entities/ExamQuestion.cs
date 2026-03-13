@@ -9,11 +9,11 @@ namespace JelleSmart.ExamSystem.Core.Entities
         public double Points { get; set; } = 1.0; // Bu sorunun puanı
 
         // Foreign keys
-        public int ExamId { get; set; }
-        public int QuestionId { get; set; }
+        public string? ExamId { get; set; }
+        public string? QuestionId { get; set; }
 
         // Navigation properties
-        public Exam Exam { get; set; } = null!;
-        public Question Question { get; set; } = null!;
+        public Exam? Exam { get; set; }
+        public Question? Question { get; set; }
     }
 }

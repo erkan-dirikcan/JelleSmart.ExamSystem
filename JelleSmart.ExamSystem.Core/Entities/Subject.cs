@@ -1,5 +1,3 @@
-using JelleSmart.ExamSystem.Core.Entities.Identity;
-
 namespace JelleSmart.ExamSystem.Core.Entities
 {
     /// <summary>

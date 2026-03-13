@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace JelleSmart.ExamSystem.Repository.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Phase1_SequentialGuidIds : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,8 +30,7 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                 name: "Grades",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     Level = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -47,8 +46,7 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                 name: "Subjects",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IconClass = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -91,8 +89,8 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    SubjectId = table.Column<int>(type: "int", nullable: true),
-                    GradeId = table.Column<int>(type: "int", nullable: true),
+                    SubjectId = table.Column<string>(type: "nvarchar(36)", nullable: true),
+                    GradeId = table.Column<string>(type: "nvarchar(36)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -129,12 +127,11 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                 name: "Units",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SubjectId = table.Column<int>(type: "int", nullable: false),
-                    GradeId = table.Column<int>(type: "int", nullable: false),
+                    SubjectId = table.Column<string>(type: "nvarchar(36)", nullable: true),
+                    GradeId = table.Column<string>(type: "nvarchar(36)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
@@ -245,8 +242,7 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                 name: "Exams",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Duration = table.Column<int>(type: "int", nullable: false),
@@ -256,8 +252,8 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    GradeId = table.Column<int>(type: "int", nullable: false),
-                    SubjectId = table.Column<int>(type: "int", nullable: false),
+                    GradeId = table.Column<string>(type: "nvarchar(36)", nullable: true),
+                    SubjectId = table.Column<string>(type: "nvarchar(36)", nullable: true),
                     TopicIds = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedByUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -277,24 +273,51 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                         name: "FK_Exams_Grades_GradeId",
                         column: x => x.GradeId,
                         principalTable: "Grades",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Exams_Subjects_SubjectId",
                         column: x => x.SubjectId,
                         principalTable: "Subjects",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StudentProfiles",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    GradeId = table.Column<string>(type: "nvarchar(36)", nullable: true),
+                    StudentNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EnrollmentDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StudentProfiles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StudentProfiles_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StudentProfiles_Grades_GradeId",
+                        column: x => x.GradeId,
+                        principalTable: "Grades",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
                 name: "StudentSubjects",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     StudentUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    SubjectId = table.Column<int>(type: "int", nullable: false),
+                    SubjectId = table.Column<string>(type: "nvarchar(36)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
@@ -317,15 +340,38 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TeacherProfiles",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Department = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HireDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TeacherProfiles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TeacherProfiles_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Topics",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Code = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UnitId = table.Column<int>(type: "int", nullable: false),
+                    UnitId = table.Column<string>(type: "nvarchar(36)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
@@ -345,8 +391,7 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                 name: "StudentExams",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     StartedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CompletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Score = table.Column<double>(type: "float", nullable: false),
@@ -356,7 +401,7 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                     Status = table.Column<int>(type: "int", nullable: false),
                     RemainingTime = table.Column<int>(type: "int", nullable: true),
                     StudentUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ExamId = table.Column<int>(type: "int", nullable: false),
+                    ExamId = table.Column<string>(type: "nvarchar(36)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
@@ -379,20 +424,69 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "StudentParents",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
+                    StudentProfileId = table.Column<string>(type: "nvarchar(36)", nullable: true),
+                    ParentType = table.Column<int>(type: "int", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StudentParents", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StudentParents_StudentProfiles_StudentProfileId",
+                        column: x => x.StudentProfileId,
+                        principalTable: "StudentProfiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TeacherSubjects",
+                columns: table => new
+                {
+                    TeacherProfileId = table.Column<string>(type: "nvarchar(36)", nullable: false),
+                    SubjectId = table.Column<string>(type: "nvarchar(36)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TeacherSubjects", x => new { x.TeacherProfileId, x.SubjectId });
+                    table.ForeignKey(
+                        name: "FK_TeacherSubjects_Subjects_SubjectId",
+                        column: x => x.SubjectId,
+                        principalTable: "Subjects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TeacherSubjects_TeacherProfiles_TeacherProfileId",
+                        column: x => x.TeacherProfileId,
+                        principalTable: "TeacherProfiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Questions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Explanation = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Difficulty = table.Column<int>(type: "int", nullable: false),
                     Order = table.Column<int>(type: "int", nullable: false),
-                    SubjectId = table.Column<int>(type: "int", nullable: false),
-                    UnitId = table.Column<int>(type: "int", nullable: true),
-                    TopicId = table.Column<int>(type: "int", nullable: true),
-                    GradeId = table.Column<int>(type: "int", nullable: false),
+                    SubjectId = table.Column<string>(type: "nvarchar(36)", nullable: true),
+                    UnitId = table.Column<string>(type: "nvarchar(36)", nullable: true),
+                    TopicId = table.Column<string>(type: "nvarchar(36)", nullable: true),
+                    GradeId = table.Column<string>(type: "nvarchar(36)", nullable: true),
                     CreatedByUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -411,8 +505,7 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                         name: "FK_Questions_Grades_GradeId",
                         column: x => x.GradeId,
                         principalTable: "Grades",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Questions_Subjects_SubjectId",
                         column: x => x.SubjectId,
@@ -435,13 +528,12 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                 name: "Choices",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     Label = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsCorrect = table.Column<bool>(type: "bit", nullable: false),
-                    QuestionId = table.Column<int>(type: "int", nullable: false),
+                    QuestionId = table.Column<string>(type: "nvarchar(36)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
@@ -461,13 +553,11 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                 name: "ExamQuestions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     Order = table.Column<int>(type: "int", nullable: false),
                     Points = table.Column<double>(type: "float", nullable: false),
-                    ExamId = table.Column<int>(type: "int", nullable: false),
-                    QuestionId = table.Column<int>(type: "int", nullable: false),
-                    QuestionId1 = table.Column<int>(type: "int", nullable: true),
+                    ExamId = table.Column<string>(type: "nvarchar(36)", nullable: true),
+                    QuestionId = table.Column<string>(type: "nvarchar(36)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
@@ -486,25 +576,19 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                         column: x => x.QuestionId,
                         principalTable: "Questions",
                         principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ExamQuestions_Questions_QuestionId1",
-                        column: x => x.QuestionId1,
-                        principalTable: "Questions",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "StudentAnswers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     IsCorrect = table.Column<bool>(type: "bit", nullable: false),
                     Points = table.Column<double>(type: "float", nullable: false),
                     StudentUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    StudentExamId = table.Column<int>(type: "int", nullable: false),
-                    QuestionId = table.Column<int>(type: "int", nullable: false),
-                    ChoiceId = table.Column<int>(type: "int", nullable: true),
+                    StudentExamId = table.Column<string>(type: "nvarchar(36)", nullable: true),
+                    QuestionId = table.Column<string>(type: "nvarchar(36)", nullable: true),
+                    ChoiceId = table.Column<string>(type: "nvarchar(36)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
@@ -600,11 +684,6 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                 column: "QuestionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ExamQuestions_QuestionId1",
-                table: "ExamQuestions",
-                column: "QuestionId1");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Exams_CreatedByUserId",
                 table: "Exams",
                 column: "CreatedByUserId");
@@ -658,7 +737,8 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                 name: "IX_StudentAnswers_StudentExamId_QuestionId",
                 table: "StudentAnswers",
                 columns: new[] { "StudentExamId", "QuestionId" },
-                unique: true);
+                unique: true,
+                filter: "[StudentExamId] IS NOT NULL AND [QuestionId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StudentAnswers_StudentUserId",
@@ -674,6 +754,25 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                 name: "IX_StudentExams_StudentUserId_ExamId",
                 table: "StudentExams",
                 columns: new[] { "StudentUserId", "ExamId" },
+                unique: true,
+                filter: "[ExamId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentParents_StudentProfileId_ParentType",
+                table: "StudentParents",
+                columns: new[] { "StudentProfileId", "ParentType" },
+                unique: true,
+                filter: "[StudentProfileId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentProfiles_GradeId",
+                table: "StudentProfiles",
+                column: "GradeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentProfiles_UserId",
+                table: "StudentProfiles",
+                column: "UserId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -684,6 +783,17 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_StudentSubjects_SubjectId",
                 table: "StudentSubjects",
+                column: "SubjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TeacherProfiles_UserId",
+                table: "TeacherProfiles",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TeacherSubjects_SubjectId",
+                table: "TeacherSubjects",
                 column: "SubjectId");
 
             migrationBuilder.CreateIndex(
@@ -727,7 +837,13 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
                 name: "StudentAnswers");
 
             migrationBuilder.DropTable(
+                name: "StudentParents");
+
+            migrationBuilder.DropTable(
                 name: "StudentSubjects");
+
+            migrationBuilder.DropTable(
+                name: "TeacherSubjects");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -737,6 +853,12 @@ namespace JelleSmart.ExamSystem.Repository.Migrations
 
             migrationBuilder.DropTable(
                 name: "StudentExams");
+
+            migrationBuilder.DropTable(
+                name: "StudentProfiles");
+
+            migrationBuilder.DropTable(
+                name: "TeacherProfiles");
 
             migrationBuilder.DropTable(
                 name: "Questions");

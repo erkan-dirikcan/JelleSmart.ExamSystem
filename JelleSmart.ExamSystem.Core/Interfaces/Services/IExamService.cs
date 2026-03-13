@@ -6,14 +6,14 @@ namespace JelleSmart.ExamSystem.Core.Interfaces.Services
     public interface IExamService
     {
         Task<IEnumerable<Exam>> GetAllAsync();
-        Task<Exam?> GetByIdAsync(int id);
-        Task<Exam?> GetWithQuestionsAsync(int id);
+        Task<Exam?> GetByIdAsync(string id);
+        Task<Exam?> GetWithQuestionsAsync(string id);
         Task<IEnumerable<Exam>> GetByTeacherAsync(string teacherId);
         Task<Exam> CreateAsync(CreateExamDto dto);
         Task UpdateAsync(Exam exam);
-        Task DeleteAsync(int id);
-        Task ActivateExamAsync(int examId);
-        Task DeactivateExamAsync(int examId);
-        Task<Exam?> GetExamForStudentAsync(int examId, string studentId);
+        Task DeleteAsync(string id);
+        Task ActivateExamAsync(string examId);
+        Task DeactivateExamAsync(string examId);
+        Task<Exam?> GetExamForStudentAsync(string examId, string studentId);
     }
 }

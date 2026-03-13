@@ -1,4 +1,4 @@
-@model IEnumerable<JelleSmart.ExamSystem.Core.Entities.Grade>
+@model IEnumerable<JelleSmart.ExamSystem.Core.ViewModels.GradeViewModel>
 
 @{
     ViewData["Title"] = "Sınıflar";
@@ -34,7 +34,7 @@
                     </tr>
                 </thead>
                 <tbody class="text-gray-600 fw-semibold">
-                    @foreach (var item in Model.OrderBy(g => g.Level))
+                    @foreach (var item in Model)
                     {
                         <tr>
                             <td>

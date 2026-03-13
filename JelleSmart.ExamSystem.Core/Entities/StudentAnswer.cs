@@ -12,14 +12,14 @@ namespace JelleSmart.ExamSystem.Core.Entities
 
         // Foreign keys
         public string StudentUserId { get; set; } = null!;
-        public int StudentExamId { get; set; }
-        public int QuestionId { get; set; }
-        public int? ChoiceId { get; set; } // Seçilen şık
+        public string? StudentExamId { get; set; }
+        public string? QuestionId { get; set; }
+        public string? ChoiceId { get; set; } // Seçilen şık
 
         // Navigation properties
         public AppUser Student { get; set; } = null!;
-        public StudentExam StudentExam { get; set; } = null!;
-        public Question Question { get; set; } = null!;
+        public StudentExam? StudentExam { get; set; }
+        public Question? Question { get; set; }
         public Choice? Choice { get; set; }
     }
 }

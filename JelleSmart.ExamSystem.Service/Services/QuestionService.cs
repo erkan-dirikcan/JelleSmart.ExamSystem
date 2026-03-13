@@ -20,17 +20,17 @@ namespace JelleSmart.ExamSystem.Service.Services
             return await _questionRepository.GetAllAsync();
         }
 
-        public async Task<Question?> GetByIdAsync(int id)
+        public async Task<Question?> GetByIdAsync(string id)
         {
             return await _questionRepository.GetByIdAsync(id);
         }
 
-        public async Task<Question?> GetWithChoicesAsync(int id)
+        public async Task<Question?> GetWithChoicesAsync(string id)
         {
             return await _questionRepository.GetWithChoicesAsync(id);
         }
 
-        public async Task<IEnumerable<Question>> GetBySubjectAsync(int subjectId)
+        public async Task<IEnumerable<Question>> GetBySubjectAsync(string subjectId)
         {
             return await _questionRepository.GetBySubjectAsync(subjectId);
         }
@@ -50,7 +50,7 @@ namespace JelleSmart.ExamSystem.Service.Services
             await _questionRepository.UpdateAsync(question);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(string id)
         {
             var question = await _questionRepository.GetWithChoicesAsync(id);
             if (question != null)
@@ -65,7 +65,7 @@ namespace JelleSmart.ExamSystem.Service.Services
             }
         }
 
-        public async Task<string> UploadImageAsync(int questionId, string fileName, string contentType, Stream stream)
+        public async Task<string> UploadImageAsync(string questionId, string fileName, string contentType, Stream stream)
         {
             var question = await _questionRepository.GetByIdAsync(questionId);
             if (question == null)
@@ -84,7 +84,7 @@ namespace JelleSmart.ExamSystem.Service.Services
             return imagePath;
         }
 
-        public async Task DeleteImageAsync(int questionId, string imagePath)
+        public async Task DeleteImageAsync(string questionId, string imagePath)
         {
             var question = await _questionRepository.GetByIdAsync(questionId);
             if (question == null)

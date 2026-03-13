@@ -1,7 +1,6 @@
-using JelleSmart.ExamSystem.Core.Entities;
+using JelleSmart.ExamSystem.Core.ViewModels;
 using JelleSmart.ExamSystem.Core.Interfaces.Services;
 using JelleSmart.ExamSystem.Core.Enums;
-using JelleSmart.ExamSystem.WebUI.Models;
 using JelleSmart.ExamSystem.WebUI.ViewComponents;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,8 +22,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             ViewData["ActivePage"] = ManageNavPages.Subjects;
             ViewData["Title"] = "Dersler";
             ViewData["PageDescription"] = "Sistem derslerini yönetin";
-            var subjects = await _subjectService.GetAllAsync();
-            var viewModels = subjects.Select(s => s.ToViewModel()).ToList();
+            var viewModels = await _subjectService.GetAllViewModelAsync();
             return View(viewModels);
         }
 
@@ -43,23 +41,22 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             if (!ModelState.IsValid)
                 return View(viewModel);
 
-            var entity = viewModel.ToEntity();
-            await _subjectService.CreateAsync(entity);
+            await _subjectService.CreateViewModelAsync(viewModel);
             TempData["Success"] = "Ders başarıyla eklendi";
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(string id)
         {
             ViewData["ActivePage"] = ManageNavPages.Subjects;
             ViewData["Title"] = "Ders Düzenle";
             ViewData["PageDescription"] = "Ders bilgilerini düzenleyin";
 
-            var subject = await _subjectService.GetByIdAsync(id);
-            if (subject == null)
+            var viewModel = await _subjectService.GetViewModelByIdAsync(id);
+            if (viewModel == null)
                 return NotFound();
 
-            return View(subject.ToViewModel());
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -69,32 +66,27 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             if (!ModelState.IsValid)
                 return View(viewModel);
 
-            var subject = await _subjectService.GetByIdAsync(viewModel.Id);
-            if (subject == null)
-                return NotFound();
-
-            viewModel.UpdateEntity(subject);
-            await _subjectService.UpdateAsync(subject);
+            await _subjectService.UpdateViewModelAsync(viewModel);
             TempData["Success"] = "Ders başarıyla güncellendi";
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             ViewData["ActivePage"] = ManageNavPages.Subjects;
             ViewData["Title"] = "Ders Sil";
             ViewData["PageDescription"] = "Ders silme onayı";
 
-            var subject = await _subjectService.GetByIdAsync(id);
-            if (subject == null)
+            var viewModel = await _subjectService.GetViewModelByIdAsync(id);
+            if (viewModel == null)
                 return NotFound();
 
-            return View(subject.ToViewModel());
+            return View(viewModel);
         }
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
             await _subjectService.DeleteAsync(id);
             TempData["Success"] = "Ders başarıyla silindi";

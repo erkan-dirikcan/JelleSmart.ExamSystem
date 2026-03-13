@@ -3,7 +3,6 @@ using JelleSmart.ExamSystem.Core.DTOs;
 using JelleSmart.ExamSystem.Core.Interfaces.Repositories;
 using JelleSmart.ExamSystem.Core.Interfaces.Services;
 using JelleSmart.ExamSystem.Core.Enums;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace JelleSmart.ExamSystem.Service.Services
@@ -52,7 +51,7 @@ namespace JelleSmart.ExamSystem.Service.Services
                     foreach (var parentDto in dto.Parents)
                     {
                         // Validate before adding
-                        var (canAdd, error) = await ValidateParentAdditionAsync(profile.Id, parentDto.ParentType);
+                        var (canAdd, error) = await ValidateParentAdditionAsync(profile.Id!, parentDto.ParentType);
                         if (!canAdd)
                         {
                             _logger.LogWarning("Parent addition validation failed during profile creation: {Error}", error);
@@ -92,8 +91,8 @@ namespace JelleSmart.ExamSystem.Service.Services
                 if (profile == null)
                     return false;
 
-                if (dto.GradeId.HasValue)
-                    profile.GradeId = dto.GradeId.Value;
+                if (!string.IsNullOrEmpty(dto.GradeId))
+                    profile.GradeId = dto.GradeId;
 
                 if (dto.StudentNumber != null)
                     profile.StudentNumber = dto.StudentNumber;
@@ -117,7 +116,7 @@ namespace JelleSmart.ExamSystem.Service.Services
                     return false;
 
                 // Validate: Max 2 parents per student, ParentType must be unique
-                var (canAdd, error) = await ValidateParentAdditionAsync(profile.Id, dto.ParentType);
+                var (canAdd, error) = await ValidateParentAdditionAsync(profile.Id!, dto.ParentType);
                 if (!canAdd)
                 {
                     _logger.LogWarning("Parent addition validation failed: {Error}", error);
@@ -146,7 +145,7 @@ namespace JelleSmart.ExamSystem.Service.Services
             }
         }
 
-        public async Task<bool> UpdateParentAsync(int parentId, UpdateParentDto dto)
+        public async Task<bool> UpdateParentAsync(string parentId, UpdateParentDto dto)
         {
             try
             {
@@ -178,7 +177,7 @@ namespace JelleSmart.ExamSystem.Service.Services
             }
         }
 
-        public async Task<bool> DeleteParentAsync(int parentId)
+        public async Task<bool> DeleteParentAsync(string parentId)
         {
             try
             {
@@ -194,7 +193,7 @@ namespace JelleSmart.ExamSystem.Service.Services
             }
         }
 
-        public async Task<(bool Success, string Error)> ValidateParentAdditionAsync(int studentProfileId, ParentType parentType)
+        public async Task<(bool Success, string Error)> ValidateParentAdditionAsync(string studentProfileId, ParentType parentType)
         {
             // Rule 1: Max 2 parents per student
             var parentCount = await _studentProfileRepository.CountParentsAsync(studentProfileId);

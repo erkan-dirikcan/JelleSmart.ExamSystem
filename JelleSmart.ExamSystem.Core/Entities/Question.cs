@@ -14,17 +14,17 @@ namespace JelleSmart.ExamSystem.Core.Entities
         public int Order { get; set; } = 0; // Sıralama
 
         // Foreign keys
-        public int SubjectId { get; set; }
-        public int? UnitId { get; set; }
-        public int? TopicId { get; set; }
-        public int GradeId { get; set; }
+        public string? SubjectId { get; set; }
+        public string? UnitId { get; set; }
+        public string? TopicId { get; set; }
+        public string? GradeId { get; set; }
         public string CreatedByUserId { get; set; } = null!;
 
         // Navigation properties
-        public Subject Subject { get; set; } = null!;
+        public Subject? Subject { get; set; }
         public Unit? Unit { get; set; }
         public Topic? Topic { get; set; }
-        public Grade Grade { get; set; } = null!;
+        public Grade? Grade { get; set; }
         public AppUser CreatedByUser { get; set; } = null!;
         public ICollection<Choice> Choices { get; set; } = new List<Choice>();
         public ICollection<ExamQuestion> ExamQuestions { get; set; } = new List<ExamQuestion>();

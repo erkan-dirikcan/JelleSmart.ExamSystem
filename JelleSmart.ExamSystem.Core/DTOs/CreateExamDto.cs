@@ -5,9 +5,9 @@ namespace JelleSmart.ExamSystem.Core.DTOs
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
         public int Duration { get; set; }
-        public int GradeId { get; set; }
-        public int SubjectId { get; set; }
-        public List<int> TopicIds { get; set; } = new();
+        public string? GradeId { get; set; }
+        public string? SubjectId { get; set; }
+        public List<string?> TopicIds { get; set; } = new();
         public int QuestionCount { get; set; }
         public double TotalPoints { get; set; }
         public DateTime StartTime { get; set; }

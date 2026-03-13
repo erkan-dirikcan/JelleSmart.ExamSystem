@@ -1,6 +1,8 @@
 ﻿using JelleSmart.ExamSystem.Core.Entities;
 using JelleSmart.ExamSystem.Core.Interfaces.Services;
 using JelleSmart.ExamSystem.Core.Enums;
+using JelleSmart.ExamSystem.Core.ViewModels;
+using JelleSmart.ExamSystem.Core.DTOs;
 using JelleSmart.ExamSystem.WebUI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -37,7 +39,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             return View(activeExams);
         }
 
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(string id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var exam = await _examService.GetWithQuestionsAsync(id);
@@ -52,7 +54,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             return View(exam);
         }
 
-        public async Task<IActionResult> Start(int id)
+        public async Task<IActionResult> Start(string id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -68,7 +70,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             }
         }
 
-        public async Task<IActionResult> Take(int id)
+        public async Task<IActionResult> Take(string id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var studentExam = await _studentExamService.GetWithAnswersAsync(id);
@@ -133,7 +135,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             return Json(new { success = true });
         }
 
-        public async Task<IActionResult> Complete(int id)
+        public async Task<IActionResult> Complete(string id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var studentExam = await _studentExamService.GetByIdAsync(id);
@@ -153,7 +155,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             }
         }
 
-        public async Task<IActionResult> Result(int id)
+        public async Task<IActionResult> Result(string id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var studentExam = await _studentExamService.GetByIdAsync(id);

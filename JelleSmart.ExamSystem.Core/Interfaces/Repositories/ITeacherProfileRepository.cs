@@ -6,9 +6,9 @@ namespace JelleSmart.ExamSystem.Core.Interfaces.Repositories
     {
         Task<TeacherProfile?> GetByUserIdAsync(string userId);
         Task<TeacherProfile?> GetWithSubjectsAsync(string userId);
-        Task<bool> HasSubjectAsync(int teacherProfileId, int subjectId);
+        Task<bool> HasSubjectAsync(string teacherProfileId, string subjectId);
         Task AddSubjectAsync(TeacherSubject teacherSubject);
-        Task RemoveSubjectAsync(int teacherProfileId, int subjectId);
+        Task RemoveSubjectAsync(string teacherProfileId, string subjectId);
         Task AddAsync(TeacherProfile entity);
         Task SaveChangesAsync();
     }

@@ -2,6 +2,7 @@ using JelleSmart.ExamSystem.Core.Entities;
 using JelleSmart.ExamSystem.Core.Entities.Identity;
 using JelleSmart.ExamSystem.Core.Interfaces.Services;
 using JelleSmart.ExamSystem.Core.Enums;
+using JelleSmart.ExamSystem.Core.ViewModels;
 using JelleSmart.ExamSystem.WebUI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -108,15 +109,15 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
                 SubjectId = user.SubjectId
             };
 
-            if (user.GradeId.HasValue)
+            if (!string.IsNullOrEmpty(user.GradeId))
             {
-                var grade = await _gradeService.GetByIdAsync(user.GradeId.Value);
+                var grade = await _gradeService.GetByIdAsync(user.GradeId);
                 viewModel.GradeName = grade?.Name;
             }
 
-            if (user.SubjectId.HasValue)
+            if (!string.IsNullOrEmpty(user.SubjectId))
             {
-                var subject = await _subjectService.GetByIdAsync(user.SubjectId.Value);
+                var subject = await _subjectService.GetByIdAsync(user.SubjectId);
                 viewModel.SubjectName = subject?.Name;
             }
 

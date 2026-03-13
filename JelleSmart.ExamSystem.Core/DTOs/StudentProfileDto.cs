@@ -4,9 +4,9 @@ namespace JelleSmart.ExamSystem.Core.DTOs
 {
     public class StudentProfileDto
     {
-        public int Id { get; set; }
+        public string? Id { get; set; }
         public string UserId { get; set; } = string.Empty;
-        public int GradeId { get; set; }
+        public string? GradeId { get; set; }
         public string GradeName { get; set; } = string.Empty;
         public string? StudentNumber { get; set; }
         public DateOnly? EnrollmentDate { get; set; }
@@ -15,7 +15,7 @@ namespace JelleSmart.ExamSystem.Core.DTOs
 
     public class ParentDto
     {
-        public int Id { get; set; }
+        public string? Id { get; set; }
         public ParentType ParentType { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
@@ -26,14 +26,14 @@ namespace JelleSmart.ExamSystem.Core.DTOs
 
     public class CreateStudentProfileDto
     {
-        public int GradeId { get; set; }
+        public string? GradeId { get; set; }
         public string? StudentNumber { get; set; }
         public List<CreateParentDto>? Parents { get; set; }
     }
 
     public class UpdateStudentProfileDto
     {
-        public int? GradeId { get; set; }
+        public string? GradeId { get; set; }
         public string? StudentNumber { get; set; }
     }
 

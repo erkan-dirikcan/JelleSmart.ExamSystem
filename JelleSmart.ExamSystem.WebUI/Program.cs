@@ -4,6 +4,7 @@ using JelleSmart.ExamSystem.Core.Interfaces.Services;
 using JelleSmart.ExamSystem.Repository.Data;
 using JelleSmart.ExamSystem.Repository.Repositories;
 using JelleSmart.ExamSystem.Service.Services;
+using JelleSmart.ExamSystem.Service.MappingProfiles;
 using JelleSmart.ExamSystem.WebUI.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -43,6 +44,9 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromDays(7);
     options.SlidingExpiration = true;
 });
+
+// AutoMapper
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 // Repository registration
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));

@@ -21,12 +21,12 @@ namespace JelleSmart.ExamSystem.Service.Services
             return await _examRepository.GetAllAsync();
         }
 
-        public async Task<Exam?> GetByIdAsync(int id)
+        public async Task<Exam?> GetByIdAsync(string id)
         {
             return await _examRepository.GetByIdAsync(id);
         }
 
-        public async Task<Exam?> GetWithQuestionsAsync(int id)
+        public async Task<Exam?> GetWithQuestionsAsync(string id)
         {
             return await _examRepository.GetWithQuestionsAsync(id);
         }
@@ -72,8 +72,8 @@ namespace JelleSmart.ExamSystem.Service.Services
             // Sınav sorularını ekle
             var examQuestions = questions.Select((q, index) => new ExamQuestion
             {
-                ExamId = createdExam.Id,
-                QuestionId = q.Id,
+                ExamId = createdExam.Id!,
+                QuestionId = q.Id!,
                 Order = index + 1,
                 Points = dto.TotalPoints / dto.QuestionCount
             }).ToList();
@@ -94,12 +94,12 @@ namespace JelleSmart.ExamSystem.Service.Services
             await _examRepository.UpdateAsync(exam);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(string id)
         {
             await _examRepository.DeleteAsync(id);
         }
 
-        public async Task ActivateExamAsync(int examId)
+        public async Task ActivateExamAsync(string examId)
         {
             var exam = await _examRepository.GetByIdAsync(examId);
             if (exam == null)
@@ -109,7 +109,7 @@ namespace JelleSmart.ExamSystem.Service.Services
             await _examRepository.UpdateAsync(exam);
         }
 
-        public async Task DeactivateExamAsync(int examId)
+        public async Task DeactivateExamAsync(string examId)
         {
             var exam = await _examRepository.GetByIdAsync(examId);
             if (exam == null)
@@ -119,7 +119,7 @@ namespace JelleSmart.ExamSystem.Service.Services
             await _examRepository.UpdateAsync(exam);
         }
 
-        public async Task<Exam?> GetExamForStudentAsync(int examId, string studentId)
+        public async Task<Exam?> GetExamForStudentAsync(string examId, string studentId)
         {
             var exam = await _examRepository.GetWithQuestionsAsync(examId);
 

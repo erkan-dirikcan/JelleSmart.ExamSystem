@@ -37,19 +37,19 @@ namespace JelleSmart.ExamSystem.Repository.Repositories
                 .FirstOrDefaultAsync(sp => sp.UserId == userId);
         }
 
-        public async Task<bool> HasParentWithTypeAsync(int studentProfileId, ParentType parentType)
+        public async Task<bool> HasParentWithTypeAsync(string studentProfileId, ParentType parentType)
         {
             return await _context.StudentParents
                 .AnyAsync(sp => sp.StudentProfileId == studentProfileId && sp.ParentType == parentType);
         }
 
-        public async Task<int> CountParentsAsync(int studentProfileId)
+        public async Task<int> CountParentsAsync(string studentProfileId)
         {
             return await _context.StudentParents
                 .CountAsync(sp => sp.StudentProfileId == studentProfileId);
         }
 
-        public async Task<StudentParent?> GetParentAsync(int parentId)
+        public async Task<StudentParent?> GetParentAsync(string parentId)
         {
             return await _context.StudentParents
                 .FirstOrDefaultAsync(sp => sp.Id == parentId);
@@ -65,7 +65,7 @@ namespace JelleSmart.ExamSystem.Repository.Repositories
             _context.StudentParents.Update(parent);
         }
 
-        public async Task DeleteParentAsync(int parentId)
+        public async Task DeleteParentAsync(string parentId)
         {
             var parent = await _context.StudentParents
                 .FirstOrDefaultAsync(sp => sp.Id == parentId);

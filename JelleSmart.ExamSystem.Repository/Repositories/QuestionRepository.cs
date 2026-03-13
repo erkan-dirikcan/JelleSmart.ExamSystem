@@ -11,7 +11,7 @@ namespace JelleSmart.ExamSystem.Repository.Repositories
         {
         }
 
-        public async Task<Question?> GetWithChoicesAsync(int id)
+        public async Task<Question?> GetWithChoicesAsync(string id)
         {
             return await _dbSet
                 .Include(q => q.Choices.Where(c => !c.IsDeleted))
@@ -22,7 +22,7 @@ namespace JelleSmart.ExamSystem.Repository.Repositories
                 .FirstOrDefaultAsync(q => q.Id == id && !q.IsDeleted);
         }
 
-        public async Task<IEnumerable<Question>> GetBySubjectAsync(int subjectId)
+        public async Task<IEnumerable<Question>> GetBySubjectAsync(string subjectId)
         {
             return await _dbSet
                 .Include(q => q.Choices.Where(c => !c.IsDeleted))
@@ -43,30 +43,30 @@ namespace JelleSmart.ExamSystem.Repository.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Question>> GetRandomQuestionsAsync(int subjectId, int? unitId, int? topicId, int count)
+        public async Task<IEnumerable<Question>> GetRandomQuestionsAsync(string subjectId, string? unitId, string? topicId, int count)
         {
             var query = _dbSet
                 .Include(q => q.Choices.Where(c => !c.IsDeleted))
                 .Where(q => q.SubjectId == subjectId && !q.IsDeleted);
 
-            if (unitId.HasValue)
+            if (!string.IsNullOrEmpty(unitId))
             {
-                query = query.Where(q => q.UnitId == unitId.Value);
+                query = query.Where(q => q.UnitId == unitId);
             }
 
-            if (topicId.HasValue)
+            if (!string.IsNullOrEmpty(topicId))
             {
-                query = query.Where(q => q.TopicId == topicId.Value);
+                query = query.Where(q => q.TopicId == topicId);
             }
 
             return await query.OrderBy(q => EF.Functions.Random()).Take(count).ToListAsync();
         }
 
-        public async Task<IEnumerable<Question>> GetByIdsAsync(List<int> questionIds)
+        public async Task<IEnumerable<Question>> GetByIdsAsync(List<string> questionIds)
         {
             return await _dbSet
                 .Include(q => q.Choices.Where(c => !c.IsDeleted))
-                .Where(q => questionIds.Contains(q.Id) && !q.IsDeleted)
+                .Where(q => questionIds.Contains(q.Id!) && !q.IsDeleted)
                 .ToListAsync();
         }
     }

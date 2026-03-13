@@ -11,19 +11,19 @@ namespace JelleSmart.ExamSystem.Repository.Repositories
         {
         }
 
-        public async Task<Exam?> GetWithQuestionsAsync(int id)
+        public async Task<Exam?> GetWithQuestionsAsync(string id)
         {
             return await _context.Exams
                 .Include(e => e.ExamQuestions.Where(eq => !eq.IsDeleted))
                     .ThenInclude(eq => eq.Question)
-                        .ThenInclude(q => q.Choices.Where(c => !c.IsDeleted))
+                        .ThenInclude(q => q!.Choices.Where(c => !c.IsDeleted))
                 .Include(e => e.Subject)
                 .Include(e => e.Grade)
                 .Include(e => e.CreatedByUser)
                 .FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
         }
 
-        public async Task<Exam?> GetWithStudentExamsAsync(int id)
+        public async Task<Exam?> GetWithStudentExamsAsync(string id)
         {
             return await _context.Exams
                 .Include(e => e.StudentExams.Where(se => !se.IsDeleted))
@@ -42,7 +42,7 @@ namespace JelleSmart.ExamSystem.Repository.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Exam>> GetBySubjectAsync(int subjectId)
+        public async Task<IEnumerable<Exam>> GetBySubjectAsync(string subjectId)
         {
             return await _context.Exams
                 .Include(e => e.Subject)

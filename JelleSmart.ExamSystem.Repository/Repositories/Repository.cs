@@ -1,5 +1,6 @@
 using JelleSmart.ExamSystem.Core.Entities;
 using JelleSmart.ExamSystem.Core.Interfaces.Repositories;
+using JelleSmart.ExamSystem.Core.Helpers;
 using JelleSmart.ExamSystem.Repository.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,13 +22,17 @@ namespace JelleSmart.ExamSystem.Repository.Repositories
             return await _dbSet.Where(x => !x.IsDeleted).ToListAsync();
         }
 
-        public async Task<T?> GetByIdAsync(int id)
+        public async Task<T?> GetByIdAsync(string id)
         {
             return await _dbSet.FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
         }
 
         public async Task<T> CreateAsync(T entity)
         {
+            if (string.IsNullOrEmpty(entity.Id))
+            {
+                entity.Id = SequentialGuidHelper.NewSequentialGuid();
+            }
             await _dbSet.AddAsync(entity);
             await _context.SaveChangesAsync();
             return entity;
@@ -40,7 +45,7 @@ namespace JelleSmart.ExamSystem.Repository.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(string id)
         {
             var entity = await GetByIdAsync(id);
             if (entity != null)
@@ -51,7 +56,7 @@ namespace JelleSmart.ExamSystem.Repository.Repositories
             }
         }
 
-        public async Task<bool> ExistsAsync(int id)
+        public async Task<bool> ExistsAsync(string id)
         {
             return await _dbSet.AnyAsync(x => x.Id == id && !x.IsDeleted);
         }

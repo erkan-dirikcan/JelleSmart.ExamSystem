@@ -1,6 +1,7 @@
 ﻿using JelleSmart.ExamSystem.Core.Entities;
 using JelleSmart.ExamSystem.Core.Interfaces.Services;
 using JelleSmart.ExamSystem.Core.Enums;
+using JelleSmart.ExamSystem.Core.ViewModels;
 using JelleSmart.ExamSystem.WebUI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -68,7 +69,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
                 Duration = model.Duration,
                 GradeId = model.GradeId,
                 SubjectId = model.SubjectId,
-                TopicIds = model.TopicIds ?? new List<int>(),
+                TopicIds = model.TopicIds ?? new List<string?>(),
                 QuestionCount = model.QuestionCount,
                 TotalPoints = model.TotalPoints,
                 StartTime = model.StartDate,
@@ -91,7 +92,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             }
         }
 
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(string id)
         {
             var exam = await _examService.GetWithQuestionsAsync(id);
             if (exam == null)
@@ -100,21 +101,21 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             return View(exam);
         }
 
-        public async Task<IActionResult> Activate(int id)
+        public async Task<IActionResult> Activate(string id)
         {
             await _examService.ActivateExamAsync(id);
             TempData["Success"] = "SÄ±nav aktifleÅŸtirildi";
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> Deactivate(int id)
+        public async Task<IActionResult> Deactivate(string id)
         {
             await _examService.DeactivateExamAsync(id);
             TempData["Success"] = "SÄ±nav pasife alÄ±ndÄ±";
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             var exam = await _examService.GetByIdAsync(id);
             if (exam == null)
@@ -125,14 +126,14 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
             await _examService.DeleteAsync(id);
             TempData["Success"] = "SÄ±nav baÅŸarÄ±yla silindi";
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> Results(int id)
+        public async Task<IActionResult> Results(string id)
         {
             var results = await _reportService.GetExamResultsByExamAsync(id);
             var exam = await _examService.GetByIdAsync(id);
@@ -142,7 +143,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> GetTopicsBySubject(int subjectId)
+        public async Task<JsonResult> GetTopicsBySubject(string subjectId)
         {
             var allTopics = await _topicService.GetAllAsync();
             var topics = allTopics.Where(t => t.Unit?.SubjectId == subjectId);
@@ -150,15 +151,15 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> GetQuestionCount(int subjectId, int? unitId, List<int>? topicIds)
+        public async Task<JsonResult> GetQuestionCount(string subjectId, string? unitId, List<string?>? topicIds)
         {
             var questions = await _questionService.GetBySubjectAsync(subjectId);
 
-            if (unitId.HasValue)
-                questions = questions.Where(q => q.UnitId == unitId.Value);
+            if (!string.IsNullOrEmpty(unitId))
+                questions = questions.Where(q => q.UnitId == unitId);
 
             if (topicIds != null && topicIds.Any())
-                questions = questions.Where(q => q.TopicId.HasValue && topicIds.Contains(q.TopicId.Value));
+                questions = questions.Where(q => !string.IsNullOrEmpty(q.TopicId) && topicIds.Contains(q.TopicId));
 
             return Json(new { count = questions.Count() });
         }

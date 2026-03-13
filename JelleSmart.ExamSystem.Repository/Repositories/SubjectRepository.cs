@@ -11,14 +11,14 @@ namespace JelleSmart.ExamSystem.Repository.Repositories
         {
         }
 
-        public async Task<Subject?> GetWithUnitsAsync(int id)
+        public async Task<Subject?> GetWithUnitsAsync(string id)
         {
             return await _dbSet
                 .Include(s => s.Units.Where(u => !u.IsDeleted))
                 .FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
         }
 
-        public async Task<Subject?> GetWithQuestionsAsync(int id)
+        public async Task<Subject?> GetWithQuestionsAsync(string id)
         {
             return await _dbSet
                 .Include(s => s.Questions.Where(q => !q.IsDeleted))

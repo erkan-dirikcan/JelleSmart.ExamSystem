@@ -7,8 +7,8 @@ namespace JelleSmart.ExamSystem.Core.Entities
         public string UserId { get; set; } = string.Empty;
         public AppUser User { get; set; } = null!;
 
-        public int GradeId { get; set; }
-        public Grade Grade { get; set; } = null!;
+        public string? GradeId { get; set; }
+        public Grade? Grade { get; set; }
 
         public string? StudentNumber { get; set; }
         public DateOnly? EnrollmentDate { get; set; }

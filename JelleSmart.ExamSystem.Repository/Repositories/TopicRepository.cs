@@ -11,11 +11,28 @@ namespace JelleSmart.ExamSystem.Repository.Repositories
         {
         }
 
-        public async Task<IEnumerable<Topic>> GetByUnitAsync(int unitId)
+        public async Task<IEnumerable<Topic>> GetByUnitAsync(string unitId)
         {
             return await _dbSet
                 .Include(t => t.Unit)
                 .Where(t => t.UnitId == unitId && !t.IsDeleted)
+                .ToListAsync();
+        }
+
+        public async Task<Topic?> GetByIdWithIncludesAsync(string id)
+        {
+            return await _dbSet
+                .Include(t => t.Unit)
+                    .ThenInclude(u => u!.Subject)
+                .FirstOrDefaultAsync(t => t.Id == id && !t.IsDeleted);
+        }
+
+        public async Task<IEnumerable<Topic>> GetAllWithIncludesAsync()
+        {
+            return await _dbSet
+                .Include(t => t.Unit)
+                    .ThenInclude(u => u!.Subject)
+                .Where(t => !t.IsDeleted)
                 .ToListAsync();
         }
     }

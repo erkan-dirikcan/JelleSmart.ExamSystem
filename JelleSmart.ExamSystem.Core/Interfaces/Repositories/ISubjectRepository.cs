@@ -4,7 +4,7 @@ namespace JelleSmart.ExamSystem.Core.Interfaces.Repositories
 {
     public interface ISubjectRepository : IRepository<Subject>
     {
-        Task<Subject?> GetWithUnitsAsync(int id);
-        Task<Subject?> GetWithQuestionsAsync(int id);
+        Task<Subject?> GetWithUnitsAsync(string id);
+        Task<Subject?> GetWithQuestionsAsync(string id);
     }
 }

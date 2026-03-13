@@ -11,11 +11,11 @@ namespace JelleSmart.ExamSystem.Core.Entities.Identity
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // Öğretmen için branş dersi
-        public int? SubjectId { get; set; }
+        public string? SubjectId { get; set; }
         public Subject? Subject { get; set; }
 
         // Hangi sınıfa ait?
-        public int? GradeId { get; set; }
+        public string? GradeId { get; set; }
         public Grade? Grade { get; set; }
 
         // Navigation properties

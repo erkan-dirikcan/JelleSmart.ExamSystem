@@ -11,8 +11,8 @@ namespace JelleSmart.ExamSystem.Core.Interfaces.Services
         Task<bool> CreateStudentProfileAsync(string userId, CreateStudentProfileDto dto);
         Task<bool> UpdateStudentProfileAsync(string userId, UpdateStudentProfileDto dto);
         Task<bool> AddParentAsync(string userId, CreateParentDto dto);
-        Task<bool> UpdateParentAsync(int parentId, UpdateParentDto dto);
-        Task<bool> DeleteParentAsync(int parentId);
-        Task<(bool Success, string Error)> ValidateParentAdditionAsync(int studentProfileId, ParentType parentType);
+        Task<bool> UpdateParentAsync(string parentId, UpdateParentDto dto);
+        Task<bool> DeleteParentAsync(string parentId);
+        Task<(bool Success, string Error)> ValidateParentAdditionAsync(string studentProfileId, ParentType parentType);
     }
 }

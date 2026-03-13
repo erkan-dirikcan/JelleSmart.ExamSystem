@@ -1,4 +1,4 @@
-@model JelleSmart.ExamSystem.WebUI.Models.TopicViewModel
+@model JelleSmart.ExamSystem.Core.ViewModels.TopicViewModel
 
 @{
     ViewData["Title"] = "Yeni Konu";
@@ -31,11 +31,11 @@
 
             <div class="mb-5">
                 <label asp-for="UnitId" class="form-label">Ünite</label>
-                <select asp-for="UnitId" class="form-select form-select-solid" asp-items="@(new SelectList(ViewBag.Units ?? new List<JelleSmart.ExamSystem.Core.Entities.Unit>(), "Id", "Name"))">
+                <select asp-for="UnitId" class="form-select form-select-solid" asp-items="@(new SelectList(ViewBag.Units ?? new List<JelleSmart.ExamSystem.Core.ViewModels.UnitViewModel>(), "Id", "Name"))">
                     <option value="">Seçiniz...</option>
                 </select>
                 <span asp-validation-for="UnitId" class="text-danger fs-7"></span>
-                @if (ViewBag.Units == null || !(ViewBag.Units as IEnumerable<JelleSmart.ExamSystem.Core.Entities.Unit>).Any())
+                @if (ViewBag.Units == null || !(ViewBag.Units as IEnumerable<JelleSmart.ExamSystem.Core.ViewModels.UnitViewModel>).Any())
                 {
                     <small class="text-warning fs-7">Henüz ünite eklenmemiş. Önce ünite oluşturun.</small>
                 }

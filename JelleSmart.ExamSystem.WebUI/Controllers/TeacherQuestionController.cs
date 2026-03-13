@@ -1,6 +1,8 @@
 ﻿using JelleSmart.ExamSystem.Core.Entities;
+using JelleSmart.ExamSystem.Core.Helpers;
 using JelleSmart.ExamSystem.Core.Interfaces.Services;
 using JelleSmart.ExamSystem.Core.Enums;
+using JelleSmart.ExamSystem.Core.ViewModels;
 using JelleSmart.ExamSystem.WebUI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -82,7 +84,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
                     {
                         question.Choices.Add(new Choice
                         {
-                            Label = ((char)('A' + i)).ToString(),
+                            Label = ChoiceHelper.GenerateLabel(i),
                             Text = choiceDto.Text,
                             IsCorrect = choiceDto.IsCorrect,
                             QuestionId = question.Id
@@ -106,7 +108,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(string id)
         {
             var question = await _questionService.GetWithChoicesAsync(id);
             if (question == null)
@@ -132,10 +134,10 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
 
             ViewBag.Subjects = await _subjectService.GetAllAsync();
             ViewBag.Grades = await _gradeService.GetAllAsync();
-            if (question.UnitId.HasValue)
-                ViewBag.Units = await _unitService.GetBySubjectAsync(question.SubjectId);
-            if (question.TopicId.HasValue)
-                ViewBag.Topics = await _topicService.GetByUnitAsync(question.UnitId.Value);
+            if (!string.IsNullOrEmpty(question.UnitId))
+                ViewBag.Units = await _unitService.GetBySubjectAsync(question.SubjectId!);
+            if (!string.IsNullOrEmpty(question.TopicId))
+                ViewBag.Topics = await _topicService.GetByUnitAsync(question.UnitId!);
 
             return View(viewModel);
         }
@@ -173,7 +175,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
                     {
                         question.Choices.Add(new Choice
                         {
-                            Label = ((char)('A' + i)).ToString(),
+                            Label = ChoiceHelper.GenerateLabel(i),
                             Text = choiceDto.Text,
                             IsCorrect = choiceDto.IsCorrect,
                             QuestionId = question.Id
@@ -197,7 +199,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             var question = await _questionService.GetByIdAsync(id);
             if (question == null)
@@ -208,7 +210,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
             await _questionService.DeleteAsync(id);
             TempData["Success"] = "Soru baÅŸarÄ±yla silindi";
@@ -216,14 +218,14 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> GetUnitsBySubject(int subjectId)
+        public async Task<JsonResult> GetUnitsBySubject(string subjectId)
         {
             var units = await _unitService.GetBySubjectAsync(subjectId);
             return Json(units.Select(u => new { id = u.Id, name = u.Name }));
         }
 
         [HttpPost]
-        public async Task<JsonResult> GetTopicsByUnit(int unitId)
+        public async Task<JsonResult> GetTopicsByUnit(string unitId)
         {
             var topics = await _topicService.GetByUnitAsync(unitId);
             return Json(topics.Select(t => new { id = t.Id, name = t.Name }));

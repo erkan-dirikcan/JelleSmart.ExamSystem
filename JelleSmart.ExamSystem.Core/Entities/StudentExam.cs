@@ -19,11 +19,11 @@ namespace JelleSmart.ExamSystem.Core.Entities
 
         // Foreign keys
         public string StudentUserId { get; set; } = null!;
-        public int ExamId { get; set; }
+        public string? ExamId { get; set; }
 
         // Navigation properties
         public AppUser Student { get; set; } = null!;
-        public Exam Exam { get; set; } = null!;
+        public Exam? Exam { get; set; }
         public ICollection<StudentAnswer> StudentAnswers { get; set; } = new List<StudentAnswer>();
     }
 }
