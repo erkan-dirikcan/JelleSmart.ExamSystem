@@ -1,10 +1,10 @@
-﻿"use strict";
+"use strict";
 var ApplicationTable = function () {
 
     var initTable = function () {
         var table = $('#user-list-table');
         var selectedApplicationId = "";
-        
+
         // begin first table
         table.DataTable({
             responsive: true,

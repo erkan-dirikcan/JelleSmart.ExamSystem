@@ -40,17 +40,17 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
 
         private async Task PopulateRegistrationDropdownsAsync(RegisterViewModelUI model)
         {
-            var subjectsTask = _subjectService.GetAllAsync();
-            var gradesTask = _gradeService.GetAllAsync();
-            await Task.WhenAll(subjectsTask, gradesTask);
+            // DbContext is NOT thread-safe - run queries sequentially, not in parallel
+            var subjects = await _subjectService.GetAllAsync();
+            var grades = await _gradeService.GetAllAsync();
 
-            model.AvailableSubjects = subjectsTask.Result
+            model.AvailableSubjects = subjects
                 .Select(s => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
                 {
                     Value = s.Id,
                     Text = s.Name
                 }).ToList();
-            model.AvailableGrades = gradesTask.Result
+            model.AvailableGrades = grades
                 .Select(g => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
                 {
                     Value = g.Id,

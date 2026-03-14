@@ -1,28 +1,23 @@
 "use strict";
 
-var KTGradesForm = function() {
+var GradesForm = function () {
 
-    var initForm = function() {
+    var initForm = function () {
         const form = document.getElementById('gradeForm');
         if (!form) return;
 
         const submitButton = form.querySelector('button[type="submit"]');
 
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-
+        form.addEventListener('submit', function (e) {
             // Show loading state
             if (submitButton) {
                 submitButton.setAttribute('data-kt-indicator', 'on');
                 submitButton.disabled = true;
             }
-
-            // Submit form normally
-            form.submit();
         });
     };
 
-    var initValidation = function() {
+    var initValidation = function () {
         // Check for validation errors
         const validationSummary = document.querySelector('[asp-validation-summary="ModelOnly"]');
         if (validationSummary && validationSummary.textContent.trim()) {
@@ -31,7 +26,7 @@ var KTGradesForm = function() {
     };
 
     return {
-        init: function() {
+        init: function () {
             initForm();
             initValidation();
         }
@@ -39,6 +34,6 @@ var KTGradesForm = function() {
 }();
 
 // Initialize on document ready
-jQuery(document).ready(function() {
-    KTGradesForm.init();
+jQuery(document).ready(function () {
+    GradesForm.init();
 });

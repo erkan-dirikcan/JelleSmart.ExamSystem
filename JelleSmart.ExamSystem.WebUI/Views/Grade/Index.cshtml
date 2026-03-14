@@ -4,62 +4,70 @@
     ViewData["Title"] = "Sınıflar";
 }
 
-<div class="card card-xl-stretch mb-xl-8">
-    <div class="card-header border-0 pt-6">
-        <div class="card-title">
-            <div class="d-flex align-items-center position-relative my-1">
-                <span class="svg-icon svg-icon-1 position-absolute ms-6">
-                    <i class="ki-outline ki-search fs-2"></i>
-                </span>
-                <input type="text" data-kt-grade-table-filter="search" class="form-control form-control-solid w-250px ps-15" placeholder="Sınıf ara..." />
+<div class="d-flex flex-column-fluid">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-xl-stretch mb-xl-8">
+                    <div class="card-header border-0 pt-6">
+                        <div class="card-title">
+                            <div class="d-flex align-items-center position-relative my-1">
+                                <span class="svg-icon svg-icon-1 position-absolute ms-6">
+                                    <i class="ki-outline ki-search fs-2"></i>
+                                </span>
+                                <input type="text" data-kt-grade-table-filter="search" class="form-control form-control-solid w-250px ps-15" placeholder="Sınıf ara..." />
+                            </div>
+                        </div>
+                        <div class="card-toolbar">
+                            <div class="d-flex justify-content-end" data-kt-grade-table-toolbar="base">
+                                <a asp-action="Create" class="btn btn-primary">
+                                    <i class="ki-outline ki-plus fs-2"></i>
+                                    Yeni Sınıf Ekle
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body py-4">
+                        <div class="table-responsive">
+                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="gradesTable">
+                                <thead>
+                                    <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
+                                        <th class="min-w-100px">Seviye</th>
+                                        <th class="min-w-150px">Sınıf Adı</th>
+                                        <th class="text-end min-w-100px">İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-gray-600 fw-semibold">
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="symbol symbol-40px me-3 bg-light-success">
+                                                        <span class="symbol-label text-success fw-bold">@item.Level</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>@item.Name</td>
+                                            <td class="text-end">
+                                                <div class="d-flex justify-content-end flex-shrink-0">
+                                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                                                        <i class="ki-outline ki-pencil fs-5"></i>
+                                                    </a>
+                                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-icon btn-bg-light btn-active-color-danger btn-sm"
+                                                       onclick="return confirm('Bu sınıfı silmek istediğinizden emin misiniz?')">
+                                                        <i class="ki-outline ki-trash fs-5"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="card-toolbar">
-            <div class="d-flex justify-content-end" data-kt-grade-table-toolbar="base">
-                <a asp-action="Create" class="btn btn-primary">
-                    <i class="ki-outline ki-plus fs-2"></i>
-                    Yeni Sınıf Ekle
-                </a>
-            </div>
-        </div>
-    </div>
-    <div class="card-body py-4">
-        <div class="table-responsive">
-            <table class="table align-middle table-row-dashed fs-6 gy-5" id="gradesTable">
-                <thead>
-                    <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
-                        <th class="min-w-100px">Seviye</th>
-                        <th class="min-w-150px">Sınıf Adı</th>
-                        <th class="text-end min-w-100px">İşlemler</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-600 fw-semibold">
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="symbol symbol-40px me-3 bg-light-success">
-                                        <span class="symbol-label text-success fw-bold">@item.Level</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>@item.Name</td>
-                            <td class="text-end">
-                                <div class="d-flex justify-content-end flex-shrink-0">
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
-                                        <i class="ki-outline ki-pencil fs-5"></i>
-                                    </a>
-                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-icon btn-bg-light btn-active-color-danger btn-sm"
-                                       onclick="return confirm('Bu sınıfı silmek istediğinizden emin misiniz?')">
-                                        <i class="ki-outline ki-trash fs-5"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
         </div>
     </div>
 </div>

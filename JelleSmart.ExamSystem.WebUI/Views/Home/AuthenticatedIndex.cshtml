@@ -3,214 +3,224 @@
 @{
     ViewData["Title"] = "Dashboard";
 }
+<div class="d-flex flex-column-fluid">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <!-- Stats Cards -->
+                <div class="row g-5 g-xl-8">
+                    <div class="col-xl-4">
+                        <div class="card card-xl-stretch mb-xl-8">
+                            <div class="card-body p-0">
+                                <div class="d-flex flex-stack h-100 p-6">
+                                    <div class="d-flex flex-column flex-grow-1">
+                                        <a href="#" class="text-gray-800 text-hover-primary fw-bold fs-3">Hoş Geldiniz</a>
+                                        <span class="text-gray-400 fw-semibold mt-1">@Model.User.FullName</span>
+                                    </div>
+                                    <div class="symbol symbol-60px symbol-lg-90px">
+                                        <div class="symbol-label bg-light-primary align-items-end">
+                                            <span class="symbol-badge badge-circle bg-success start-0 top-0 w-15px h-15px" data-bs-toggle="tooltip" title="Online"></span>
+                                            <span class="text-primary fs-3qx fw-bold">@(Model.User.FirstName?.Substring(0, 1).ToUpper())@(Model.User.LastName?.Substring(0, 1).ToUpper())</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-<!-- Stats Cards -->
-<div class="row g-5 g-xl-8">
-    <div class="col-xl-4">
-        <div class="card card-xl-stretch mb-xl-8">
-            <div class="card-body p-0">
-                <div class="d-flex flex-stack h-100 p-6">
-                    <div class="d-flex flex-column flex-grow-1">
-                        <a href="#" class="text-gray-800 text-hover-primary fw-bold fs-3">Hoş Geldiniz</a>
-                        <span class="text-gray-400 fw-semibold mt-1">@Model.User.FullName</span>
-                    </div>
-                    <div class="symbol symbol-60px symbol-lg-90px">
-                        <div class="symbol-label bg-light-primary align-items-end">
-                            <span class="symbol-badge badge-circle bg-success start-0 top-0 w-15px h-15px" data-bs-toggle="tooltip" title="Online"></span>
-                            <span class="text-primary fs-3qx fw-bold">@(Model.User.FirstName?.Substring(0, 1).ToUpper())@(Model.User.LastName?.Substring(0, 1).ToUpper())</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    @switch (Model.Role)
-    {
-        case "Admin":
-            <div class="col-xl-4">
-                <div class="card card-xl-stretch mb-5 mb-xl-8">
-                    <div class="card-body p-0 d-flex align-items-center justify-content-between px-6 py-8">
-                        <div class="d-flex flex-column">
-                            <a asp-controller="UserManagement" asp-action="Index" class="text-dark text-hover-primary fw-bold fs-3">Kullanıcılar</a>
-                            <span class="text-gray-400 fw-semibold mt-1">Sistem kullanıcılarını yönetin</span>
-                        </div>
-                        <div class="symbol symbol-50px">
-                            <div class="symbol-label bg-light-info">
-                                <i class="ki-outline ki-users fs-2 text-info"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-4">
-                <div class="card card-xl-stretch mb-5 mb-xl-8">
-                    <div class="card-body p-0 d-flex align-items-center justify-content-between px-6 py-8">
-                        <div class="d-flex flex-column">
-                            <a asp-controller="Subject" asp-action="Index" class="text-dark text-hover-primary fw-bold fs-3">Dersler</a>
-                            <span class="text-gray-400 fw-semibold mt-1">Ders içeriklerini yönetin</span>
-                        </div>
-                        <div class="symbol symbol-50px">
-                            <div class="symbol-label bg-light-success">
-                                <i class="ki-outline ki-book fs-2 text-success"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            break;
-
-        case "Teacher":
-            <div class="col-xl-4">
-                <div class="card card-xl-stretch mb-5 mb-xl-8">
-                    <div class="card-body p-0 d-flex align-items-center justify-content-between px-6 py-8">
-                        <div class="d-flex flex-column">
-                            <a asp-controller="TeacherQuestion" asp-action="Index" class="text-dark text-hover-primary fw-bold fs-3">Soru Bankası</a>
-                            <span class="text-gray-400 fw-semibold mt-1">Soru ekleyin ve yönetin</span>
-                        </div>
-                        <div class="symbol symbol-50px">
-                            <div class="symbol-label bg-light-warning">
-                                <i class="ki-outline ki-questionnaire fs-2 text-warning"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-4">
-                <div class="card card-xl-stretch mb-5 mb-xl-8">
-                    <div class="card-body p-0 d-flex align-items-center justify-content-between px-6 py-8">
-                        <div class="d-flex flex-column">
-                            <a asp-controller="TeacherExam" asp-action="Index" class="text-dark text-hover-primary fw-bold fs-3">Sınavlar</a>
-                            <span class="text-gray-400 fw-semibold mt-1">Sınav oluşturun ve yönetin</span>
-                        </div>
-                        <div class="symbol symbol-50px">
-                            <div class="symbol-label bg-light-danger">
-                                <i class="ki-outline ki-clipboard fs-2 text-danger"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            break;
-
-        case "Student":
-            <div class="col-xl-4">
-                <div class="card card-xl-stretch mb-5 mb-xl-8">
-                    <div class="card-body p-0 d-flex align-items-center justify-content-between px-6 py-8">
-                        <div class="d-flex flex-column">
-                            <a asp-controller="StudentExam" asp-action="Index" class="text-dark text-hover-primary fw-bold fs-3">Sınavlarım</a>
-                            <span class="text-gray-400 fw-semibold mt-1">Sınavlara katılın</span>
-                        </div>
-                        <div class="symbol symbol-50px">
-                            <div class="symbol-label bg-light-primary">
-                                <i class="ki-outline ki-clipboard-check fs-2 text-primary"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-4">
-                <div class="card card-xl-stretch mb-5 mb-xl-8">
-                    <div class="card-body p-0 d-flex align-items-center justify-content-between px-6 py-8">
-                        <div class="d-flex flex-column">
-                            <a asp-controller="StudentReport" asp-action="Index" class="text-dark text-hover-primary fw-bold fs-3">Raporlarım</a>
-                            <span class="text-gray-400 fw-semibold mt-1">Sonuçlarınızı görün</span>
-                        </div>
-                        <div class="symbol symbol-50px">
-                            <div class="symbol-label bg-light-success">
-                                <i class="ki-outline ki-chart fs-2 text-success"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            break;
-    }
-</div>
-
-<!-- Quick Actions -->
-<div class="row g-5 g-xl-8 mt-0">
-    <div class="col-12">
-        <div class="card card-xl-stretch mb-5 mb-xl-8">
-            <div class="card-header border-0 pt-6">
-                <h3 class="card-title align-items-start flex-column">
-                    <span class="card-label fw-bold fs-3 mb-1">Hızlı Erişim</span>
-                    <span class="text-muted fw-semibold fs-7">Sık kullanılan özelliklere hızlı erişim</span>
-                </h3>
-            </div>
-            <div class="card-body py-3">
-                <div class="row g-4">
                     @switch (Model.Role)
                     {
                         case "Admin":
-                            <div class="col-sm-6 col-xl-3">
-                                <a asp-controller="Subject" asp-action="Create" class="card border border-dashed border-gray-300 bg-hover-light-primary hoverable h-100">
-                                    <div class="card-body d-flex flex-column align-items-center justify-content-center py-8">
-                                        <div class="symbol symbol-50px mb-3">
-                                            <div class="symbol-label bg-light-primary">
-                                                <i class="ki-outline ki-plus fs-2 text-primary"></i>
+                            <div class="col-xl-4">
+                                <div class="card card-xl-stretch mb-5 mb-xl-8">
+                                    <div class="card-body p-0 d-flex align-items-center justify-content-between px-6 py-8">
+                                        <div class="d-flex flex-column">
+                                            <a asp-controller="UserManagement" asp-action="Index" class="text-dark text-hover-primary fw-bold fs-3">Kullanıcılar</a>
+                                            <span class="text-gray-400 fw-semibold mt-1">Sistem kullanıcılarını yönetin</span>
+                                        </div>
+                                        <div class="symbol symbol-50px">
+                                            <div class="symbol-label bg-light-info">
+                                                <i class="ki-outline ki-users fs-2 text-info"></i>
                                             </div>
                                         </div>
-                                        <span class="text-gray-800 fw-bold">Yeni Ders</span>
                                     </div>
-                                </a>
+                                </div>
                             </div>
-                            <div class="col-sm-6 col-xl-3">
-                                <a asp-controller="Grade" asp-action="Create" class="card border border-dashed border-gray-300 bg-hover-light-success hoverable h-100">
-                                    <div class="card-body d-flex flex-column align-items-center justify-content-center py-8">
-                                        <div class="symbol symbol-50px mb-3">
+                            <div class="col-xl-4">
+                                <div class="card card-xl-stretch mb-5 mb-xl-8">
+                                    <div class="card-body p-0 d-flex align-items-center justify-content-between px-6 py-8">
+                                        <div class="d-flex flex-column">
+                                            <a asp-controller="Subject" asp-action="Index" class="text-dark text-hover-primary fw-bold fs-3">Dersler</a>
+                                            <span class="text-gray-400 fw-semibold mt-1">Ders içeriklerini yönetin</span>
+                                        </div>
+                                        <div class="symbol symbol-50px">
                                             <div class="symbol-label bg-light-success">
-                                                <i class="ki-outline ki-graduation-cap fs-2 text-success"></i>
+                                                <i class="ki-outline ki-book fs-2 text-success"></i>
                                             </div>
                                         </div>
-                                        <span class="text-gray-800 fw-bold">Yeni Sınıf</span>
                                     </div>
-                                </a>
+                                </div>
                             </div>
                             break;
 
                         case "Teacher":
-                            <div class="col-sm-6 col-xl-3">
-                                <a asp-controller="TeacherQuestion" asp-action="Create" class="card border border-dashed border-gray-300 bg-hover-light-warning hoverable h-100">
-                                    <div class="card-body d-flex flex-column align-items-center justify-content-center py-8">
-                                        <div class="symbol symbol-50px mb-3">
+                            <div class="col-xl-4">
+                                <div class="card card-xl-stretch mb-5 mb-xl-8">
+                                    <div class="card-body p-0 d-flex align-items-center justify-content-between px-6 py-8">
+                                        <div class="d-flex flex-column">
+                                            <a asp-controller="TeacherQuestion" asp-action="Index" class="text-dark text-hover-primary fw-bold fs-3">Soru Bankası</a>
+                                            <span class="text-gray-400 fw-semibold mt-1">Soru ekleyin ve yönetin</span>
+                                        </div>
+                                        <div class="symbol symbol-50px">
                                             <div class="symbol-label bg-light-warning">
                                                 <i class="ki-outline ki-questionnaire fs-2 text-warning"></i>
                                             </div>
                                         </div>
-                                        <span class="text-gray-800 fw-bold">Soru Ekle</span>
                                     </div>
-                                </a>
+                                </div>
                             </div>
-                            <div class="col-sm-6 col-xl-3">
-                                <a asp-controller="TeacherExam" asp-action="Create" class="card border border-dashed border-gray-300 bg-hover-light-danger hoverable h-100">
-                                    <div class="card-body d-flex flex-column align-items-center justify-content-center py-8">
-                                        <div class="symbol symbol-50px mb-3">
+                            <div class="col-xl-4">
+                                <div class="card card-xl-stretch mb-5 mb-xl-8">
+                                    <div class="card-body p-0 d-flex align-items-center justify-content-between px-6 py-8">
+                                        <div class="d-flex flex-column">
+                                            <a asp-controller="TeacherExam" asp-action="Index" class="text-dark text-hover-primary fw-bold fs-3">Sınavlar</a>
+                                            <span class="text-gray-400 fw-semibold mt-1">Sınav oluşturun ve yönetin</span>
+                                        </div>
+                                        <div class="symbol symbol-50px">
                                             <div class="symbol-label bg-light-danger">
                                                 <i class="ki-outline ki-clipboard fs-2 text-danger"></i>
                                             </div>
                                         </div>
-                                        <span class="text-gray-800 fw-bold">Sınav Oluştur</span>
                                     </div>
-                                </a>
+                                </div>
                             </div>
                             break;
 
                         case "Student":
-                            <div class="col-sm-6 col-xl-3">
-                                <a asp-controller="StudentExam" asp-action="Index" class="card border border-dashed border-gray-300 bg-hover-light-primary hoverable h-100">
-                                    <div class="card-body d-flex flex-column align-items-center justify-content-center py-8">
-                                        <div class="symbol symbol-50px mb-3">
+                            <div class="col-xl-4">
+                                <div class="card card-xl-stretch mb-5 mb-xl-8">
+                                    <div class="card-body p-0 d-flex align-items-center justify-content-between px-6 py-8">
+                                        <div class="d-flex flex-column">
+                                            <a asp-controller="StudentExam" asp-action="Index" class="text-dark text-hover-primary fw-bold fs-3">Sınavlarım</a>
+                                            <span class="text-gray-400 fw-semibold mt-1">Sınavlara katılın</span>
+                                        </div>
+                                        <div class="symbol symbol-50px">
                                             <div class="symbol-label bg-light-primary">
                                                 <i class="ki-outline ki-clipboard-check fs-2 text-primary"></i>
                                             </div>
                                         </div>
-                                        <span class="text-gray-800 fw-bold">Sınava Başla</span>
                                     </div>
-                                </a>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="card card-xl-stretch mb-5 mb-xl-8">
+                                    <div class="card-body p-0 d-flex align-items-center justify-content-between px-6 py-8">
+                                        <div class="d-flex flex-column">
+                                            <a asp-controller="StudentReport" asp-action="Index" class="text-dark text-hover-primary fw-bold fs-3">Raporlarım</a>
+                                            <span class="text-gray-400 fw-semibold mt-1">Sonuçlarınızı görün</span>
+                                        </div>
+                                        <div class="symbol symbol-50px">
+                                            <div class="symbol-label bg-light-success">
+                                                <i class="ki-outline ki-chart fs-2 text-success"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             break;
                     }
+                </div>
+
+
+
+
+                <!-- Quick Actions -->
+                <div class="row g-5 g-xl-8 mt-0">
+                    <div class="col-12">
+                        <div class="card card-xl-stretch mb-5 mb-xl-8">
+                            <div class="card-header border-0 pt-6">
+                                <h3 class="card-title align-items-start flex-column">
+                                    <span class="card-label fw-bold fs-3 mb-1">Hızlı Erişim</span>
+                                    <span class="text-muted fw-semibold fs-7">Sık kullanılan özelliklere hızlı erişim</span>
+                                </h3>
+                            </div>
+                            <div class="card-body py-3">
+                                <div class="row g-4">
+                                    @switch (Model.Role)
+                                    {
+                                        case "Admin":
+                                            <div class="col-sm-6 col-xl-3">
+                                                <a asp-controller="Subject" asp-action="Create" class="card border border-dashed border-gray-300 bg-hover-light-primary hoverable h-100">
+                                                    <div class="card-body d-flex flex-column align-items-center justify-content-center py-8">
+                                                        <div class="symbol symbol-50px mb-3">
+                                                            <div class="symbol-label bg-light-primary">
+                                                                <i class="ki-outline ki-plus fs-2 text-primary"></i>
+                                                            </div>
+                                                        </div>
+                                                        <span class="text-gray-800 fw-bold">Yeni Ders</span>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-sm-6 col-xl-3">
+                                                <a asp-controller="Grade" asp-action="Create" class="card border border-dashed border-gray-300 bg-hover-light-success hoverable h-100">
+                                                    <div class="card-body d-flex flex-column align-items-center justify-content-center py-8">
+                                                        <div class="symbol symbol-50px mb-3">
+                                                            <div class="symbol-label bg-light-success">
+                                                                <i class="ki-outline ki-graduation-cap fs-2 text-success"></i>
+                                                            </div>
+                                                        </div>
+                                                        <span class="text-gray-800 fw-bold">Yeni Sınıf</span>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            break;
+
+                                        case "Teacher":
+                                            <div class="col-sm-6 col-xl-3">
+                                                <a asp-controller="TeacherQuestion" asp-action="Create" class="card border border-dashed border-gray-300 bg-hover-light-warning hoverable h-100">
+                                                    <div class="card-body d-flex flex-column align-items-center justify-content-center py-8">
+                                                        <div class="symbol symbol-50px mb-3">
+                                                            <div class="symbol-label bg-light-warning">
+                                                                <i class="ki-outline ki-questionnaire fs-2 text-warning"></i>
+                                                            </div>
+                                                        </div>
+                                                        <span class="text-gray-800 fw-bold">Soru Ekle</span>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-sm-6 col-xl-3">
+                                                <a asp-controller="TeacherExam" asp-action="Create" class="card border border-dashed border-gray-300 bg-hover-light-danger hoverable h-100">
+                                                    <div class="card-body d-flex flex-column align-items-center justify-content-center py-8">
+                                                        <div class="symbol symbol-50px mb-3">
+                                                            <div class="symbol-label bg-light-danger">
+                                                                <i class="ki-outline ki-clipboard fs-2 text-danger"></i>
+                                                            </div>
+                                                        </div>
+                                                        <span class="text-gray-800 fw-bold">Sınav Oluştur</span>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            break;
+
+                                        case "Student":
+                                            <div class="col-sm-6 col-xl-3">
+                                                <a asp-controller="StudentExam" asp-action="Index" class="card border border-dashed border-gray-300 bg-hover-light-primary hoverable h-100">
+                                                    <div class="card-body d-flex flex-column align-items-center justify-content-center py-8">
+                                                        <div class="symbol symbol-50px mb-3">
+                                                            <div class="symbol-label bg-light-primary">
+                                                                <i class="ki-outline ki-clipboard-check fs-2 text-primary"></i>
+                                                            </div>
+                                                        </div>
+                                                        <span class="text-gray-800 fw-bold">Sınava Başla</span>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            break;
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

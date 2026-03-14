@@ -4,77 +4,85 @@
     ViewData["Title"] = "Konular";
 }
 
-<div class="card card-xl-stretch mb-xl-8">
-    <div class="card-header border-0 pt-6">
-        <div class="card-title">
-            <div class="d-flex align-items-center position-relative my-1">
-                <span class="svg-icon svg-icon-1 position-absolute ms-6">
-                    <i class="ki-outline ki-search fs-2"></i>
-                </span>
-                <input type="text" data-kt-topic-table-filter="search" class="form-control form-control-solid w-250px ps-15" placeholder="Konu ara..." />
-            </div>
-        </div>
-        <div class="card-toolbar">
-            <div class="d-flex justify-content-end" data-kt-topic-table-toolbar="base">
-                <a asp-action="Create" class="btn btn-primary">
-                    <i class="ki-outline ki-plus fs-2"></i>
-                    Yeni Konu Ekle
-                </a>
-            </div>
-        </div>
-    </div>
-    <div class="card-body py-4">
-        <div class="table-responsive">
-            <table class="table align-middle table-row-dashed fs-6 gy-5" id="topicsTable">
-                <thead>
-                    <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
-                        <th class="min-w-100px">Kod</th>
-                        <th class="min-w-200px">Konu Adı</th>
-                        <th class="min-w-150px">Ünite</th>
-                        <th class="min-w-250px">Açıklama</th>
-                        <th class="text-end min-w-100px">İşlemler</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-600 fw-semibold">
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>
-                                <span class="badge badge-light-info fw-bold">@item.Code</span>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="symbol symbol-35px me-3 bg-light-warning">
-                                        <span class="symbol-label text-warning fw-bold fs-7">
-                                            @(item.Name?.Substring(0, 1).ToUpper())
-                                        </span>
-                                    </div>
-                                    <span class="text-gray-800 fw-bold">@item.Name</span>
-                                </div>
-                            </td>
-                            <td>
-                                <span class="text-gray-600">@item.UnitName</span>
-                            </td>
-                            <td>
-                                <span class="text-muted text-truncate d-block" style="max-width: 250px;">
-                                    @(item.Description?.Length > 50 ? item.Description.Substring(0, 50) + "..." : item.Description ?? "-")
+<div class="d-flex flex-column-fluid">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-xl-stretch mb-xl-8">
+                    <div class="card-header border-0 pt-6">
+                        <div class="card-title">
+                            <div class="d-flex align-items-center position-relative my-1">
+                                <span class="svg-icon svg-icon-1 position-absolute ms-6">
+                                    <i class="ki-outline ki-search fs-2"></i>
                                 </span>
-                            </td>
-                            <td class="text-end">
-                                <div class="d-flex justify-content-end flex-shrink-0">
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
-                                        <i class="ki-outline ki-pencil fs-5"></i>
-                                    </a>
-                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-icon btn-bg-light btn-active-color-danger btn-sm"
-                                       onclick="return confirm('Bu konuyu silmek istediğinizden emin misiniz?')">
-                                        <i class="ki-outline ki-trash fs-5"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                                <input type="text" data-kt-topic-table-filter="search" class="form-control form-control-solid w-250px ps-15" placeholder="Konu ara..." />
+                            </div>
+                        </div>
+                        <div class="card-toolbar">
+                            <div class="d-flex justify-content-end" data-kt-topic-table-toolbar="base">
+                                <a asp-action="Create" class="btn btn-primary">
+                                    <i class="ki-outline ki-plus fs-2"></i>
+                                    Yeni Konu Ekle
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body py-4">
+                        <div class="table-responsive">
+                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="topicsTable">
+                                <thead>
+                                    <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
+                                        <th class="min-w-100px">Kod</th>
+                                        <th class="min-w-200px">Konu Adı</th>
+                                        <th class="min-w-150px">Ünite</th>
+                                        <th class="min-w-250px">Açıklama</th>
+                                        <th class="text-end min-w-100px">İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-gray-600 fw-semibold">
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <span class="badge badge-light-info fw-bold">@item.Code</span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="symbol symbol-35px me-3 bg-light-warning">
+                                                        <span class="symbol-label text-warning fw-bold fs-7">
+                                                            @(item.Name?.Substring(0, 1).ToUpper())
+                                                        </span>
+                                                    </div>
+                                                    <span class="text-gray-800 fw-bold">@item.Name</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="text-gray-600">@item.UnitName</span>
+                                            </td>
+                                            <td>
+                                                <span class="text-muted text-truncate d-block" style="max-width: 250px;">
+                                                    @(item.Description?.Length > 50 ? item.Description.Substring(0, 50) + "..." : item.Description ?? "-")
+                                                </span>
+                                            </td>
+                                            <td class="text-end">
+                                                <div class="d-flex justify-content-end flex-shrink-0">
+                                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                                                        <i class="ki-outline ki-pencil fs-5"></i>
+                                                    </a>
+                                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-icon btn-bg-light btn-active-color-danger btn-sm"
+                                                       onclick="return confirm('Bu konuyu silmek istediğinizden emin misiniz?')">
+                                                        <i class="ki-outline ki-trash fs-5"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
