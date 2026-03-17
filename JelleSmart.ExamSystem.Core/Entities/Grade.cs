@@ -11,7 +11,6 @@ namespace JelleSmart.ExamSystem.Core.Entities
         public string Name { get; set; } = string.Empty; // "1. Sınıf", "2. Sınıf" vb.
 
         // Navigation properties
-        public ICollection<Unit> Units { get; set; } = new List<Unit>();
         public ICollection<AppUser> Students { get; set; } = new List<AppUser>();
     }
 }

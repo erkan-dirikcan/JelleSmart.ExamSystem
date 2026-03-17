@@ -12,13 +12,11 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
     {
         private readonly IUnitService _unitService;
         private readonly ISubjectService _subjectService;
-        private readonly IGradeService _gradeService;
 
-        public UnitController(IUnitService unitService, ISubjectService subjectService, IGradeService gradeService)
+        public UnitController(IUnitService unitService, ISubjectService subjectService)
         {
             _unitService = unitService;
             _subjectService = subjectService;
-            _gradeService = gradeService;
         }
 
         public async Task<IActionResult> Index()
@@ -36,7 +34,6 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             ViewData["Title"] = "Yeni Ünite";
             ViewData["PageDescription"] = "Yeni ünite ekleyin";
             ViewBag.Subjects = await _subjectService.GetAllViewModelAsync();
-            ViewBag.Grades = await _gradeService.GetAllViewModelAsync();
             return View();
         }
 
@@ -47,7 +44,6 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             if (!ModelState.IsValid)
             {
                 ViewBag.Subjects = await _subjectService.GetAllViewModelAsync();
-                ViewBag.Grades = await _gradeService.GetAllViewModelAsync();
                 return View(viewModel);
             }
 
@@ -67,7 +63,6 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
                 return NotFound();
 
             ViewBag.Subjects = await _subjectService.GetAllViewModelAsync();
-            ViewBag.Grades = await _gradeService.GetAllViewModelAsync();
             return View(viewModel);
         }
 
@@ -78,7 +73,6 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             if (!ModelState.IsValid)
             {
                 ViewBag.Subjects = await _subjectService.GetAllViewModelAsync();
-                ViewBag.Grades = await _gradeService.GetAllViewModelAsync();
                 return View(viewModel);
             }
 

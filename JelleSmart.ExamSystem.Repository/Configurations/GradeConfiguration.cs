@@ -14,11 +14,6 @@ namespace JelleSmart.ExamSystem.Repository.Configurations
             builder.Property(e => e.Name).IsRequired();
             builder.Property(e => e.Level).IsRequired();
 
-            builder.HasMany(g => g.Units)
-                .WithOne(u => u.Grade)
-                .HasForeignKey(u => u.GradeId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             builder.HasMany(g => g.Students)
                 .WithOne(u => u.Grade)
                 .HasForeignKey(u => u.GradeId)

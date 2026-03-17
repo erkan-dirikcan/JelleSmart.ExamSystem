@@ -53,10 +53,8 @@ namespace JelleSmart.ExamSystem.Service.Services
                 Id = e.Id,
                 Name = e.Name,
                 SubjectId = e.SubjectId,
-                GradeId = e.GradeId,
                 Description = e.Description,
-                SubjectName = e.Subject?.Name,
-                GradeName = e.Grade?.Name
+                SubjectName = e.Subject?.Name
             }).ToList();
         }
 
@@ -71,10 +69,8 @@ namespace JelleSmart.ExamSystem.Service.Services
                 Id = entity.Id,
                 Name = entity.Name,
                 SubjectId = entity.SubjectId,
-                GradeId = entity.GradeId,
                 Description = entity.Description,
-                SubjectName = entity.Subject?.Name,
-                GradeName = entity.Grade?.Name
+                SubjectName = entity.Subject?.Name
             };
         }
 
@@ -84,7 +80,6 @@ namespace JelleSmart.ExamSystem.Service.Services
             {
                 Name = viewModel.Name,
                 SubjectId = viewModel.SubjectId,
-                GradeId = viewModel.GradeId,
                 Description = viewModel.Description
             };
             var result = await _unitRepository.CreateAsync(entity);
@@ -99,7 +94,6 @@ namespace JelleSmart.ExamSystem.Service.Services
 
             entity.Name = viewModel.Name;
             entity.SubjectId = viewModel.SubjectId;
-            entity.GradeId = viewModel.GradeId;
             entity.Description = viewModel.Description;
 
             await _unitRepository.UpdateAsync(entity);

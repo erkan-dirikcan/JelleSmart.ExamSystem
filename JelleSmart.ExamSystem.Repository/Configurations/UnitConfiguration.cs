@@ -19,11 +19,6 @@ namespace JelleSmart.ExamSystem.Repository.Configurations
                 .HasForeignKey(u => u.SubjectId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(u => u.Grade)
-                .WithMany(g => g.Units)
-                .HasForeignKey(u => u.GradeId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             builder.HasMany(u => u.Topics)
                 .WithOne(t => t.Unit)
                 .HasForeignKey(t => t.UnitId)

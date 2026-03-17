@@ -37,14 +37,6 @@
                             </div>
 
                             <div class="mb-5">
-                                <label asp-for="GradeId" class="form-label">Sınıf</label>
-                                <select asp-for="GradeId" class="form-select form-select-solid" asp-items="@(new SelectList(ViewBag.Grades, "Id", "Name"))">
-                                    <option value="">Seçiniz...</option>
-                                </select>
-                                <span asp-validation-for="GradeId" class="text-danger fs-7"></span>
-                            </div>
-
-                            <div class="mb-5">
                                 <label asp-for="Description" class="form-label">Açıklama</label>
                                 <textarea asp-for="Description" class="form-control form-control-solid" rows="3" placeholder="Ünite açıklamasını girin"></textarea>
                                 <span asp-validation-for="Description" class="text-danger fs-7"></span>
