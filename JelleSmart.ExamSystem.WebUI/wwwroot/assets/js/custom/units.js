@@ -12,7 +12,7 @@ var UnitsTable = function () {
                   <'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
             // Order settings
             order: [[0, 'asc']],
-            // Column definitions
+            // Column definitions - 4 sütun var artık (Sınıf sütunu kaldırıldı)
             columnDefs: [
                 {
                     targets: 0,
@@ -28,10 +28,6 @@ var UnitsTable = function () {
                 },
                 {
                     targets: 3,
-                    orderable: true,
-                },
-                {
-                    targets: 4,
                     orderable: false,
                     className: 'text-end'
                 }
