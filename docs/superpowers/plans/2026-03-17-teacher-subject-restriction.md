@@ -304,14 +304,21 @@ git commit -m "feat: Add GetByTeacherSubjectsAsync implementation to TopicServic
 
 Dosyayı oku.
 
-- [ ] **Step 2: ITeacherProfileService field'ını ekle**
+- [ ] **Step 2: System.Security.Claims using'ini ekle**
+
+Dosyanın en üstündeki using'lere ekle:
+```csharp
+using System.Security.Claims;
+```
+
+- [ ] **Step 3: ITeacherProfileService field'ını ekle**
 
 Class level'da ekle:
 ```csharp
 private readonly ITeacherProfileService _teacherProfileService;
 ```
 
-- [ ] **Step 3: Constructor'ı güncelle**
+- [ ] **Step 4: Constructor'ı güncelle**
 
 Constructor'ı güncelle:
 ```csharp
@@ -326,7 +333,7 @@ public UnitController(
 }
 ```
 
-- [ ] **Step 4: Authorize attribute'ını güncelle**
+- [ ] **Step 5: Authorize attribute'ını güncelle**
 
 Class attribute'ını güncelle:
 ```csharp
@@ -639,14 +646,21 @@ git commit -m "feat: Add authorization check to UnitController Delete actions"
 
 Dosyayı oku.
 
-- [ ] **Step 2: ITeacherProfileService field'ını ekle**
+- [ ] **Step 2: System.Security.Claims using'ini ekle**
+
+Dosyanın en üstündeki using'lere ekle:
+```csharp
+using System.Security.Claims;
+```
+
+- [ ] **Step 3: ITeacherProfileService field'ını ekle**
 
 Class level'da ekle:
 ```csharp
 private readonly ITeacherProfileService _teacherProfileService;
 ```
 
-- [ ] **Step 3: Constructor'ı güncelle**
+- [ ] **Step 4: Constructor'ı güncelle**
 
 Constructor'ı güncelle:
 ```csharp
@@ -661,7 +675,7 @@ public TopicController(
 }
 ```
 
-- [ ] **Step 4: Authorize attribute'ını güncelle**
+- [ ] **Step 5: Authorize attribute'ını güncelle**
 
 Class attribute'ını güncelle:
 ```csharp
@@ -670,12 +684,12 @@ Class attribute'ını güncelle:
 [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Teacher)]
 ```
 
-- [ ] **Step 5: Build kontrolü**
+- [ ] **Step 6: Build kontrolü**
 
 Run: `dotnet build JelleSmart.ExamSystem.WebUI/JelleSmart.ExamSystem.WebUI.csproj`
 Expected: Build başarılı
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 7: Commit**
 
 ```bash
 git add JelleSmart.ExamSystem.WebUI/Controllers/TopicController.cs
