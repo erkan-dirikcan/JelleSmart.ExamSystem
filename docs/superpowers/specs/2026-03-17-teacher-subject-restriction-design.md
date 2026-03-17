@@ -58,12 +58,23 @@ Task<IEnumerable<UnitViewModel>> GetAllViewModelAsync();
 
 // Teacher için - yeni
 Task<IEnumerable<UnitViewModel>> GetByTeacherSubjectsAsync(string userId);
-Task<IEnumerable<UnitViewModel>> GetBySubjectIdAsync(string subjectId);
 ```
 
 ### 2. UnitService Güncelleme
 
 **Dosya:** `JelleSmart.ExamSystem.Service/Services/UnitService.cs`
+
+Constructor güncelleme - ITeacherProfileService ekle:
+```csharp
+private readonly IUnitRepository _unitRepository;
+private readonly ITeacherProfileService _teacherProfileService;
+
+public UnitService(IUnitRepository unitRepository, ITeacherProfileService teacherProfileService)
+{
+    _unitRepository = unitRepository;
+    _teacherProfileService = teacherProfileService;
+}
+```
 
 Teacher filtreleme implementasyonu:
 ```csharp
@@ -74,14 +85,18 @@ public async Task<IEnumerable<UnitViewModel>> GetByTeacherSubjectsAsync(string u
     if (teacherProfile == null || !teacherProfile.Subjects.Any())
         return Enumerable.Empty<UnitViewModel>();
 
-    var subjectIds = teacherProfile.Subjects.Select(ts => ts.SubjectId).ToList();
+    // 2. SubjectId'leri al (null kontrolü ile)
+    var subjectIds = teacherProfile.Subjects
+        .Where(ts => !string.IsNullOrEmpty(ts.SubjectId))
+        .Select(ts => ts.SubjectId!)
+        .ToList();
 
-    // 2. Tüm üniteleri getir
+    // 3. Tüm üniteleri getir
     var allUnits = await _unitRepository.GetAllWithIncludesAsync();
 
-    // 3. Teacher'ın derslerine ait üniteleri filtrele
+    // 4. Teacher'ın derslerine ait üniteleri filtrele
     return allUnits
-        .Where(u => subjectIds.Contains(u.SubjectId))
+        .Where(u => !string.IsNullOrEmpty(u.SubjectId) && subjectIds.Contains(u.SubjectId))
         .Select(e => new UnitViewModel
         {
             Id = e.Id,
@@ -97,43 +112,90 @@ public async Task<IEnumerable<UnitViewModel>> GetByTeacherSubjectsAsync(string u
 
 **Dosya:** `JelleSmart.ExamSystem.WebUI/Controllers/UnitController.cs`
 
+Constructor güncelleme:
 ```csharp
-// Admin OR Teacher
+private readonly IUnitService _unitService;
+private readonly ISubjectService _subjectService;
+private readonly ITeacherProfileService _teacherProfileService;  // YENİ
+
+public UnitController(
+    IUnitService unitService,
+    ISubjectService subjectService,
+    ITeacherProfileService teacherProfileService)  // YENİ
+{
+    _unitService = unitService;
+    _subjectService = subjectService;
+    _teacherProfileService = teacherProfileService;  // YENİ
+}
+```
+
+Authorize güncelleme:
+```csharp
+// ÖNCE: [Authorize(Roles = UserRoles.Admin)]
+// SONRA:
 [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Teacher)]
 public class UnitController : Controller
+```
+
+Index action güncelleme:
+```csharp
+public async Task<IActionResult> Index()
 {
-    private readonly IUnitService _unitService;
-    private readonly ISubjectService _subjectService;
-    private readonly ITeacherProfileService _teacherProfileService;
+    ViewData["ActivePage"] = ManageNavPages.Units;
+    ViewData["Title"] = "Üniteler";
+    ViewData["PageDescription"] = "Sistem ünitelerini yönetin";
 
-    public async Task<IActionResult> Index()
+    IEnumerable<UnitViewModel> viewModels;
+
+    // Admin ise tüm üniteler, Teacher ise sadece kendi derslerinin üniteleri
+    if (User.IsInRole(UserRoles.Admin))
     {
-        ViewData["ActivePage"] = ManageNavPages.Units;
-        ViewData["Title"] = "Üniteler";
-        ViewData["PageDescription"] = "Sistem ünitelerini yönetin";
-
-        IEnumerable<UnitViewModel> viewModels;
-
-        // Admin ise tüm üniteler, Teacher ise sadece kendi derslerinin üniteleri
-        if (User.IsInRole(UserRoles.Admin))
-        {
-            viewModels = await _unitService.GetAllViewModelAsync();
-        }
-        else
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            viewModels = await _unitService.GetByTeacherSubjectsAsync(userId!);
-        }
-
-        return View(viewModels);
+        viewModels = await _unitService.GetAllViewModelAsync();
+    }
+    else  // Teacher
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        viewModels = await _unitService.GetByTeacherSubjectsAsync(userId!);
     }
 
-    public async Task<IActionResult> Create()
-    {
-        ViewData["ActivePage"] = ManageNavPages.Units;
-        ViewData["Title"] = "Yeni Ünite";
-        ViewData["PageDescription"] = "Yeni ünite ekleyin";
+    return View(viewModels);
+}
+```
 
+Create GET action güncelleme:
+```csharp
+public async Task<IActionResult> Create()
+{
+    ViewData["ActivePage"] = ManageNavPages.Units;
+    ViewData["Title"] = "Yeni Ünite";
+    ViewData["PageDescription"] = "Yeni ünite ekleyin";
+
+    IEnumerable<SubjectViewModel> subjects;
+
+    if (User.IsInRole(UserRoles.Admin))
+    {
+        subjects = await _subjectService.GetAllViewModelAsync();
+    }
+    else  // Teacher
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        subjects = await _teacherProfileService.GetTeacherSubjectsAsync(userId!);
+    }
+
+    ViewBag.Subjects = subjects;
+    return View();
+}
+```
+
+Create POST action güncelleme:
+```csharp
+[HttpPost]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Create(UnitViewModel viewModel)
+{
+    if (!ModelState.IsValid)
+    {
+        // Validasyon hatasında da ViewBag'i doğru doldur
         IEnumerable<SubjectViewModel> subjects;
 
         if (User.IsInRole(UserRoles.Admin))
@@ -147,8 +209,137 @@ public class UnitController : Controller
         }
 
         ViewBag.Subjects = subjects;
-        return View();
+        return View(viewModel);
     }
+
+    await _unitService.CreateViewModelAsync(viewModel);
+    TempData["Success"] = "Ünite başarıyla eklendi";
+    return RedirectToAction("Index");
+}
+```
+
+Edit GET action güncelleme:
+```csharp
+public async Task<IActionResult> Edit(string id)
+{
+    ViewData["ActivePage"] = ManageNavPages.Units;
+    ViewData["Title"] = "Ünite Düzenle";
+    ViewData["PageDescription"] = "Ünite bilgilerini düzenleyin";
+
+    var viewModel = await _unitService.GetViewModelByIdAsync(id);
+    if (viewModel == null)
+        return NotFound();
+
+    // Teacher için: Kendi dersine ait mi kontrol et
+    if (!User.IsInRole(UserRoles.Admin))
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var hasSubject = await _teacherProfileService.HasSubjectAsync(userId!, viewModel.SubjectId!);
+        if (!hasSubject)
+            return Forbid();
+    }
+
+    IEnumerable<SubjectViewModel> subjects;
+
+    if (User.IsInRole(UserRoles.Admin))
+    {
+        subjects = await _subjectService.GetAllViewModelAsync();
+    }
+    else
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        subjects = await _teacherProfileService.GetTeacherSubjectsAsync(userId!);
+    }
+
+    ViewBag.Subjects = subjects;
+    return View(viewModel);
+}
+```
+
+Edit POST action güncelleme:
+```csharp
+[HttpPost]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Edit(UnitViewModel viewModel)
+{
+    if (!ModelState.IsValid)
+    {
+        // Validasyon hatasında da ViewBag'i doğru doldur
+        IEnumerable<SubjectViewModel> subjects;
+
+        if (User.IsInRole(UserRoles.Admin))
+        {
+            subjects = await _subjectService.GetAllViewModelAsync();
+        }
+        else
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            subjects = await _teacherProfileService.GetTeacherSubjectsAsync(userId!);
+        }
+
+        ViewBag.Subjects = subjects;
+        return View(viewModel);
+    }
+
+    // Teacher için: Kendi dersine ait mi kontrol et
+    if (!User.IsInRole(UserRoles.Admin))
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var hasSubject = await _teacherProfileService.HasSubjectAsync(userId!, viewModel.SubjectId!);
+        if (!hasSubject)
+            return Forbid();
+    }
+
+    await _unitService.UpdateViewModelAsync(viewModel);
+    TempData["Success"] = "Ünite başarıyla güncellendi";
+    return RedirectToAction("Index");
+}
+```
+
+Delete action güncelleme:
+```csharp
+public async Task<IActionResult> Delete(string id)
+{
+    ViewData["ActivePage"] = ManageNavPages.Units;
+    ViewData["Title"] = "Ünite Sil";
+    ViewData["PageDescription"] = "Ünite silme onayı";
+
+    var viewModel = await _unitService.GetViewModelByIdAsync(id);
+    if (viewModel == null)
+        return NotFound();
+
+    // Teacher için: Kendi dersine ait mi kontrol et
+    if (!User.IsInRole(UserRoles.Admin))
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var hasSubject = await _teacherProfileService.HasSubjectAsync(userId!, viewModel.SubjectId!);
+        if (!hasSubject)
+            return Forbid();
+    }
+
+    return View(viewModel);
+}
+
+[HttpPost, ActionName("Delete")]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> DeleteConfirmed(string id)
+{
+    var viewModel = await _unitService.GetViewModelByIdAsync(id);
+    if (viewModel == null)
+        return NotFound();
+
+    // Teacher için: Kendi dersine ait mi kontrol et
+    if (!User.IsInRole(UserRoles.Admin))
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var hasSubject = await _teacherProfileService.HasSubjectAsync(userId!, viewModel.SubjectId!);
+        if (!hasSubject)
+            return Forbid();
+    }
+
+    await _unitService.DeleteAsync(id);
+    TempData["Success"] = "Ünite başarıyla silindi";
+    return RedirectToAction("Index");
 }
 ```
 
@@ -157,15 +348,30 @@ public class UnitController : Controller
 **Dosya:** `JelleSmart.ExamSystem.Core/Interfaces/Services/ITopicService.cs`
 
 ```csharp
+// Admin için - mevcut metod
+Task<IEnumerable<TopicViewModel>> GetAllViewModelAsync();
+
 // Teacher için - yeni
 Task<IEnumerable<TopicViewModel>> GetByTeacherSubjectsAsync(string userId);
-Task<IEnumerable<TopicViewModel>> GetBySubjectIdAsync(string subjectId);
 ```
 
 ### 5. TopicService Güncelleme
 
 **Dosya:** `JelleSmart.ExamSystem.Service/Services/TopicService.cs`
 
+Constructor güncelleme:
+```csharp
+private readonly ITopicRepository _topicRepository;
+private readonly ITeacherProfileService _teacherProfileService;  // YENİ
+
+public TopicService(ITopicRepository topicRepository, ITeacherProfileService teacherProfileService)
+{
+    _topicRepository = topicRepository;
+    _teacherProfileService = teacherProfileService;  // YENİ
+}
+```
+
+Teacher filtreleme implementasyonu:
 ```csharp
 public async Task<IEnumerable<TopicViewModel>> GetByTeacherSubjectsAsync(string userId)
 {
@@ -174,34 +380,24 @@ public async Task<IEnumerable<TopicViewModel>> GetByTeacherSubjectsAsync(string 
     if (teacherProfile == null || !teacherProfile.Subjects.Any())
         return Enumerable.Empty<TopicViewModel>();
 
-    var subjectIds = teacherProfile.Subjects.Select(ts => ts.SubjectId).ToList();
+    // 2. SubjectId'leri al (null kontrolü ile)
+    var subjectIds = teacherProfile.Subjects
+        .Where(ts => !string.IsNullOrEmpty(ts.SubjectId))
+        .Select(ts => ts.SubjectId!)
+        .ToList();
 
-    // 2. Tüm konuları getir
+    // 3. Tüm konuları getir
     var allTopics = await _topicRepository.GetAllWithIncludesAsync();
 
-    // 3. Teacher'ın derslerine ait konuları filtrele
+    // 4. Teacher'ın derslerine ait konuları filtrele
     return allTopics
-        .Where(t => t.Unit != null && subjectIds.Contains(t.Unit.SubjectId))
+        .Where(t => t.Unit != null && !string.IsNullOrEmpty(t.Unit.SubjectId) && subjectIds.Contains(t.Unit.SubjectId))
         .Select(e => new TopicViewModel
         {
             Id = e.Id,
             Name = e.Name,
             UnitId = e.UnitId,
-            Description = e.Description,
-            UnitName = e.Unit?.Name
-        }).ToList();
-}
-
-public async Task<IEnumerable<TopicViewModel>> GetBySubjectIdAsync(string subjectId)
-{
-    var allTopics = await _topicRepository.GetAllWithIncludesAsync();
-    return allTopics
-        .Where(t => t.Unit != null && t.Unit.SubjectId == subjectId)
-        .Select(e => new TopicViewModel
-        {
-            Id = e.Id,
-            Name = e.Name,
-            UnitId = e.UnitId,
+            Code = e.Code,
             Description = e.Description,
             UnitName = e.Unit?.Name
         }).ToList();
@@ -212,42 +408,88 @@ public async Task<IEnumerable<TopicViewModel>> GetBySubjectIdAsync(string subjec
 
 **Dosya:** `JelleSmart.ExamSystem.WebUI/Controllers/TopicController.cs`
 
+Constructor güncelleme:
 ```csharp
-// Admin OR Teacher
+private readonly ITopicService _topicService;
+private readonly IUnitService _unitService;
+private readonly ITeacherProfileService _teacherProfileService;  // YENİ
+
+public TopicController(
+    ITopicService topicService,
+    IUnitService unitService,
+    ITeacherProfileService teacherProfileService)  // YENİ
+{
+    _topicService = topicService;
+    _unitService = unitService;
+    _teacherProfileService = teacherProfileService;  // YENİ
+}
+```
+
+Authorize güncelleme:
+```csharp
+// ÖNCE: [Authorize(Roles = UserRoles.Admin)]
+// SONRA:
 [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Teacher)]
 public class TopicController : Controller
+```
+
+Index action:
+```csharp
+public async Task<IActionResult> Index()
 {
-    private readonly ITopicService _topicService;
-    private readonly IUnitService _unitService;
-    private readonly ITeacherProfileService _teacherProfileService;
+    ViewData["ActivePage"] = ManageNavPages.Topics;
+    ViewData["Title"] = "Konular";
+    ViewData["PageDescription"] = "Ünite konularını yönetin";
 
-    public async Task<IActionResult> Index()
+    IEnumerable<TopicViewModel> viewModels;
+
+    if (User.IsInRole(UserRoles.Admin))
     {
-        ViewData["ActivePage"] = ManageNavPages.Topics;
-        ViewData["Title"] = "Konular";
-        ViewData["PageDescription"] = "Ünite konularını yönetin";
-
-        IEnumerable<TopicViewModel> viewModels;
-
-        if (User.IsInRole(UserRoles.Admin))
-        {
-            viewModels = await _topicService.GetAllViewModelAsync();
-        }
-        else
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            viewModels = await _topicService.GetByTeacherSubjectsAsync(userId!);
-        }
-
-        return View(viewModels);
+        viewModels = await _topicService.GetAllViewModelAsync();
+    }
+    else  // Teacher
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        viewModels = await _topicService.GetByTeacherSubjectsAsync(userId!);
     }
 
-    public async Task<IActionResult> Create()
-    {
-        ViewData["ActivePage"] = ManageNavPages.Topics;
-        ViewData["Title"] = "Yeni Konu";
-        ViewData["PageDescription"] = "Yeni konu ekleyin";
+    return View(viewModels);
+}
+```
 
+Create GET action:
+```csharp
+public async Task<IActionResult> Create()
+{
+    ViewData["ActivePage"] = ManageNavPages.Topics;
+    ViewData["Title"] = "Yeni Konu";
+    ViewData["PageDescription"] = "Yeni konu ekleyin";
+
+    IEnumerable<UnitViewModel> units;
+
+    if (User.IsInRole(UserRoles.Admin))
+    {
+        units = await _unitService.GetAllViewModelAsync();
+    }
+    else  // Teacher
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        units = await _unitService.GetByTeacherSubjectsAsync(userId!);
+    }
+
+    ViewBag.Units = units;
+    return View();
+}
+```
+
+Create POST action:
+```csharp
+[HttpPost]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Create(TopicViewModel viewModel)
+{
+    if (!ModelState.IsValid)
+    {
         IEnumerable<UnitViewModel> units;
 
         if (User.IsInRole(UserRoles.Admin))
@@ -257,16 +499,62 @@ public class TopicController : Controller
         else
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            // Teacher'ın derslerine ait üniteler
-            var teacherUnits = await _unitService.GetByTeacherSubjectsAsync(userId!);
-            units = teacherUnits;
+            units = await _unitService.GetByTeacherSubjectsAsync(userId!);
         }
 
         ViewBag.Units = units;
-        return View();
+        return View(viewModel);
     }
+
+    await _topicService.CreateViewModelAsync(viewModel);
+    TempData["Success"] = "Konu başarıyla eklendi";
+    return RedirectToAction("Index");
 }
 ```
+
+Edit GET action:
+```csharp
+public async Task<IActionResult> Edit(string id)
+{
+    ViewData["ActivePage"] = ManageNavPages.Topics;
+    ViewData["Title"] = "Konu Düzenle";
+    ViewData["PageDescription"] = "Konu bilgilerini düzenleyin";
+
+    var viewModel = await _topicService.GetViewModelByIdAsync(id);
+    if (viewModel == null)
+        return NotFound();
+
+    // Teacher için: Kendi dersine ait mi kontrol et
+    if (!User.IsInRole(UserRoles.Admin))
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var unit = await _unitService.GetByIdAsync(viewModel.UnitId!);
+        if (unit != null)
+        {
+            var hasSubject = await _teacherProfileService.HasSubjectAsync(userId!, unit.SubjectId!);
+            if (!hasSubject)
+                return Forbid();
+        }
+    }
+
+    IEnumerable<UnitViewModel> units;
+
+    if (User.IsInRole(UserRoles.Admin))
+    {
+        units = await _unitService.GetAllViewModelAsync();
+    }
+    else
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        units = await _unitService.GetByTeacherSubjectsAsync(userId!);
+    }
+
+    ViewBag.Units = units;
+    return View(viewModel);
+}
+```
+
+Delete actions - UnitController ile aynı mantıkta yetki kontrolü eklenmeli.
 
 ### 7. ITeacherProfileService Güncelleme
 
@@ -275,6 +563,8 @@ public class TopicController : Controller
 ```csharp
 Task<IEnumerable<SubjectViewModel>> GetTeacherSubjectsAsync(string userId);
 ```
+
+Not: `HasSubjectAsync(string userId, string subjectId)` zaten mevcut.
 
 ### 8. TeacherProfileService Güncelleme
 
@@ -294,7 +584,8 @@ public async Task<IEnumerable<SubjectViewModel>> GetTeacherSubjectsAsync(string 
         {
             Id = s.Id,
             Name = s.Name,
-            Code = s.Code
+            Description = s.Description,
+            IconClass = s.IconClass
         }).ToList();
 }
 ```
@@ -332,13 +623,21 @@ public async Task<IEnumerable<SubjectViewModel>> GetTeacherSubjectsAsync(string 
 3. Yeni konu ekle -> Sadece kendi derslerinin üniteleri seçilebilir
 ```
 
+### Test 5: Yetki Kontrolü (Delete/Edit)
+```
+1. Matematik öğretmeni olarak giriş yap
+2. Fizik dersine ait bir Unit'in Edit URL'sine doğrudan git
+3. 403 Forbidden dönmeli
+```
+
 ## Güvenlik
 
 ### Authorize Kontrolü
-Controller seviyesinde `[Authorize]` kontrolü mevcut. Ek güvenlik önlemi gerekmiyor.
+Controller seviyesinde `[Authorize]` kontrolü mevcut.
 
-### Validasyon
-Service katmanında teacher'ın ders IDs'i kontrol ediliyor, yanlış ID ile istek gönderse bile boş sonuç dönüyor.
+### Ek Güvenlik
+- Edit/Delete action'larında teacher için kaynak yetki kontrolü yapılıyor
+- Doğrudan URL erişimi engelleniyor (`Forbid()`)
 
 ## Riskler
 
@@ -350,8 +649,6 @@ Service katmanında teacher'ın ders IDs'i kontrol ediliyor, yanlış ID ile ist
 
 1. IUnitService ve UnitService güncelle
 2. ITopicService ve TopicService güncelle
-3. ITeacherProfileService ve TeacherProfileService güncelle
-4. UnitController güncelle
-5. TopicController güncelle
-6. Test
-7. Commit
+3. UnitController ve TopicController güncelle
+4. Test
+5. Commit
