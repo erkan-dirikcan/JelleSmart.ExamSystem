@@ -43,7 +43,5 @@
       "Read(//c/Users/erkan.dirikcan/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.2/skills/requesting-code-review/**)"
     ]
   },
-  "enabledPlugins": {
-    "ralph-wiggum@claude-plugins-official": false
-  }
+  "enabledPlugins": {}
 }
