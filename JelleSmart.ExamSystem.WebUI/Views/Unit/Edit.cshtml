@@ -28,11 +28,11 @@
                                 </div>
 
                                 <div class="col-md-6 mb-5">
-                                    <label asp-for="SubjectId" class="form-label">Ders</label>
-                                    <select asp-for="SubjectId" class="form-select form-select-solid" asp-items="@(new SelectList(ViewBag.Subjects, "Id", "Name"))">
+                                    <label asp-for="GradeId" class="form-label">Sınıf</label>
+                                    <select asp-for="GradeId" class="form-select form-select-solid" asp-items="@(new SelectList(ViewBag.Grades, "Id", "Name"))">
                                         <option value="">Seçiniz...</option>
                                     </select>
-                                    <span asp-validation-for="SubjectId" class="text-danger fs-7"></span>
+                                    <span asp-validation-for="GradeId" class="text-danger fs-7"></span>
                                 </div>
                             </div>
 
@@ -62,5 +62,4 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script src="~/assets/js/custom/units-form.js"></script>
 }

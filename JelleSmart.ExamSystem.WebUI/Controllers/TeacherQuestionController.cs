@@ -1,4 +1,4 @@
-﻿using JelleSmart.ExamSystem.Core.Entities;
+using JelleSmart.ExamSystem.Core.Entities;
 using JelleSmart.ExamSystem.Core.Helpers;
 using JelleSmart.ExamSystem.Core.Interfaces.Services;
 using JelleSmart.ExamSystem.Core.Enums;
@@ -64,17 +64,14 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             {
                 Text = model.Text,
                 Difficulty = model.Difficulty,
-                SubjectId = model.SubjectId,
-                UnitId = model.UnitId,
                 TopicId = model.TopicId,
-                GradeId = model.GradeId,
                 CreatedByUserId = userId!
             };
 
-            // Ã–nce soruyu kaydet
+            // Once soruyu kaydet
             question = await _questionService.CreateAsync(question);
 
-            // ÅÄ±klarÄ± ekle
+            // Siklari ekle
             if (model.Choices != null && model.Choices.Count >= 2)
             {
                 for (int i = 0; i < model.Choices.Count; i++)
@@ -95,7 +92,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
 
             await _questionService.UpdateAsync(question);
 
-            // GÃ¶rsel varsa yÃ¼kle
+            // Gorsel varsa yukle
             if (model.ImageFile != null)
             {
                 using (var stream = model.ImageFile.OpenReadStream())
@@ -104,7 +101,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
                 }
             }
 
-            TempData["Success"] = "Soru baÅŸarÄ±yla eklendi";
+            TempData["Success"] = "Soru basariyla eklendi";
             return RedirectToAction("Index");
         }
 
@@ -120,10 +117,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
                 Text = question.Text,
                 ImageUrl = question.ImageUrl,
                 Difficulty = question.Difficulty,
-                SubjectId = question.SubjectId,
-                UnitId = question.UnitId,
                 TopicId = question.TopicId,
-                GradeId = question.GradeId,
                 Choices = question.Choices.Select(c => new ChoiceViewModel
                 {
                     Id = c.Id,
@@ -134,10 +128,6 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
 
             ViewBag.Subjects = await _subjectService.GetAllAsync();
             ViewBag.Grades = await _gradeService.GetAllAsync();
-            if (!string.IsNullOrEmpty(question.UnitId))
-                ViewBag.Units = await _unitService.GetBySubjectAsync(question.SubjectId!);
-            if (!string.IsNullOrEmpty(question.TopicId))
-                ViewBag.Topics = await _topicService.GetByUnitAsync(question.UnitId!);
 
             return View(viewModel);
         }
@@ -159,12 +149,9 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
 
             question.Text = model.Text;
             question.Difficulty = model.Difficulty;
-            question.SubjectId = model.SubjectId;
-            question.UnitId = model.UnitId;
             question.TopicId = model.TopicId;
-            question.GradeId = model.GradeId;
 
-            // ÅÄ±klarÄ± gÃ¼ncelle
+            // Siklari guncelle
             question.Choices.Clear();
             if (model.Choices != null && model.Choices.Count >= 2)
             {
@@ -186,7 +173,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
 
             await _questionService.UpdateAsync(question);
 
-            // Yeni gÃ¶rsel varsa yÃ¼kle
+            // Yeni gorsel varsa yukle
             if (model.ImageFile != null)
             {
                 using (var stream = model.ImageFile.OpenReadStream())
@@ -195,7 +182,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
                 }
             }
 
-            TempData["Success"] = "Soru baÅŸarÄ±yla gÃ¼ncellendi";
+            TempData["Success"] = "Soru basariyla guncellendi";
             return RedirectToAction("Index");
         }
 
@@ -213,14 +200,14 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             await _questionService.DeleteAsync(id);
-            TempData["Success"] = "Soru baÅŸarÄ±yla silindi";
+            TempData["Success"] = "Soru basariyla silindi";
             return RedirectToAction("Index");
         }
 
         [HttpPost]
-        public async Task<JsonResult> GetUnitsBySubject(string subjectId)
+        public async Task<JsonResult> GetUnitsByGrade(string gradeId)
         {
-            var units = await _unitService.GetBySubjectAsync(subjectId);
+            var units = await _unitService.GetByGradeAsync(gradeId);
             return Json(units.Select(u => new { id = u.Id, name = u.Name }));
         }
 

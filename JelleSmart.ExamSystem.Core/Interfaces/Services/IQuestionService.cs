@@ -7,7 +7,7 @@ namespace JelleSmart.ExamSystem.Core.Interfaces.Services
         Task<IEnumerable<Question>> GetAllAsync();
         Task<Question?> GetByIdAsync(string id);
         Task<Question?> GetWithChoicesAsync(string id);
-        Task<IEnumerable<Question>> GetBySubjectAsync(string subjectId);
+        Task<IEnumerable<Question>> GetByTopicAsync(string topicId);
         Task<IEnumerable<Question>> GetByTeacherAsync(string teacherId);
         Task<Question> CreateAsync(Question question);
         Task UpdateAsync(Question question);

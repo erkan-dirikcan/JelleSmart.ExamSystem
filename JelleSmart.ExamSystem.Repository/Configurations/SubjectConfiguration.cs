@@ -17,7 +17,7 @@ namespace JelleSmart.ExamSystem.Repository.Configurations
 
             builder.HasIndex(s => s.Name)
                 .IsUnique()
-                .HasFilter("LOWER([Name]) = LOWER([Name])");
+                .HasFilter("[Name] IS NOT NULL");
 
             builder.HasMany(s => s.SubjectGrades)
                 .WithOne(sg => sg.Subject)

@@ -30,9 +30,9 @@ namespace JelleSmart.ExamSystem.Service.Services
             return await _questionRepository.GetWithChoicesAsync(id);
         }
 
-        public async Task<IEnumerable<Question>> GetBySubjectAsync(string subjectId)
+        public async Task<IEnumerable<Question>> GetByTopicAsync(string topicId)
         {
-            return await _questionRepository.GetBySubjectAsync(subjectId);
+            return await _questionRepository.GetByTopicAsync(topicId);
         }
 
         public async Task<IEnumerable<Question>> GetByTeacherAsync(string teacherId)

@@ -38,11 +38,17 @@ namespace JelleSmart.ExamSystem.Service.Services
 
         public async Task<Exam> CreateAsync(CreateExamDto dto)
         {
-            // Seçilen kazanımlardan rastgele sorular seç
+            // For now, use the first topic ID to get questions
+            // This should be updated to handle multiple topics properly
+            var topicId = dto.TopicIds.FirstOrDefault();
+            if (string.IsNullOrEmpty(topicId))
+            {
+                throw new InvalidOperationException("En az bir konu seçilmelidir.");
+            }
+
+            // Seçilen konudan rastgele sorular seç
             var questions = await _questionRepository.GetRandomQuestionsAsync(
-                dto.SubjectId,
-                null, // UnitId will be filtered by topics
-                null,
+                topicId,
                 dto.QuestionCount);
 
             if (!questions.Any())

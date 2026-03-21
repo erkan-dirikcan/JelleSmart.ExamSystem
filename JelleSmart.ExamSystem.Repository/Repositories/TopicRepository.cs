@@ -23,7 +23,7 @@ namespace JelleSmart.ExamSystem.Repository.Repositories
         {
             return await _dbSet
                 .Include(t => t.Unit)
-                    .ThenInclude(u => u!.Subject)
+                    .ThenInclude(u => u!.Grade)
                 .FirstOrDefaultAsync(t => t.Id == id && !t.IsDeleted);
         }
 
@@ -31,7 +31,7 @@ namespace JelleSmart.ExamSystem.Repository.Repositories
         {
             return await _dbSet
                 .Include(t => t.Unit)
-                    .ThenInclude(u => u!.Subject)
+                    .ThenInclude(u => u!.Grade)
                 .Where(t => !t.IsDeleted)
                 .ToListAsync();
         }

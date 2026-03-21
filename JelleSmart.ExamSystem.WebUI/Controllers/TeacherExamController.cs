@@ -1,4 +1,4 @@
-﻿using JelleSmart.ExamSystem.Core.Entities;
+using JelleSmart.ExamSystem.Core.Entities;
 using JelleSmart.ExamSystem.Core.Interfaces.Services;
 using JelleSmart.ExamSystem.Core.Enums;
 using JelleSmart.ExamSystem.Core.ViewModels;
@@ -80,7 +80,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             try
             {
                 await _examService.CreateAsync(dto);
-                TempData["Success"] = "SÄ±nav baÅŸarÄ±yla oluÅŸturuldu";
+                TempData["Success"] = "Sinav basariyla olusturuldu";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -104,14 +104,14 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
         public async Task<IActionResult> Activate(string id)
         {
             await _examService.ActivateExamAsync(id);
-            TempData["Success"] = "SÄ±nav aktifleÅŸtirildi";
+            TempData["Success"] = "Sinav aktiflestirildi";
             return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Deactivate(string id)
         {
             await _examService.DeactivateExamAsync(id);
-            TempData["Success"] = "SÄ±nav pasife alÄ±ndÄ±";
+            TempData["Success"] = "Sinav pasife alindi";
             return RedirectToAction("Index");
         }
 
@@ -129,7 +129,7 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             await _examService.DeleteAsync(id);
-            TempData["Success"] = "SÄ±nav baÅŸarÄ±yla silindi";
+            TempData["Success"] = "Sinav basariyla silindi";
             return RedirectToAction("Index");
         }
 
@@ -143,23 +143,22 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> GetTopicsBySubject(string subjectId)
+        public async Task<JsonResult> GetTopicsByGradeSubject(string gradeId, string subjectId)
         {
+            // Get all topics and filter by grade and subject through the unit hierarchy
             var allTopics = await _topicService.GetAllAsync();
-            var topics = allTopics.Where(t => t.Unit?.SubjectId == subjectId);
+            var topics = allTopics.Where(t => t.GradeId == gradeId);
             return Json(topics.Select(t => new { id = t.Id, name = $"{t.Unit?.Name} - {t.Name}", code = t.Code }));
         }
 
         [HttpPost]
-        public async Task<JsonResult> GetQuestionCount(string subjectId, string? unitId, List<string?>? topicIds)
+        public async Task<JsonResult> GetQuestionCount(List<string?>? topicIds)
         {
-            var questions = await _questionService.GetBySubjectAsync(subjectId);
+            if (topicIds == null || !topicIds.Any())
+                return Json(new { count = 0 });
 
-            if (!string.IsNullOrEmpty(unitId))
-                questions = questions.Where(q => q.UnitId == unitId);
-
-            if (topicIds != null && topicIds.Any())
-                questions = questions.Where(q => !string.IsNullOrEmpty(q.TopicId) && topicIds.Contains(q.TopicId));
+            var allQuestions = await _questionService.GetAllAsync();
+            var questions = allQuestions.Where(q => !string.IsNullOrEmpty(q.TopicId) && topicIds.Contains(q.TopicId));
 
             return Json(new { count = questions.Count() });
         }

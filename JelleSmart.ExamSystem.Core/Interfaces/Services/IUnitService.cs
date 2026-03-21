@@ -7,7 +7,7 @@ namespace JelleSmart.ExamSystem.Core.Interfaces.Services
     {
         Task<IEnumerable<Unit>> GetAllAsync();
         Task<Unit?> GetByIdAsync(string id);
-        Task<IEnumerable<Unit>> GetBySubjectAsync(string subjectId);
+        Task<IEnumerable<Unit>> GetByGradeAsync(string gradeId);
         Task<Unit> CreateAsync(Unit unit);
         Task UpdateAsync(Unit unit);
         Task DeleteAsync(string id);

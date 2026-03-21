@@ -24,9 +24,9 @@ namespace JelleSmart.ExamSystem.Service.Services
             return await _unitRepository.GetByIdAsync(id);
         }
 
-        public async Task<IEnumerable<Unit>> GetBySubjectAsync(string subjectId)
+        public async Task<IEnumerable<Unit>> GetByGradeAsync(string gradeId)
         {
-            return await _unitRepository.GetBySubjectAsync(subjectId);
+            return await _unitRepository.GetByGradeAsync(gradeId);
         }
 
         public async Task<Unit> CreateAsync(Unit unit)
@@ -52,9 +52,9 @@ namespace JelleSmart.ExamSystem.Service.Services
             {
                 Id = e.Id,
                 Name = e.Name,
-                SubjectId = e.SubjectId,
+                GradeId = e.GradeId,
                 Description = e.Description,
-                SubjectName = e.Subject?.Name
+                GradeName = e.Grade?.Name
             }).ToList();
         }
 
@@ -68,9 +68,9 @@ namespace JelleSmart.ExamSystem.Service.Services
             {
                 Id = entity.Id,
                 Name = entity.Name,
-                SubjectId = entity.SubjectId,
+                GradeId = entity.GradeId,
                 Description = entity.Description,
-                SubjectName = entity.Subject?.Name
+                GradeName = entity.Grade?.Name
             };
         }
 
@@ -79,7 +79,7 @@ namespace JelleSmart.ExamSystem.Service.Services
             var entity = new Unit
             {
                 Name = viewModel.Name,
-                SubjectId = viewModel.SubjectId,
+                GradeId = viewModel.GradeId,
                 Description = viewModel.Description
             };
             var result = await _unitRepository.CreateAsync(entity);
@@ -93,7 +93,7 @@ namespace JelleSmart.ExamSystem.Service.Services
                 throw new Exception("Unit not found");
 
             entity.Name = viewModel.Name;
-            entity.SubjectId = viewModel.SubjectId;
+            entity.GradeId = viewModel.GradeId;
             entity.Description = viewModel.Description;
 
             await _unitRepository.UpdateAsync(entity);

@@ -21,6 +21,6 @@ namespace JelleSmart.ExamSystem.Core.ViewModels
 
         // For display purposes
         public string? UnitName { get; set; }
-        public string? SubjectName { get; set; }
+        public string? GradeName { get; set; }
     }
 }

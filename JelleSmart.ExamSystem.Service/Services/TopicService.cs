@@ -56,7 +56,7 @@ namespace JelleSmart.ExamSystem.Service.Services
                 Code = e.Code,
                 Description = e.Description,
                 UnitName = e.Unit?.Name,
-                SubjectName = e.Unit?.Subject?.Name
+                GradeName = e.Unit?.Grade?.Name
             }).ToList();
         }
 
@@ -74,7 +74,7 @@ namespace JelleSmart.ExamSystem.Service.Services
                 Code = entity.Code,
                 Description = entity.Description,
                 UnitName = entity.Unit?.Name,
-                SubjectName = entity.Unit?.Subject?.Name
+                GradeName = entity.Unit?.Grade?.Name
             };
         }
 

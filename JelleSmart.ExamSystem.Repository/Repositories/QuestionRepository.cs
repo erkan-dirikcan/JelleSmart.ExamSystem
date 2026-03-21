@@ -15,20 +15,19 @@ namespace JelleSmart.ExamSystem.Repository.Repositories
         {
             return await _dbSet
                 .Include(q => q.Choices.Where(c => !c.IsDeleted))
-                .Include(q => q.Subject)
-                .Include(q => q.Unit)
                 .Include(q => q.Topic)
-                .Include(q => q.Grade)
+                    .ThenInclude(t => t!.Unit)
+                        .ThenInclude(u => u!.Grade)
+                .Include(q => q.CreatedByUser)
                 .FirstOrDefaultAsync(q => q.Id == id && !q.IsDeleted);
         }
 
-        public async Task<IEnumerable<Question>> GetBySubjectAsync(string subjectId)
+        public async Task<IEnumerable<Question>> GetByTopicAsync(string topicId)
         {
             return await _dbSet
                 .Include(q => q.Choices.Where(c => !c.IsDeleted))
-                .Include(q => q.Unit)
                 .Include(q => q.Topic)
-                .Where(q => q.SubjectId == subjectId && !q.IsDeleted)
+                .Where(q => q.TopicId == topicId && !q.IsDeleted)
                 .ToListAsync();
         }
 
@@ -36,28 +35,17 @@ namespace JelleSmart.ExamSystem.Repository.Repositories
         {
             return await _dbSet
                 .Include(q => q.Choices.Where(c => !c.IsDeleted))
-                .Include(q => q.Subject)
-                .Include(q => q.Unit)
                 .Include(q => q.Topic)
+                    .ThenInclude(t => t!.Unit)
                 .Where(q => q.CreatedByUserId == teacherId && !q.IsDeleted)
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Question>> GetRandomQuestionsAsync(string subjectId, string? unitId, string? topicId, int count)
+        public async Task<IEnumerable<Question>> GetRandomQuestionsAsync(string topicId, int count)
         {
             var query = _dbSet
                 .Include(q => q.Choices.Where(c => !c.IsDeleted))
-                .Where(q => q.SubjectId == subjectId && !q.IsDeleted);
-
-            if (!string.IsNullOrEmpty(unitId))
-            {
-                query = query.Where(q => q.UnitId == unitId);
-            }
-
-            if (!string.IsNullOrEmpty(topicId))
-            {
-                query = query.Where(q => q.TopicId == topicId);
-            }
+                .Where(q => q.TopicId == topicId && !q.IsDeleted);
 
             return await query.OrderBy(q => EF.Functions.Random()).Take(count).ToListAsync();
         }
