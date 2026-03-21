@@ -19,6 +19,14 @@ namespace JelleSmart.ExamSystem.Repository.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Topic>> GetByUnitIdAsync(string unitId)
+        {
+            return await _dbSet
+                .Where(t => t.UnitId == unitId && !t.IsDeleted)
+                .OrderBy(t => t.Order)
+                .ToListAsync();
+        }
+
         public async Task<Topic?> GetByIdWithIncludesAsync(string id)
         {
             return await _dbSet

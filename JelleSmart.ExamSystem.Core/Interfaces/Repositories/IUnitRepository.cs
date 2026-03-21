@@ -6,6 +6,7 @@ namespace JelleSmart.ExamSystem.Core.Interfaces.Repositories
     {
         Task<Unit?> GetWithTopicsAsync(string id);
         Task<IEnumerable<Unit>> GetByGradeAsync(string gradeId);
+        Task<IEnumerable<Unit>> GetByGradeIdAsync(string gradeId);
         Task<Unit?> GetByIdWithIncludesAsync(string id);
         Task<IEnumerable<Unit>> GetAllWithIncludesAsync();
     }

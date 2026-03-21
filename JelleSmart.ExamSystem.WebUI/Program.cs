@@ -57,6 +57,7 @@ builder.Services.AddScoped<ITopicRepository, TopicRepository>();
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 builder.Services.AddScoped<IExamRepository, ExamRepository>();
 builder.Services.AddScoped<IStudentExamRepository, StudentExamRepository>();
+builder.Services.AddScoped<ISubjectGradeRepository, SubjectGradeRepository>();
 
 // Phase 1: Profile repositories
 builder.Services.AddScoped<IAppUserRepository, AppUserRepository>();

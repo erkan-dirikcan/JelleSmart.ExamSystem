@@ -27,6 +27,14 @@ namespace JelleSmart.ExamSystem.Repository.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Unit>> GetByGradeIdAsync(string gradeId)
+        {
+            return await _dbSet
+                .Where(u => u.GradeId == gradeId && !u.IsDeleted)
+                .OrderBy(u => u.Order)
+                .ToListAsync();
+        }
+
         public async Task<Unit?> GetByIdWithIncludesAsync(string id)
         {
             return await _dbSet

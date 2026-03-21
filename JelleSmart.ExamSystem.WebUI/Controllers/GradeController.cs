@@ -1,5 +1,6 @@
 using JelleSmart.ExamSystem.Core.ViewModels;
 using JelleSmart.ExamSystem.Core.Interfaces.Services;
+using JelleSmart.ExamSystem.Core.Interfaces.Repositories;
 using JelleSmart.ExamSystem.Core.Enums;
 using JelleSmart.ExamSystem.WebUI.ViewComponents;
 using Microsoft.AspNetCore.Authorization;
@@ -11,10 +12,12 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
     public class GradeController : Controller
     {
         private readonly IGradeService _gradeService;
+        private readonly ISubjectGradeRepository _subjectGradeRepository;
 
-        public GradeController(IGradeService gradeService)
+        public GradeController(IGradeService gradeService, ISubjectGradeRepository subjectGradeRepository)
         {
             _gradeService = gradeService;
+            _subjectGradeRepository = subjectGradeRepository;
         }
 
         public async Task<IActionResult> Index()
@@ -91,6 +94,14 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             await _gradeService.DeleteAsync(id);
             TempData["Success"] = "Sınıf başarıyla silindi";
             return RedirectToAction("Index");
+        }
+
+        [HttpPost("BySubject/{subjectId}")]
+        public async Task<IActionResult> GetBySubject(string subjectId)
+        {
+            var grades = await _subjectGradeRepository.GetGradesBySubjectIdAsync(subjectId);
+            var result = grades.Select(g => new { id = g.Id, name = g.Name });
+            return Json(result);
         }
     }
 }

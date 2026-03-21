@@ -1,5 +1,6 @@
 using JelleSmart.ExamSystem.Core.ViewModels;
 using JelleSmart.ExamSystem.Core.Interfaces.Services;
+using JelleSmart.ExamSystem.Core.Interfaces.Repositories;
 using JelleSmart.ExamSystem.Core.Enums;
 using JelleSmart.ExamSystem.WebUI.ViewComponents;
 using Microsoft.AspNetCore.Authorization;
@@ -12,11 +13,13 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
     {
         private readonly ITopicService _topicService;
         private readonly IUnitService _unitService;
+        private readonly ITopicRepository _topicRepository;
 
-        public TopicController(ITopicService topicService, IUnitService unitService)
+        public TopicController(ITopicService topicService, IUnitService unitService, ITopicRepository topicRepository)
         {
             _topicService = topicService;
             _unitService = unitService;
+            _topicRepository = topicRepository;
         }
 
         public async Task<IActionResult> Index()
@@ -101,6 +104,18 @@ namespace JelleSmart.ExamSystem.WebUI.Controllers
             await _topicService.DeleteAsync(id);
             TempData["Success"] = "Konu başarıyla silindi";
             return RedirectToAction("Index");
+        }
+
+        [HttpPost("ByUnit/{unitId}")]
+        public async Task<IActionResult> GetByUnit(string unitId)
+        {
+            var topics = await _topicRepository.GetByUnitIdAsync(unitId);
+            var result = topics.Select(t => new
+            {
+                id = t.Id,
+                name = string.IsNullOrEmpty(t.Code) ? $"{t.Order}. {t.Name}" : $"{t.Code} - {t.Name}"
+            });
+            return Json(result);
         }
     }
 }
