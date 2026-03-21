@@ -17,6 +17,7 @@ namespace JelleSmart.ExamSystem.Core.Entities
         public DateTime EndTime { get; set; }
         public bool IsActive { get; set; } = false;
         public ExamStatus Status { get; set; } = ExamStatus.NotStarted;
+        public bool OrderQuestionsByTopicSequence { get; set; } = false;
 
         // Hangi sınıf için?
         public string? GradeId { get; set; }
