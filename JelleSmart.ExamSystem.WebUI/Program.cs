@@ -1,3 +1,4 @@
+using FluentValidation;
 using JelleSmart.ExamSystem.Core.Entities.Identity;
 using JelleSmart.ExamSystem.Core.Interfaces.Repositories;
 using JelleSmart.ExamSystem.Core.Interfaces.Services;
@@ -47,6 +48,9 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+// FluentValidation
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 // Repository registration
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));

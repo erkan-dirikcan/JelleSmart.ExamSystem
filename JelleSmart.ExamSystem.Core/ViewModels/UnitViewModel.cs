@@ -16,6 +16,8 @@ namespace JelleSmart.ExamSystem.Core.ViewModels
         [StringLength(1000, ErrorMessage = "Açıklama en fazla 1000 karakter olabilir")]
         public string? Description { get; set; }
 
+        public int Order { get; set; } = 1;
+
         // For display purposes
         public string? GradeName { get; set; }
     }
