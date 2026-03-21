@@ -7,9 +7,10 @@ namespace JelleSmart.ExamSystem.Core.Entities
     {
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
-        public string? IconClass { get; set; } // CSS icon class (FontAwesome vb.)
+        public string? IconClass { get; set; }
 
         // Navigation properties
+        public ICollection<SubjectGrade> SubjectGrades { get; set; } = new List<SubjectGrade>();
         public ICollection<Unit> Units { get; set; } = new List<Unit>();
         public ICollection<Question> Questions { get; set; } = new List<Question>();
     }
