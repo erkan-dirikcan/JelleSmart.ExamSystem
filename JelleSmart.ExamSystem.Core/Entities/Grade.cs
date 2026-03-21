@@ -7,10 +7,12 @@ namespace JelleSmart.ExamSystem.Core.Entities
     /// </summary>
     public class Grade : BaseEntity
     {
-        public int Level { get; set; } // 1, 2, 3, 4
-        public string Name { get; set; } = string.Empty; // "1. Sınıf", "2. Sınıf" vb.
+        public int Level { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         // Navigation properties
+        public ICollection<SubjectGrade> SubjectGrades { get; set; } = new List<SubjectGrade>();
+        public ICollection<Unit> Units { get; set; } = new List<Unit>();
         public ICollection<AppUser> Students { get; set; } = new List<AppUser>();
     }
 }
