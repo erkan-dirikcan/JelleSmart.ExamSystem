@@ -15,14 +15,13 @@ namespace JelleSmart.ExamSystem.Repository.Configurations
             builder.Property(e => e.Description).IsRequired(false);
             builder.Property(e => e.IconClass).IsRequired(false);
 
-            builder.HasMany(s => s.Units)
-                .WithOne(u => u.Subject)
-                .HasForeignKey(u => u.SubjectId)
-                .OnDelete(DeleteBehavior.Cascade);
+            builder.HasIndex(s => s.Name)
+                .IsUnique()
+                .HasFilter("LOWER([Name]) = LOWER([Name])");
 
-            builder.HasMany(s => s.Questions)
-                .WithOne(q => q.Subject)
-                .HasForeignKey(q => q.SubjectId)
+            builder.HasMany(s => s.SubjectGrades)
+                .WithOne(sg => sg.Subject)
+                .HasForeignKey(sg => sg.SubjectId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasQueryFilter(e => !e.IsDeleted);

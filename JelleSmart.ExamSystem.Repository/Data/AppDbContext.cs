@@ -21,6 +21,7 @@ namespace JelleSmart.ExamSystem.Repository.Data
         public DbSet<Exam> Exams { get; set; }
         public DbSet<ExamQuestion> ExamQuestions { get; set; }
         public DbSet<StudentSubject> StudentSubjects { get; set; }
+        public DbSet<SubjectGrade> SubjectGrades { get; set; }
         public DbSet<StudentExam> StudentExams { get; set; }
         public DbSet<StudentAnswer> StudentAnswers { get; set; }
         public DbSet<TeacherProfile> TeacherProfiles { get; set; }

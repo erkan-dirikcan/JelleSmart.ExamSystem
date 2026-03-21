@@ -11,7 +11,5 @@ namespace JelleSmart.ExamSystem.Core.Entities
 
         // Navigation properties
         public ICollection<SubjectGrade> SubjectGrades { get; set; } = new List<SubjectGrade>();
-        public ICollection<Unit> Units { get; set; } = new List<Unit>();
-        public ICollection<Question> Questions { get; set; } = new List<Question>();
     }
 }

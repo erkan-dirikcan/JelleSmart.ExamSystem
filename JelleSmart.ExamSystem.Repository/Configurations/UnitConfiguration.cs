@@ -14,9 +14,12 @@ namespace JelleSmart.ExamSystem.Repository.Configurations
             builder.Property(e => e.Name).IsRequired();
             builder.Property(e => e.Description).IsRequired(false);
 
-            builder.HasOne(u => u.Subject)
-                .WithMany(s => s.Units)
-                .HasForeignKey(u => u.SubjectId)
+            builder.HasIndex(u => new { u.GradeId, u.Order })
+                .IsUnique();
+
+            builder.HasOne(u => u.Grade)
+                .WithMany(g => g.Units)
+                .HasForeignKey(u => u.GradeId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasMany(u => u.Topics)
@@ -24,10 +27,8 @@ namespace JelleSmart.ExamSystem.Repository.Configurations
                 .HasForeignKey(t => t.UnitId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasMany(u => u.Questions)
-                .WithOne(q => q.Unit)
-                .HasForeignKey(q => q.UnitId)
-                .OnDelete(DeleteBehavior.NoAction);
+            builder.Property(u => u.Order)
+                .HasDefaultValue(1);
 
             builder.HasQueryFilter(e => !e.IsDeleted);
         }

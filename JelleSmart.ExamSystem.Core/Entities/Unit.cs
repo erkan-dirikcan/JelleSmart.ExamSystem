@@ -16,6 +16,5 @@ namespace JelleSmart.ExamSystem.Core.Entities
         // Navigation properties
         public Grade? Grade { get; set; }
         public ICollection<Topic> Topics { get; set; } = new List<Topic>();
-        public ICollection<Question> Questions { get; set; } = new List<Question>();
     }
 }
