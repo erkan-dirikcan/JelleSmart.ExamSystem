@@ -13,7 +13,7 @@ namespace JelleSmart.ExamSystem.Repository.Data
         {
             await SeedRolesAsync(roleManager);
             await SeedAdminUserAsync(userManager, roleManager);
-            await SeedHierarchicalDataAsync(context);
+            await SeedHierarchicalDataAsync(context, userManager);
         }
 
         private static async Task SeedRolesAsync(RoleManager<AppRole> roleManager)
@@ -67,8 +67,7 @@ namespace JelleSmart.ExamSystem.Repository.Data
                 LastName = "Smart",
                 Email = adminEmail,
                 UserName = adminEmail,
-                EmailConfirmed = true,
-                IsActive = true
+                EmailConfirmed = true
             };
 
             var result = await userManager.CreateAsync(adminUser, adminPassword);
@@ -94,7 +93,7 @@ namespace JelleSmart.ExamSystem.Repository.Data
         /// <summary>
         /// Seeds sample hierarchical data for testing purposes
         /// </summary>
-        private static async Task SeedHierarchicalDataAsync(AppDbContext context)
+        private static async Task SeedHierarchicalDataAsync(AppDbContext context, UserManager<AppUser> userManager)
         {
             // Check if data already exists
             if (await context.Subjects.AnyAsync())
@@ -105,14 +104,20 @@ namespace JelleSmart.ExamSystem.Repository.Data
 
             Console.WriteLine("Seeding hierarchical data...");
 
+            // Get admin user for question creation
+            var adminUser = await userManager.Users.FirstOrDefaultAsync(u => u.Email == "info@jellosmart.com");
+            if (adminUser == null)
+            {
+                Console.WriteLine("Warning: Admin user not found. Skipping question creation.");
+                return;
+            }
+
             // Create Subject: Matematik
             var matematik = new Subject
             {
                 Name = "Matematik",
-                Code = "MAT",
                 Description = "Matematik dersi",
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
+                IconClass = "fas fa-calculator"
             };
             context.Subjects.Add(matematik);
             await context.SaveChangesAsync();
@@ -121,16 +126,12 @@ namespace JelleSmart.ExamSystem.Repository.Data
             var sinif1 = new Grade
             {
                 Name = "1. Sınıf",
-                Order = 1,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
+                Level = 1
             };
             var sinif2 = new Grade
             {
                 Name = "2. Sınıf",
-                Order = 2,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
+                Level = 2
             };
             context.Grades.AddRange(sinif1, sinif2);
             await context.SaveChangesAsync();
@@ -155,18 +156,14 @@ namespace JelleSmart.ExamSystem.Repository.Data
                 Name = "Sayılar",
                 GradeId = sinif1.Id,
                 Order = 1,
-                Description = "Doğal sayılar ve işlemler",
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
+                Description = "Doğal sayılar ve işlemler"
             };
             var unit2Sinif1 = new Unit
             {
                 Name = "İşlemler",
                 GradeId = sinif1.Id,
                 Order = 2,
-                Description = "Toplama ve çıkarma",
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
+                Description = "Toplama ve çıkarma"
             };
             context.Units.AddRange(unit1Sinif1, unit2Sinif1);
             await context.SaveChangesAsync();
@@ -178,9 +175,8 @@ namespace JelleSmart.ExamSystem.Repository.Data
                 UnitId = unit1Sinif1.Id,
                 GradeId = sinif1.Id,
                 Order = 1,
-                Description = "1-100 arası sayılar",
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
+                Code = "M.1.1.1",
+                Description = "1-100 arası sayılar"
             };
             var topic2 = new Topic
             {
@@ -188,9 +184,8 @@ namespace JelleSmart.ExamSystem.Repository.Data
                 UnitId = unit1Sinif1.Id,
                 GradeId = sinif1.Id,
                 Order = 2,
-                Description = "Tam sayılar kavramı",
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
+                Code = "M.1.1.2",
+                Description = "Tam sayılar kavramı"
             };
             context.Topics.AddRange(topic1, topic2);
             await context.SaveChangesAsync();
@@ -202,9 +197,8 @@ namespace JelleSmart.ExamSystem.Repository.Data
                 UnitId = unit2Sinif1.Id,
                 GradeId = sinif1.Id,
                 Order = 1,
-                Description = "Toplama işlemi",
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
+                Code = "M.1.2.1",
+                Description = "Toplama işlemi"
             };
             context.Topics.Add(topic3);
             await context.SaveChangesAsync();
@@ -215,9 +209,7 @@ namespace JelleSmart.ExamSystem.Repository.Data
                 Name = "Sayılar",
                 GradeId = sinif2.Id,
                 Order = 1,
-                Description = "Doğal sayılar ve işlemler",
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
+                Description = "Doğal sayılar ve işlemler"
             };
             context.Units.Add(unit1Sinif2);
             await context.SaveChangesAsync();
@@ -229,42 +221,57 @@ namespace JelleSmart.ExamSystem.Repository.Data
                 UnitId = unit1Sinif2.Id,
                 GradeId = sinif2.Id,
                 Order = 1,
-                Description = "1-1000 arası sayılar",
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
+                Code = "M.2.1.1",
+                Description = "1-1000 arası sayılar"
             };
             context.Topics.Add(topic4);
             await context.SaveChangesAsync();
 
-            // Create sample Questions
+            // Create sample Questions with Choices
             var question1 = new Question
             {
-                QuestionText = "5 + 3 işleminin sonucu kaçtır?",
-                OptionA = "6",
-                OptionB = "7",
-                OptionC = "8",
-                OptionD = "9",
-                CorrectAnswer = "C",
+                Text = "5 + 3 işleminin sonucu kaçtır?",
                 TopicId = topic3.Id,
-                Difficulty = "Easy",
-                Points = 10,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
+                Difficulty = 1,
+                Explanation = "5 + 3 = 8",
+                CreatedByUserId = adminUser.Id
             };
+
+            // Choices for question 1 - create as list then assign
+            var q1Choices = new List<Choice>
+            {
+                new Choice { Label = "A", Text = "6", IsCorrect = false },
+                new Choice { Label = "B", Text = "7", IsCorrect = false },
+                new Choice { Label = "C", Text = "8", IsCorrect = true },
+                new Choice { Label = "D", Text = "9", IsCorrect = false }
+            };
+            foreach (var choice in q1Choices)
+            {
+                context.Choices.Add(choice);
+            }
+
             var question2 = new Question
             {
-                QuestionText = "10 - 4 işleminin sonucu kaçtır?",
-                OptionA = "5",
-                OptionB = "6",
-                OptionC = "7",
-                OptionD = "8",
-                CorrectAnswer = "B",
+                Text = "10 - 4 işleminin sonucu kaçtır?",
                 TopicId = topic3.Id,
-                Difficulty = "Easy",
-                Points = 10,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
+                Difficulty = 1,
+                Explanation = "10 - 4 = 6",
+                CreatedByUserId = adminUser.Id
             };
+
+            // Choices for question 2 - create as list then assign
+            var q2Choices = new List<Choice>
+            {
+                new Choice { Label = "A", Text = "5", IsCorrect = false },
+                new Choice { Label = "B", Text = "6", IsCorrect = true },
+                new Choice { Label = "C", Text = "7", IsCorrect = false },
+                new Choice { Label = "D", Text = "8", IsCorrect = false }
+            };
+            foreach (var choice in q2Choices)
+            {
+                context.Choices.Add(choice);
+            }
+
             context.Questions.AddRange(question1, question2);
             await context.SaveChangesAsync();
 
